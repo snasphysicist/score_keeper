@@ -4,8 +4,38 @@
 </head>
 <body>
   <h1>New Duel</h1>
-  <p>Opponent 1</p>
-  <input id="opponent-1" type="text">
-  <input id="opponent-2" type="text">
+  <div>
+    <p>Opponent 1</p>
+    <input id="opponent-1" type="text">
+    <p>Opponent 2</p>
+    <input id="opponent-2" type="text">
+  </div>
+  <input type="button" id="fight" onclick="startNewDuel()" value="READY!"/>
+
+  <!-- JS to submit form -->
+  <script type="text/javascript">
+    function startNewDuel() {
+      const POST_URL = "/run_duel/api/v1/new_duel"
+      let opponent1Name = document.getElementById("opponent-1").value;
+      let opponent2Name = document.getElementById("opponent-2").value;
+      let data = {
+        "opponent1": opponent1Name,
+        "opponent2": opponent2Name,
+      }
+      fetch(
+        POST_URL,
+        {
+          method: "POST",
+          body: JSON.stringify(data)
+        }
+      ).then((response) => {
+          if(response.ok) {
+            window.location.href = "/run_duel/current_duel"
+          } else {
+            // Handle error
+          }
+      })
+    }
+  </script>
 </body>
 </html>
