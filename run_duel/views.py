@@ -4,7 +4,7 @@ import json
 from django.template import loader
 from django.http import HttpResponse, JsonResponse
 
-from run_duels.models import Duel
+from run_duel.models import Duel
 
 # Render new duel page
 def new_duel(request):
@@ -34,8 +34,8 @@ def new_duel_api(request):
             "reason": "The opponents' names cannot be empty"
         })
     new_duel = Duel(
-        opponent_1 = data['opponent1']
-        opponent_2 = data['opponent2']
+        opponent_1=data['opponent1'],
+        opponent_2=data['opponent2']
     )
     new_duel.save()
     return JsonResponse({
