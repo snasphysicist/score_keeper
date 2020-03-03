@@ -91,23 +91,27 @@ def event_stream(request):
     current_duel_object = Duel.objects.filter(
         current__exact=True
     )[0]
-    current_round = Round.objects.filter(
-        duel__exact=current_duel_object.id
-    ).exclude(
-        status__exact='FINISHED'
-    ).exclude(
-        status__exact='NOT STARTED'
-    )[0]
-    # Get all events for current duel
-    current_duel_events = FightEvent.objects.filter(
-        round__exact=current_round.id
+    rounds = list(
+        Round.objects.filter(
+            duel__exact=current_duel_object.id
+        )
     )
+    # Get all events for current duel
+    # current_duel_events = FightEvent.objects.filter(
+    #     round__exact=current_round.id
+    # )
     # TODO assemble into useful json format
     event_data = {
         "duel_id": current_duel_object.id,
-        "round": {
-            "round_id": current_round.id
-        }
+        "rounds": []
     }
+    for round in rounds:
+        event_data["rounds"].append(
+            {
+                "round_id": round.id,
+                "round_number": round.round_number,
+                "status": round.status
+            }
+        )
     # TODO add latest event
     return JsonResponse(event_data)
