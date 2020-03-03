@@ -51,4 +51,24 @@
       vueApplication.rounds = jsonData["rounds"];
     };
   </script>
+  <script type="text/javascript">
+    function submitEvent(event) {
+      let eventType = event.target.id;
+      const POST_URL = "/run_duel/api/v1/event"
+      let data = {
+        "eventType": eventType
+      }
+      fetch(
+        POST_URL,
+        {
+          method: "POST",
+          body: JSON.stringify(data)
+        }
+      ).then((response) => {
+          if (!response.ok) {
+            // Handle error
+          }
+      })
+    }
+  </script>
 </html>
