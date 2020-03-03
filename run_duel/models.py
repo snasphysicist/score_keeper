@@ -14,7 +14,8 @@ class Duel(models.Model):
 class Round(models.Model):
     duel = models.ForeignKey(
         'Duel',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        default=0
     )
     round_number = models.IntegerField(default=1)
 
@@ -23,7 +24,8 @@ class Round(models.Model):
 class FightEvent(models.Model):
     round = models.ForeignKey(
         'Round',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        default=0
     )
     time = models.DateTimeField('Occurred At')
     type = models.CharField(max_length=20)
