@@ -109,9 +109,11 @@ def event_stream(request):
     # )
     # TODO assemble into useful json format
     event_data = {
-        "duel_id": current_duel_object.id,
-        "opponent1": current_duel_object.opponent1,
-        "opponent2": current_duel_object.opponent2,
+        "duel": {
+            "duel_id": current_duel_object.id,
+            "opponent1": current_duel_object.opponent1,
+            "opponent2": current_duel_object.opponent2
+        },
         "rounds": []
     }
     for round in rounds:
