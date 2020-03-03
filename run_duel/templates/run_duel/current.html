@@ -56,7 +56,7 @@
       let eventType = event.target.id;
       const POST_URL = "/run_duel/api/v1/event"
       let data = {
-        "eventType": eventType
+        "type": eventType
       }
       fetch(
         POST_URL,
