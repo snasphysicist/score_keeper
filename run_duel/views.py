@@ -78,12 +78,21 @@ def new_event_api(request):
             "success": False,
             "reason": "Required key missing from json request"
         })
+    # Get the rounds for the current match
+    this_duel = Duel.object.filter(current__exact=True)
+    these_rounds = Round.object.filter(duel__exact=this_duel)
     # Get the round for this event
-    this_round = Round.object.filter(id=data['round_id'])
+    # Will depend upon event type
+    if data['type'].upper() == "START-ROUND":
+        # For start, want next round
+        the_round = next_round(these_rounds)
+    else:
+        # For everything else, current round
+        the_round = current_round(these_rounds)
     event = FightEvent(
         time=datetime.datetime.now(),
         type=data['type'].upper(),
-        round=this_round
+        round=the_round
     )
     if event.save():
         return JsonResponse({
@@ -129,3 +138,32 @@ def event_stream(request):
         )
     # TODO add latest event
     return JsonResponse(event_data)
+
+
+# Helper functions for events api
+
+# Current round should be RUNNING or PAUSED
+def current_round(rounds):
+    for a_round in rounds:
+        if a_round.status == "RUNNING" or a_round.status == "PAUSED":
+            return a_round
+
+
+def next_round(rounds):
+    # Get round numbers of all complete rounds
+    rounds_complete = []
+    for a_round in rounds:
+        if a_round.status == "FINISHED":
+            rounds_complete.append(
+                a_round.round_number
+            )
+    # If none is complete, next round is first round
+    if len(rounds_complete) == 0:
+        next_round_number = 1
+    else:
+        # Otherwise, highest finished + 1
+        sorted(rounds_complete)
+        next_round_number = sorted[-1] + 1
+    for a_round in rounds:
+        if a_round.round_number == next_round_number:
+            return a_round
