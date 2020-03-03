@@ -116,10 +116,13 @@ def event_stream(request):
         )
     )
     # Get all events for current duel
-    # current_duel_events = FightEvent.objects.filter(
-    #     round__exact=current_round.id
-    # )
-    # TODO assemble into useful json format
+    current_duel_events = []
+    for a_round in rounds:
+        current_duel_events += list(
+            FightEvent.objects.filter(
+                round__exact=a_round
+            )
+        )
     event_data = {
         "duel": {
             "duel_id": current_duel_object.id,
