@@ -29,4 +29,10 @@
       <input id="opponent-2-head" type="button" value="Body">
     </div>
   </body>
+  <script>
+    var ws = new WebSocket("ws://127.0.0.1:8001/");
+    ws.onmessage = function (event) {
+      console.log(event.data)
+    };
+  </script>
 </html>
