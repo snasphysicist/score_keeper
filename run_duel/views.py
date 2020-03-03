@@ -37,15 +37,15 @@ def new_duel_api(request):
             "reason": "The opponents' names cannot be empty"
         })
     new_duel_object = Duel(
-        opponent_1=data['opponent1'],
-        opponent_2=data['opponent2'],
+        opponent1=data['opponent1'],
+        opponent2=data['opponent2'],
         current=True   # This is now current duel
     )
     new_duel_object.save()
     # Also need to create three rounds in this duel
     for i in [1, 2, 3]:
         next_round = Round(
-            duel=new_duel_object.id,
+            duel=new_duel_object,
             round_number=i
         )
         next_round.save()
@@ -90,20 +90,24 @@ def new_event_api(request):
 def event_stream(request):
     current_duel_object = Duel.objects.filter(
         current__exact=True
-    )
+    )[0]
     current_round = Round.objects.filter(
         duel__exact=current_duel_object.id
     ).exclude(
         status__exact='FINISHED'
     ).exclude(
         status__exact='NOT STARTED'
-    )
+    )[0]
     # Get all events for current duel
     current_duel_events = FightEvent.objects.filter(
         round__exact=current_round.id
     )
     # TODO assemble into useful json format
+    event_data = {
+        "duel_id": current_duel_object.id,
+        "round": {
+            "round_id": current_round.id
+        }
+    }
     # TODO add latest event
-    return JsonResponse({
-
-    })
+    return JsonResponse(event_data)
