@@ -73,14 +73,14 @@ def new_event_api(request):
     data = json.loads(
         request.body.decode('utf-8')
     )
-    if ('type' not in data.keys()) or ('round_id' not in data.keys()):
+    if 'type' not in data.keys():
         return JsonResponse({
             "success": False,
             "reason": "Required key missing from json request"
         })
     # Get the rounds for the current match
-    this_duel = Duel.object.filter(current__exact=True)
-    these_rounds = Round.object.filter(duel__exact=this_duel)
+    this_duel = list(Duel.objects.filter(current__exact=True))[0]
+    these_rounds = list(Round.objects.filter(duel__exact=this_duel))
     # Get the round for this event
     # Will depend upon event type
     if data['type'].upper() == "START-ROUND":
