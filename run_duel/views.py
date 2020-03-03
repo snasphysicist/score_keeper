@@ -5,13 +5,15 @@ import json
 from django.template import loader
 from django.http import HttpResponse, JsonResponse
 
-from run_duel.models import Duel, Event
+from run_duel.models import Duel, Event, Round
+
 
 # Render new duel page
 def new_duel(request):
     template = loader.get_template('run_duel/new.html')
     context = {}
     return HttpResponse(template.render(context, request))
+
 
 # Create a new duel
 def new_duel_api(request):
@@ -43,11 +45,13 @@ def new_duel_api(request):
         "success": True
     })
 
+
 # Render current duel page
 def current_duel(request):
     template = loader.get_template('run_duel/current.html')
     context = {}
     return HttpResponse(template.render(context, request))
+
 
 # Event recording api
 def new_event_api(request):
@@ -72,3 +76,26 @@ def new_event_api(request):
             "success": False,
             "reason": "Invalid event type"
         })
+
+
+# Event stream api
+def event_stream(request):
+    current_duel_object = Duel.objects.filter(
+        current__exact=True
+    )
+    current_round = Round.objects.filter(
+        duel__exact=current_duel_object.id
+    ).exclude(
+        status__exact='FINISHED'
+    ).exclude(
+        status__exact='NOT STARTED'
+    )
+    # Get all events for current duel
+    current_duel_events = Event.objects.filter(
+        round__exact=current_round.id
+    )
+    # TODO assemble into useful json format
+    # TODO add latest event
+    return JsonResponse({
+
+    })
