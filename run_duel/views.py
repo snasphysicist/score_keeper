@@ -36,6 +36,13 @@ def new_duel_api(request):
             "success": False,
             "reason": "The opponents' names cannot be empty"
         })
+    # Ensure no other duels are current
+    old_duels = list(
+        Duel.objects.filter(current__exact=True)
+    )
+    for old_duel in old_duels:
+        old_duel.current = False
+        old_duel.save()
     new_duel_object = Duel(
         opponent1=data['opponent1'],
         opponent2=data['opponent2'],
@@ -93,7 +100,7 @@ def event_stream(request):
     )[0]
     rounds = list(
         Round.objects.filter(
-            duel__exact=current_duel_object.id
+            duel__exact=current_duel_object
         )
     )
     # Get all events for current duel
