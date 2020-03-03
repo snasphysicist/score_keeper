@@ -36,11 +36,14 @@ def new_duel_api(request):
             "success": False,
             "reason": "The opponents' names cannot be empty"
         })
-    new_duel = Duel(
+    new_duel_object = Duel(
         opponent_1=data['opponent1'],
-        opponent_2=data['opponent2']
+        opponent_2=data['opponent2'],
+        current=True   # This is now current duel
     )
-    new_duel.save()
+    new_duel_object.save()
+    # Also need to create three rounds in this duel
+
     return JsonResponse({
         "success": True
     })
