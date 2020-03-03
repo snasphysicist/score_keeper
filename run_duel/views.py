@@ -73,14 +73,17 @@ def new_event_api(request):
     data = json.loads(
         request.body.decode('utf-8')
     )
-    if 'type' not in data.keys():
+    if ('type' not in data.keys()) or ('round_id' not in data.keys()):
         return JsonResponse({
             "success": False,
             "reason": "Required key missing from json request"
         })
+    # Get the round for this event
+    this_round = Round.object.filter(id=data['round_id'])
     event = FightEvent(
         time=datetime.datetime.now(),
-        type=data['type']
+        type=data['type'],
+        round=this_round
     )
     if event.save():
         return JsonResponse({
