@@ -82,7 +82,7 @@ def new_event_api(request):
     this_round = Round.object.filter(id=data['round_id'])
     event = FightEvent(
         time=datetime.datetime.now(),
-        type=data['type'],
+        type=data['type'].upper(),
         round=this_round
     )
     if event.save():
