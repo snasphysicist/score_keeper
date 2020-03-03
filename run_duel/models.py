@@ -1,4 +1,6 @@
+
 from django.db import models
+
 
 # Duel object
 class Duel(models.Model):
@@ -7,12 +9,22 @@ class Duel(models.Model):
     opponent2 = models.CharField(max_length=100)
     sequence_number = models.IntegerField(default=1)
 
+
 # Round object
 class Round(models.Model):
+    duel = models.ForeignKey(
+        'Duel',
+        on_delete=models.CASCADE
+    )
     round_number = models.IntegerField(default=1)
+
 
 # Event object
 class FightEvent(models.Model):
+    round = models.ForeignKey(
+        'Round',
+        on_delete=models.CASCADE
+    )
     time = models.DateTimeField('Occurred At')
     type = models.CharField(max_length=20)
 
