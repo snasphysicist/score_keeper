@@ -18,6 +18,10 @@ class Round(models.Model):
         default=0
     )
     round_number = models.IntegerField(default=1)
+    status = models.CharField(
+        max_length=20,
+        default="NOT STARTED"   # RUNNING, PAUSED, FINISHED
+    )
 
 
 # Event object
