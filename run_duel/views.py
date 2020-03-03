@@ -43,7 +43,12 @@ def new_duel_api(request):
     )
     new_duel_object.save()
     # Also need to create three rounds in this duel
-
+    for i in [1, 2, 3]:
+        next_round = Round(
+            duel=new_duel_object.id,
+            round_number=i
+        )
+        next_round.save()
     return JsonResponse({
         "success": True
     })
