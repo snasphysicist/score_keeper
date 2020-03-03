@@ -3,36 +3,52 @@
   <head>
   </head>
   <body>
-    <h1>Current Duel</h1>
-    <div>
-      <h2>Round 1</h2>
-      <p>Status: Ready</p>
-      <p>Time Remaining: 30</p>
-      <input id="start-round" type="button" value="Start Next Round"/>
-      <input id="pause-round" type="button" value="Pause"/>
-      <input id="continue-round" type="button" value="Continue"/>
-    </div>
-    <div>
-      <h2>Opponent 1</h2>
-      <p>Name: </p>
-      <p>Score: </p>
-      <input id="opponent-1-head" type="button" value="Head">
-      <input id="opponent-1-head" type="button" value="Hand">
-      <input id="opponent-1-head" type="button" value="Body">
-    </div>
-    <div>
-      <h2>Opponent 2</h2>
-      <p>Name: </p>
-      <p>Score: </p>
-      <input id="opponent-2-head" type="button" value="Head">
-      <input id="opponent-2-head" type="button" value="Hand">
-      <input id="opponent-2-head" type="button" value="Body">
+    <div id="Vue">
+      <h1>Current Duel</h1>
+      <div>
+        <h2>Round 1</h2>
+        <p>Status: Ready</p>
+        <p>Time Remaining: 30</p>
+        <input id="start-round" type="button" value="Start Next Round"/>
+        <input id="pause-round" type="button" value="Pause"/>
+        <input id="continue-round" type="button" value="Continue"/>
+      </div>
+      <div>
+        <h2>Opponent 1</h2>
+        <p>Name: </p>
+        <p>Score: </p>
+        <input id="opponent-1-head" type="button" value="Head">
+        <input id="opponent-1-head" type="button" value="Hand">
+        <input id="opponent-1-head" type="button" value="Body">
+      </div>
+      <div>
+        <h2>Opponent 2</h2>
+        <p>Name: </p>
+        <p>Score: </p>
+        <input id="opponent-2-head" type="button" value="Head">
+        <input id="opponent-2-head" type="button" value="Hand">
+        <input id="opponent-2-head" type="button" value="Body">
+      </div>
     </div>
   </body>
-  <script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script type="text/javascript">
+    var vueApplication = new Vue({
+      el: '#vue',
+      data: {
+        "duel": {},
+        "rounds": {}
+      }
+    })
+  </script>
+  <script type="text/javascript">
+    // Web socket opener
     var ws = new WebSocket("ws://127.0.0.1:8001/");
     ws.onmessage = function (event) {
-      console.log(event.data)
+      console.log(event.data);
+      jsonData = JSON.parse(event.data);
+      vueApplication.duel = jsonData["duel"];
+      vueApplication.rounds = jsonData["rounds"];
     };
   </script>
 </html>
