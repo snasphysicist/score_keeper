@@ -1,10 +1,11 @@
 
+import datetime
 import json
 
 from django.template import loader
 from django.http import HttpResponse, JsonResponse
 
-from run_duel.models import Duel
+from run_duel.models import Duel, Event
 
 # Render new duel page
 def new_duel(request):
@@ -41,3 +42,33 @@ def new_duel_api(request):
     return JsonResponse({
         "success": True
     })
+
+# Render current duel page
+def current_duel(request):
+    template = loader.get_template('run_duel/current.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+# Event recording api
+def new_event_api(request):
+    data = json.loads(
+        request.body.decode('utf-8')
+    )
+    if 'type' not in data.keys():
+        return JsonResponse({
+            "success": False,
+            "reason": "Required key missing from json request"
+        })
+    event = Event(
+        time=datetime.datetime.now(),
+        type=data['type']
+    )
+    if event.save():
+        return JsonResponse({
+            "success": True
+        })
+    else:
+        return JsonResponse({
+            "success": False,
+            "reason": "Invalid event type"
+        })
