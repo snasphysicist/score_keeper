@@ -5,7 +5,7 @@ import json
 from django.template import loader
 from django.http import HttpResponse, JsonResponse
 
-from run_duel.models import Duel, Event, Round
+from run_duel.models import Duel, FightEvent, Round
 
 
 # Render new duel page
@@ -63,7 +63,7 @@ def new_event_api(request):
             "success": False,
             "reason": "Required key missing from json request"
         })
-    event = Event(
+    event = FightEvent(
         time=datetime.datetime.now(),
         type=data['type']
     )
@@ -91,7 +91,7 @@ def event_stream(request):
         status__exact='NOT STARTED'
     )
     # Get all events for current duel
-    current_duel_events = Event.objects.filter(
+    current_duel_events = FightEvent.objects.filter(
         round__exact=current_round.id
     )
     # TODO assemble into useful json format
