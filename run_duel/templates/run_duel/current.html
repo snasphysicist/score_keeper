@@ -9,7 +9,7 @@
       <div>
         <h2>Round 1</h2>
         <p>Status: Ready</p>
-        <p>Time Remaining: 30</p>
+        <p>Time Remaining: {% verbatim %}{{ currentRoundTimeRemaining }}{% endverbatim %}</p>
         <input id="start-round" onclick="submitEvent(event)" type="button" value="Start Next Round"/>
         <input id="pause-round" onclick="submitEvent(event)" type="button" value="Pause"/>
         <input id="continue-round" onclick="submitEvent(event)" type="button" value="Continue"/>
@@ -20,16 +20,16 @@
         <p>Name: {% verbatim %}{{ duel.opponent1 }}{% endverbatim %}</p>
         <p>Score: </p>
         <input id="opponent-1-head" onclick="submitEvent(event)" type="button" value="Head">
-        <input id="opponent-1-hand" onclick="submitEvent(event)" type="button" value="Hand">
-        <input id="opponent-1-body" onclick="submitEvent(event)" type="button" value="Body">
+        <input id="opponent-1-head" onclick="submitEvent(event)" type="button" value="Hand">
+        <input id="opponent-1-head" onclick="submitEvent(event)" type="button" value="Body">
       </div>
       <div>
         <h2>Opponent 2</h2>
         <p>Name: {% verbatim %}{{ duel.opponent2 }}{% endverbatim %}</p>
         <p>Score: </p>
         <input id="opponent-2-head" onclick="submitEvent(event)" type="button" value="Head">
-        <input id="opponent-2-hand" onclick="submitEvent(event)" type="button" value="Hand">
-        <input id="opponent-2-body" onclick="submitEvent(event)" type="button" value="Body">
+        <input id="opponent-2-head" onclick="submitEvent(event)" type="button" value="Hand">
+        <input id="opponent-2-head" onclick="submitEvent(event)" type="button" value="Body">
       </div>
     </div>
   </body>
@@ -43,6 +43,26 @@
           "opponent2": ""
         },
         "rounds": {}
+      },
+      computed: {
+        currentRoundTimeRemaining: function() {
+          let duel_time = 30000; //ms
+          for (let i = 0; i < this.rounds.length; i++) {
+            let round = this.rounds[i];
+            if (
+                (round["status"] === "RUNNING")
+                || (round["status"] === "PAUSED")
+            ) {
+              let remaining = duel_time - round["time"];
+              if (remaining < 0) {
+                remaining = 0;
+              }
+              return (remaining / 1000.0).toFixed(0);
+            }
+          }
+          // Default
+          return "---";
+        }
       }
     })
   </script>
