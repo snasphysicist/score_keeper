@@ -403,6 +403,11 @@ def calculate_total_score(events):
             elif "OPPONENT-2" in event.type:
                 round_scores["opponent1"] += value
         scores[i - 1] = round_scores
+    # Impose maximum score of 5
+    for opponent in ["opponent1", "opponent2"]:
+        for round_scores in scores:
+            if round_scores[opponent] > 5:
+                round_scores[opponent] = 5
     return scores
 
 
