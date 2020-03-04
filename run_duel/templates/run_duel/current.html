@@ -52,8 +52,10 @@
     ws.onmessage = function (event) {
       console.log(event.data);
       jsonData = JSON.parse(event.data);
-      vueApplication.duel = jsonData["duel"];
-      vueApplication.rounds = jsonData["rounds"];
+      if (jsonData["success"]) {
+        vueApplication.duel = jsonData["duel"];
+        vueApplication.rounds = jsonData["rounds"];
+      }
     };
   </script>
   <script type="text/javascript">
