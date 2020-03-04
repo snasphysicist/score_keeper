@@ -18,18 +18,18 @@
       <div>
         <h2>Opponent 1</h2>
         <p>Name: {% verbatim %}{{ duel.opponent1 }}{% endverbatim %}</p>
-        <p>Score: </p>
+        <p>Score: {% verbatim %}{{ currentRoundOpponent1Score }}{% endverbatim %}</p>
         <input id="opponent-1-head" onclick="submitEvent(event)" type="button" value="Head">
-        <input id="opponent-1-head" onclick="submitEvent(event)" type="button" value="Hand">
-        <input id="opponent-1-head" onclick="submitEvent(event)" type="button" value="Body">
+        <input id="opponent-1-hand" onclick="submitEvent(event)" type="button" value="Hand">
+        <input id="opponent-1-body" onclick="submitEvent(event)" type="button" value="Body">
       </div>
       <div>
         <h2>Opponent 2</h2>
         <p>Name: {% verbatim %}{{ duel.opponent2 }}{% endverbatim %}</p>
-        <p>Score: </p>
+        <p>Score: {% verbatim %}{{ currentRoundOpponent2Score }}{% endverbatim %}</p>
         <input id="opponent-2-head" onclick="submitEvent(event)" type="button" value="Head">
-        <input id="opponent-2-head" onclick="submitEvent(event)" type="button" value="Hand">
-        <input id="opponent-2-head" onclick="submitEvent(event)" type="button" value="Body">
+        <input id="opponent-2-hand" onclick="submitEvent(event)" type="button" value="Hand">
+        <input id="opponent-2-body" onclick="submitEvent(event)" type="button" value="Body">
       </div>
     </div>
   </body>
@@ -62,6 +62,31 @@
           }
           // Default
           return "---";
+        },
+        currentRound: function() {
+          for (let i = 0; i < this.rounds.length; i++) {
+            let round = this.rounds[i];
+            if (
+                (round["status"] === "RUNNING")
+                || (round["status"] === "PAUSED")
+            ) {
+              return round;
+            }
+          }
+        },
+        currentRoundOpponent1Score: function() {
+          let round = this.currentRound;
+          if (typeof round === "undefined") {
+            return "---";
+          }
+          return round["score"]["opponent1"];
+        },
+        currentRoundOpponent2Score: function() {
+          let round = this.currentRound;
+          if (typeof round === "undefined") {
+            return "---";
+          }
+          return round["score"]["opponent2"];
         }
       }
     })
