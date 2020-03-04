@@ -1,6 +1,7 @@
 <DOCTYPE! html>
 <html>
   <head>
+      <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   </head>
   <body>
     <div id="Vue">
@@ -15,7 +16,7 @@
       </div>
       <div>
         <h2>Opponent 1</h2>
-        <p>Name: </p>
+        <p>Name: {% verbatim %}{{ duel.opponent1 }}{% endverbatim %}</p>
         <p>Score: </p>
         <input id="opponent-1-head" onclick="submitEvent(event)" type="button" value="Head">
         <input id="opponent-1-head" onclick="submitEvent(event)" type="button" value="Hand">
@@ -23,7 +24,7 @@
       </div>
       <div>
         <h2>Opponent 2</h2>
-        <p>Name: </p>
+        <p>Name: {% verbatim %}{{ duel.opponent2 }}{% endverbatim %}</p>
         <p>Score: </p>
         <input id="opponent-2-head" onclick="submitEvent(event)" type="button" value="Head">
         <input id="opponent-2-head" onclick="submitEvent(event)" type="button" value="Hand">
@@ -31,12 +32,15 @@
       </div>
     </div>
   </body>
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script type="text/javascript">
     var vueApplication = new Vue({
       el: '#vue',
       data: {
-        "duel": {},
+        "duel": {
+          "duel_id": 0,
+          "opponent1": "",
+          "opponent2": ""
+        },
         "rounds": {}
       }
     })
