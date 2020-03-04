@@ -6,9 +6,11 @@
   <body>
     <div id="Vue">
       <h1>Current Duel</h1>
+      <p>Overall Score: {% verbatim %}{{ totalOpponent1Score }} : {{ totalOpponent2Score }}{% endverbatim %}</p>
       <div>
         <h2>Round {% verbatim %}{{ roundNumberDisplay }}{% endverbatim %}</h2>
         <p>Status: {% verbatim %}{{ roundStatusDisplay }}{% endverbatim %}</p>
+        <p>Score: {% verbatim %}{{ currentRoundOpponent1Score }} : {{ currentRoundOpponent2Score }}{% endverbatim %}
         <p>Time Remaining: {% verbatim %}{{ currentRoundTimeRemaining }}{% endverbatim %}</p>
         <input id="start-round" onclick="submitEvent(event)" type="button" value="Start Next Round"/>
         <input id="pause-round" onclick="submitEvent(event)" type="button" value="Pause"/>
@@ -97,6 +99,22 @@
             return round["score"]["opponent2"];
           }
           return "---";
+        },
+        totalOpponent1Score: function() {
+          let running_total = 0;
+          for (let i = 0; i < this.rounds.length; i++) {
+            let round = this.rounds[i];
+            running_total += round["score"]["opponent1"];
+          }
+          return running_total;
+        },
+        totalOpponent2Score: function() {
+          let running_total = 0;
+          for (let i = 0; i < this.rounds.length; i++) {
+            let round = this.rounds[i];
+            running_total += round["score"]["opponent2"];
+          }
+          return running_total;
         },
         roundNumberDisplay: function() {
           let displayRound = this.currentOrNextRound;
