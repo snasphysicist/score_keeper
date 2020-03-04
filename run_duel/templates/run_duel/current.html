@@ -7,8 +7,8 @@
     <div id="Vue">
       <h1>Current Duel</h1>
       <div>
-        <h2>Round 1</h2>
-        <p>Status: Ready</p>
+        <h2>Round {% verbatim %}{{ roundNumberDisplay }}{% endverbatim %}</h2>
+        <p>Status: {% verbatim %}{{ roundStatusDisplay }}{% endverbatim %}</p>
         <p>Time Remaining: {% verbatim %}{{ currentRoundTimeRemaining }}{% endverbatim %}</p>
         <input id="start-round" onclick="submitEvent(event)" type="button" value="Start Next Round"/>
         <input id="pause-round" onclick="submitEvent(event)" type="button" value="Pause"/>
@@ -73,20 +73,54 @@
               return round;
             }
           }
+          return null;
+        },
+        nextRound: function() {
+          for (let i = 0; i < this.rounds.length; i++) {
+            let round = this.rounds[i];
+            if (round["status"] == "READY") {
+              return round;
+            }
+          }
+          return null;
         },
         currentRoundOpponent1Score: function() {
           let round = this.currentRound;
-          if (typeof round === "undefined") {
-            return "---";
+          if (round) {
+            return round["score"]["opponent1"];
           }
-          return round["score"]["opponent1"];
+          return "---";
         },
         currentRoundOpponent2Score: function() {
           let round = this.currentRound;
-          if (typeof round === "undefined") {
-            return "---";
+          if (round) {
+            return round["score"]["opponent2"];
           }
-          return round["score"]["opponent2"];
+          return "---";
+        },
+        roundNumberDisplay: function() {
+          let displayRound = this.currentOrNextRound;
+          if (displayRound) {
+            return displayRound["round_number"];
+          }
+          return "---";
+        },
+        roundStatusDisplay: function() {
+          let displayRound = this.currentOrNextRound;
+          if (displayRound) {
+            return displayRound["status"];
+          }
+          return "ALL FINISHED";
+        },
+        currentOrNextRound: function() {
+          let currentRound = this.currentRound;
+          let nextRound = this.nextRound;
+          if (currentRound) {
+            return currentRound;
+          }
+          if (nextRound) {
+            return nextRound;
+          }
         }
       }
     })
