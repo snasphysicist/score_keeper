@@ -184,7 +184,13 @@ def next_round(rounds):
             return a_round
 
 
+#
 # Helper functions to create event stream data
+#
+
+#
+# Functions to calculate round time
+#
 
 # Calculate time and round status
 def time_remaining(rounds, events):
@@ -364,3 +370,56 @@ def determine_round_status(a_round):
         return "RUNNING"
     else:
         return "FINISHED"
+
+
+#
+# Functions to calculate round score
+#
+def calculate_total_score(events):
+    scores = [{}, {}, {}]
+    score_events = filter_only_score_events(events)
+    for i in [1, 2, 3]:
+        round_score_events = filter_one_rounds_events(
+            score_events,
+            i
+        )
+        round_scores = {
+            "opponent1": 0,
+            "opponent2": 0
+        }
+        for event in round_score_events:
+            value = 0
+            if "HAND" in event.type:
+                value = 2
+            elif "HEAD" in event.type:
+                value = 1
+            elif "BODY" in event.type:
+                value = 3
+            if "OPPONENT1" in event.type:
+                round_scores["opponent2"] += value
+            elif "OPPONENT2" in event.type:
+                round_scores["opponent1"] += value
+        scores[i - 1] = round_scores
+    return scores
+
+
+# Take an array of FightEvents
+# and return only those which
+# relating to scoring
+def filter_only_score_events(events):
+    return [
+        x for x in events
+        if "HEAD" in x.type
+           or "HAND" in x.type
+           or "BODY" in x.type
+    ]
+
+
+# Take an array of FightEvents
+# and return only those which
+# occurred in a certain round number
+def filter_one_rounds_events(events, round_number):
+    return [
+        x for x in events
+        if x.round.round_number == round_number
+    ]
