@@ -141,13 +141,16 @@ def event_stream(request):
         rounds,
         current_duel_events
     )
+    # Get score data
+    round_scores = calculate_total_score(current_duel_events)
     for a_round in rounds:
         event_data["rounds"].append(
             {
                 "round_id": a_round.id,
                 "round_number": a_round.round_number,
                 "status": round_status[a_round.round_number - 1],
-                "time": round_time[a_round.round_number - 1]
+                "time": round_time[a_round.round_number - 1],
+                "score": round_scores[a_round.round_number - 1]
             }
         )
     # TODO add latest event
