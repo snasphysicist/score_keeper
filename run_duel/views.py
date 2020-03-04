@@ -398,9 +398,9 @@ def calculate_total_score(events):
                 value = 1
             elif "BODY" in event.type:
                 value = 3
-            if "OPPONENT1" in event.type:
+            if "OPPONENT-1" in event.type:
                 round_scores["opponent2"] += value
-            elif "OPPONENT2" in event.type:
+            elif "OPPONENT-2" in event.type:
                 round_scores["opponent1"] += value
         scores[i - 1] = round_scores
     return scores
