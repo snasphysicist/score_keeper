@@ -181,7 +181,7 @@ def next_round(rounds):
     else:
         # Otherwise, highest finished + 1
         sorted(rounds_complete)
-        next_round_number = sorted[-1] + 1
+        next_round_number = rounds_complete[-1] + 1
     for a_round in rounds:
         if a_round.round_number == next_round_number:
             return a_round
