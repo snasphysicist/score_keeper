@@ -3,6 +3,7 @@ import datetime
 
 from django.db import models
 
+
 # Tournament model
 class Tournament(models.Model):
     name = models.CharField(max_length=100)
