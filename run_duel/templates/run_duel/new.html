@@ -29,13 +29,13 @@
   <!-- JS to submit form -->
   <script type="text/javascript">
     function startNewDuel() {
-      const POST_URL = "/run_duel/api/v1/new_duel"
+      const POST_URL = "/run_duel/api/v1/new_duel";
       let opponent1Name = document.getElementById("opponent-1").value;
       let opponent2Name = document.getElementById("opponent-2").value;
       let data = {
         "opponent1": opponent1Name,
-        "opponent2": opponent2Name,
-      }
+        "opponent2": opponent2Name
+      };
       fetch(
         POST_URL,
         {

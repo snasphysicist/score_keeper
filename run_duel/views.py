@@ -7,6 +7,7 @@ from django.http import HttpResponse, JsonResponse
 from django.template import loader
 
 from run_duel.models import Duel, FightEvent, Round
+from tournament.models import Group
 
 
 # Render new duel page
@@ -44,19 +45,27 @@ def new_duel_api(request):
     for old_duel in old_duels:
         old_duel.current = False
         old_duel.save()
+    # Get group object for testing
+    # TODO delete later
+    groups = list(Group.objects.all())
+    if len(groups) > 0:
+        group = groups[-1]
+    else:
+        group = None
     new_duel_object = Duel(
         opponent1=data['opponent1'],
         opponent2=data['opponent2'],
-        current=True   # This is now current duel
+        current=True,   # This is now current duel
+        group=group
     )
     new_duel_object.save()
     # Also need to create three rounds in this duel
     for i in [1, 2, 3]:
-        next_round = Round(
+        create_round = Round(
             duel=new_duel_object,
             round_number=i
         )
-        next_round.save()
+        create_round.save()
     return JsonResponse({
         "success": True
     })
