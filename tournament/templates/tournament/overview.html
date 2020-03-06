@@ -36,6 +36,12 @@
       <p>Score</p>
       <p>Score</p>
       <p>Opponent 2</p>
+      <template v-for="duel in duels">
+        <p>{% verbatim %}{{ duel.opponent1 }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ duel.score1 }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ duel.score2 }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ duel.opponent2 }}{% endverbatim %}</p>
+      </template>
     </div>
     <h1>Table</h1>
     <div class="grid-container five-columns">
@@ -44,7 +50,52 @@
       <p>Draw</p>
       <p>Loss</p>
       <p>Total</p>
+      <template v-for="participant in participants">
+        <p>{% verbatim %}{{ participant.name }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ participant.wins }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ participant.draws }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ participant.losses }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ participant.total }}{% endverbatim %}</p>
+      </template>
     </div>
   </div>
+  <script type="text/javascript">
+  var vueApplication = new Vue({
+    el: '#vue',
+    data: {
+      "duels": [
+      ],
+      "participants": [
+      ]
+    },
+  })
+  </script>
+  <script type="text/javascript">
+    function getTournamentDetails() {
+      const TOURNAMENT_ID = "2";
+      const GET_URL = "/tournament/api/v1/<0>/overview";
+      // Insert ID into url
+      let url = GET_URL.replace(
+        "<0>",
+        TOURNAMENT_ID
+      );
+      fetch(
+        url,
+        {
+          method: "GET",
+        }
+      ).then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      }).then((json) => {
+        if (json["success"]) {
+          vueApplication.duels = json["duels"];
+          vueApplication.participants = json["participants"];
+        }
+      })
+    }
+    getTournamentDetails();
+  </script>
 </body>
 </html>
