@@ -3,8 +3,8 @@ import datetime
 import json
 
 from django.db import IntegrityError
-from django.template import loader
 from django.http import HttpResponse, JsonResponse
+from django.template import loader
 
 from run_duel.models import Duel, FightEvent, Round
 
