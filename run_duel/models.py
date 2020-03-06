@@ -8,6 +8,12 @@ class Duel(models.Model):
     opponent1 = models.CharField(max_length=100)
     opponent2 = models.CharField(max_length=100)
     sequence_number = models.IntegerField(default=1)
+    group = models.ForeignKey(
+        'tournament.Group',
+        null=True,
+        on_delete=models.SET_NULL,
+        default=None
+    )
 
 
 # Round object

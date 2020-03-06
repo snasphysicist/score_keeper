@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style type="text/css">
+    body, h1, h2, p, input, div {
+      background-color: black;
+      color: white;
+      margin: 5px;
+      text-align: center;
+      font-family: sans-serif;
+    }
+    input {
+      min-width: 30%;
+      min-height: 50px;
+      font-family: sans-serif;
+    }
+    .grid-container{
+      display: grid;
+      justify-content: center;
+      width: 90vw;
+    }
+    .four-columns{
+      grid-template-columns: 1fr 0.3fr 0.3fr 1fr;
+    }
+    .five-columns{
+      grid-template-columns: 1fr 0.2fr 0.2fr 0.2fr 0.2fr;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+  <div id="vue">
+    <h1>Duels</h1>
+    <div class="grid-container four-columns">
+      <p>Opponent 1</p>
+      <p>Score</p>
+      <p>Score</p>
+      <p>Opponent 2</p>
+      <template v-for="duel in duels">
+        <p>{% verbatim %}{{ duel.opponent1 }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ duel.score1 }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ duel.score2 }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ duel.opponent2 }}{% endverbatim %}</p>
+      </template>
+    </div>
+    <h1>Table</h1>
+    <div class="grid-container five-columns">
+      <p>Participant</p>
+      <p>Win</p>
+      <p>Draw</p>
+      <p>Loss</p>
+      <p>Total</p>
+      <template v-for="participant in participants">
+        <p>{% verbatim %}{{ participant.name }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ participant.wins }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ participant.draws }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ participant.losses }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ participant.total }}{% endverbatim %}</p>
+      </template>
+    </div>
+  </div>
+  <script type="text/javascript">
+  var vueApplication = new Vue({
+    el: '#vue',
+    data: {
+      "duels": [
+      ],
+      "participants": [
+      ]
+    },
+  })
+  </script>
+  <script type="text/javascript">
+    function getTournamentDetails() {
+      const TOURNAMENT_ID = "2";
+      const GET_URL = "/tournament/api/v1/<0>/overview";
+      // Insert ID into url
+      let url = GET_URL.replace(
+        "<0>",
+        TOURNAMENT_ID
+      );
+      fetch(
+        url,
+        {
+          method: "GET",
+        }
+      ).then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      }).then((json) => {
+        if (json["success"]) {
+          vueApplication.duels = json["duels"];
+          vueApplication.participants = json["participants"];
+        }
+      })
+    }
+    getTournamentDetails();
+  </script>
+</body>
+</html>

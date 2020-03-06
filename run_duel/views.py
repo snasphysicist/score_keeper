@@ -3,8 +3,8 @@ import datetime
 import json
 
 from django.db import IntegrityError
-from django.template import loader
 from django.http import HttpResponse, JsonResponse
+from django.template import loader
 
 from run_duel.models import Duel, FightEvent, Round
 
@@ -112,9 +112,16 @@ def event_stream(request):
     current_duel_object = Duel.objects.filter(
         current__exact=True
     )[0]
+    event_data = calculate_duel_data(current_duel_object)
+    # TODO add latest event
+    return JsonResponse(event_data)
+
+
+# Used also in tournament app
+def calculate_duel_data(duel):
     rounds = list(
         Round.objects.filter(
-            duel__exact=current_duel_object
+            duel__exact=duel
         )
     )
     # Get all events for current duel
@@ -127,9 +134,9 @@ def event_stream(request):
         )
     event_data = {
         "duel": {
-            "duel_id": current_duel_object.id,
-            "opponent1": current_duel_object.opponent1,
-            "opponent2": current_duel_object.opponent2
+            "duel_id": duel.id,
+            "opponent1": duel.opponent1,
+            "opponent2": duel.opponent2
         },
         "rounds": []
     }
@@ -153,8 +160,7 @@ def event_stream(request):
                 "score": round_scores[a_round.round_number - 1]
             }
         )
-    # TODO add latest event
-    return JsonResponse(event_data)
+    return event_data
 
 
 # Helper functions for events api
