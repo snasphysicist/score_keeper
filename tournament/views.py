@@ -4,7 +4,7 @@ from django.template import loader
 
 from run_duel.models import Duel
 from run_duel.views import calculate_duel_data
-from tournament.models import Group, Stage, Tournament
+from tournament.models import Group, Participant, Stage, Tournament
 
 
 # Tournament overview page
@@ -75,7 +75,6 @@ def overview_api(request, **kwargs):
             or x["opponent2"] == name
         ]
         participant["completed"] = len(participant_duels)
-        # participant["remaining"] = 15 * len(participant_duels)
         for duel in participant_duels:
             if duel["opponent1"] == name:
                 participant["remaining"] += duel["score1"]
@@ -87,3 +86,44 @@ def overview_api(request, **kwargs):
         "participants": participants,
         "success": True
     })
+
+
+def setup_duels(request):
+    # First get data for context
+    tournament = list(Tournament.objects.all())[0]
+    stages = list(Stage.objects.filter(tournament__exact=tournament))
+    groups = list()
+    current_stage = None
+    for stage in stages:
+        groups += list(Group.objects.filter(stage__exact=stage))
+        duels = list()
+        for group in groups:
+            duels += list(Duel.objects.filter(group__exact=group))
+        if len(duels) == 0:
+            current_stage = stage
+            break
+    participants = list(Participant.objects.filter(tournaments=tournament))
+    context = {}
+    context["stage"] = {
+        "id": current_stage.id,
+        "number": current_stage.number
+    }
+    context["groups"] = []
+    for group in groups:
+        context["groups"].append(
+            {
+                "id": group.id,
+                "number": group.number
+            }
+        )
+    context["participants"] = []
+    for participant in participants:
+        context["participants"].append(
+            {
+                "id": participant.id,
+                "battle_name": participant.battle_name
+            }
+        )
+    # Finally, load page template
+    template = loader.get_template('tournament/setup_duels.html')
+    return HttpResponse(template.render(context, request))
