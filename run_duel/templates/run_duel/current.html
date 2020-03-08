@@ -38,13 +38,13 @@
   <body>
     <div id="vue" class="grid-container page-contatiner">
       <p>{% verbatim %}{{ duel.opponent1 }}{% endverbatim %} vs {% verbatim %}{{ duel.opponent2 }}{% endverbatim %}</p>
-      <p>Overall Score: {% verbatim %}{{ totalOpponent1Score }} : {{ totalOpponent2Score }}{% endverbatim %}</p>
+      <p>Total HP: {% verbatim %}{{ totalOpponent1Score }} : {{ totalOpponent2Score }}{% endverbatim %}</p>
       <div class="grid-container">
         <div class="grid-container two-columns">
           <h2>Round {% verbatim %}{{ roundNumberDisplay }}{% endverbatim %}</h2>
           <p>Status: {% verbatim %}{{ roundStatusDisplay }}{% endverbatim %}</p>
           <p>Time Remaining: {% verbatim %}{{ currentRoundTimeRemaining }}{% endverbatim %}</p>
-          <p>Score: {% verbatim %}{{ currentRoundOpponent1Score }} : {{ currentRoundOpponent2Score }}{% endverbatim %}</p>
+          <p>HP: {% verbatim %}{{ currentRoundOpponent1Score }} : {{ currentRoundOpponent2Score }}{% endverbatim %}</p>
         </div>
         <div class="grid-container two-columns">
           <input id="start-round" onclick="submitEvent(event)" type="button" value="Start Next Round"/>
@@ -56,7 +56,7 @@
       <div class="grid-container">
         <div class="grid-container two-columns">
           <h2>{% verbatim %}{{ duel.opponent1 }}{% endverbatim %}</h2>
-          <p>Score: {% verbatim %}{{ currentRoundOpponent1Score }}{% endverbatim %}</p>
+          <p>HP: {% verbatim %}{{ currentRoundOpponent1Score }}{% endverbatim %}</p>
         </div>
         <div class="grid-container three-columns">
           <input id="opponent-1-head" onclick="submitEvent(event)" type="button" value="Head">
@@ -67,7 +67,7 @@
       <div class="grid-container">
         <div class="grid-container two-columns">
           <h2>{% verbatim %}{{ duel.opponent2 }}{% endverbatim %}</h2>
-          <p>Score: {% verbatim %}{{ currentRoundOpponent2Score }}{% endverbatim %}</p>
+          <p>HP: {% verbatim %}{{ currentRoundOpponent2Score }}{% endverbatim %}</p>
         </div>
         <div class="grid-container three-columns">
           <input id="opponent-2-head" onclick="submitEvent(event)" type="button" value="Head">
