@@ -32,3 +32,10 @@ class Group(models.Model):
         on_delete=models.CASCADE,
         default=0
     )
+
+
+class Participant(models.Model):
+    battle_name = models.CharField(max_length=50)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    tournaments = models.ManyToManyField(Tournament)

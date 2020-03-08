@@ -1,12 +1,24 @@
 
 from django.db import models
 
+from tournament.models import Participant
+
 
 # Duel object
 class Duel(models.Model):
     current = models.BooleanField(default=False)
-    opponent1 = models.CharField(max_length=100)
-    opponent2 = models.CharField(max_length=100)
+    opponent1 = models.ForeignKey(
+        'tournament.Participant',
+        related_name="opponent1",
+        on_delete=models.CASCADE,
+        default=0
+    )
+    opponent2 = models.ForeignKey(
+        'tournament.Participant',
+        related_name="opponent2",
+        on_delete=models.CASCADE,
+        default=0
+    )
     sequence_number = models.IntegerField(default=1)
     group = models.ForeignKey(
         'tournament.Group',
