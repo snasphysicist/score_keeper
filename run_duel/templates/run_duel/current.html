@@ -178,16 +178,24 @@
     })
   </script>
   <script type="text/javascript">
-    // Web socket opener
-    var ws = new WebSocket("ws://127.0.0.1:8001/");
-    ws.onmessage = function (event) {
-      console.log(event.data);
-      jsonData = JSON.parse(event.data);
-      if (jsonData["success"]) {
-        vueApplication.duel = jsonData["duel"];
-        vueApplication.rounds = jsonData["rounds"];
+    // Web socket handling
+    let ws = null;
+    function manageWebSocketConnection() {
+      ws = new WebSocket("ws://127.0.0.1:8001/");
+      ws.onmessage = function (event) {
+        console.log(event.data);
+        jsonData = JSON.parse(event.data);
+        if (jsonData["success"]) {
+          vueApplication.duel = jsonData["duel"];
+          vueApplication.rounds = jsonData["rounds"];
+        }
+      };
+      ws.onclose = function () {
+        ws = null;
+        setTimeout(manageWebSocketConnection, 1000);
       }
-    };
+    }
+    manageWebSocketConnection();
   </script>
   <script type="text/javascript">
     function submitEvent(event) {
