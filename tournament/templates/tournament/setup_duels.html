@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Stage {% current_stage %} Setup</h1>
+    {% for group in groups %}
+    <input id="group-{% group.number %}" type="button" value="GROUP {% group.number %}"/>
+    {% endfor %}
+    {% for participant in participants %}
+    <input id="{% participant.battle_name %}" type="button" value="{% participant.battle_name %}"/>
+    {% endfor %}
+    <div>
+        {% for group in groups %}
+        <div id="group-{% group.number %}-participants">
+            <h2>GROUP {% group.number %}</h2>
+            <p v-for="member in members({% group.number %})">{% vertabim %}{{ member.battle_name }}{% endvertabim %}</p>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
