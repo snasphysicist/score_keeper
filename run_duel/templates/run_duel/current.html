@@ -17,10 +17,14 @@
         input[type=button]:active {
           background-color: #8b0000;
         }
-        .grid-container{
+        .grid-container {
           display: grid;
           justify-content: center;
+          align-items: center;
           width: 90vw;
+        }
+        .page-contatiner {
+          margin: auto;
         }
         .two-columns{
           grid-template-columns: 1fr 1fr;
@@ -32,14 +36,16 @@
       <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   </head>
   <body>
-    <div id="vue" class="grid-container">
-      <h1>Current Duel</h1>
+    <div id="vue" class="grid-container page-contatiner">
+      <p>{% verbatim %}{{ duel.opponent1 }}{% endverbatim %} vs {% verbatim %}{{ duel.opponent2 }}{% endverbatim %}</p>
       <p>Overall Score: {% verbatim %}{{ totalOpponent1Score }} : {{ totalOpponent2Score }}{% endverbatim %}</p>
       <div class="grid-container">
-        <h2>Round {% verbatim %}{{ roundNumberDisplay }}{% endverbatim %}</h2>
-        <p>Status: {% verbatim %}{{ roundStatusDisplay }}{% endverbatim %}</p>
-        <p>Score: {% verbatim %}{{ currentRoundOpponent1Score }} : {{ currentRoundOpponent2Score }}{% endverbatim %}
-        <p>Time Remaining: {% verbatim %}{{ currentRoundTimeRemaining }}{% endverbatim %}</p>
+        <div class="grid-container two-columns">
+          <h2>Round {% verbatim %}{{ roundNumberDisplay }}{% endverbatim %}</h2>
+          <p>Status: {% verbatim %}{{ roundStatusDisplay }}{% endverbatim %}</p>
+          <p>Time Remaining: {% verbatim %}{{ currentRoundTimeRemaining }}{% endverbatim %}</p>
+          <p>Score: {% verbatim %}{{ currentRoundOpponent1Score }} : {{ currentRoundOpponent2Score }}{% endverbatim %}</p>
+        </div>
         <div class="grid-container two-columns">
           <input id="start-round" onclick="submitEvent(event)" type="button" value="Start Next Round"/>
           <input id="pause-round" onclick="submitEvent(event)" type="button" value="Pause"/>
@@ -48,9 +54,10 @@
         </div>
       </div>
       <div class="grid-container">
-        <h2>Opponent 1</h2>
-        <p>Name: {% verbatim %}{{ duel.opponent1 }}{% endverbatim %}</p>
-        <p>Score: {% verbatim %}{{ currentRoundOpponent1Score }}{% endverbatim %}</p>
+        <div class="grid-container two-columns">
+          <h2>{% verbatim %}{{ duel.opponent1 }}{% endverbatim %}</h2>
+          <p>Score: {% verbatim %}{{ currentRoundOpponent1Score }}{% endverbatim %}</p>
+        </div>
         <div class="grid-container three-columns">
           <input id="opponent-1-head" onclick="submitEvent(event)" type="button" value="Head">
           <input id="opponent-1-hand" onclick="submitEvent(event)" type="button" value="Hand">
@@ -58,9 +65,10 @@
         </div>
       </div>
       <div class="grid-container">
-        <h2>Opponent 2</h2>
-        <p>Name: {% verbatim %}{{ duel.opponent2 }}{% endverbatim %}</p>
-        <p>Score: {% verbatim %}{{ currentRoundOpponent2Score }}{% endverbatim %}</p>
+        <div class="grid-container two-columns">
+          <h2>{% verbatim %}{{ duel.opponent2 }}{% endverbatim %}</h2>
+          <p>Score: {% verbatim %}{{ currentRoundOpponent2Score }}{% endverbatim %}</p>
+        </div>
         <div class="grid-container three-columns">
           <input id="opponent-2-head" onclick="submitEvent(event)" type="button" value="Head">
           <input id="opponent-2-hand" onclick="submitEvent(event)" type="button" value="Hand">
