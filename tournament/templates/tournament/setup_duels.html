@@ -6,12 +6,16 @@
 </head>
 <body>
     <h1>Stage {{ current_stage }} Setup</h1>
-    {% for group in groups %}
-    <input id="group-{{ group.number }}" type="button" value="GROUP {{ group.number }}"/>
-    {% endfor %}
-    {% for participant in participants %}
-    <input id="{{ participant.battle_name }}" type="button" value="{{ participant.battle_name }}"/>
-    {% endfor %}
+    <div>
+        {% for group in groups %}
+        <input id="group-{{ group.number }}" type="button" value="GROUP {{ group.number }}"/>
+        {% endfor %}
+    </div>
+    <div>
+        {% for participant in participants %}
+        <input id="{{ participant.battle_name }}" type="button" value="{{ participant.battle_name }}"/>
+        {% endfor %}
+    </div>
     <div>
         {% for group in groups %}
         <div id="group-{{ group.number }}-participants">
