@@ -392,6 +392,10 @@ def determine_round_status(a_round):
 
 #
 # Functions to calculate round score
+# Note we work on 'points lost'
+# so the two opponents start with
+# the maximum amount and get points
+# subtracted when hit
 #
 def calculate_total_score(events):
     scores = [{}, {}, {}]
@@ -402,11 +406,11 @@ def calculate_total_score(events):
             i
         )
         round_scores = {
-            "opponent1": 0,
-            "opponent2": 0
+            "opponent1": 5,
+            "opponent2": 5
         }
         for event in round_score_events:
-            value = 0
+            value = 5
             if "HAND" in event.type:
                 value = 2
             elif "HEAD" in event.type:
@@ -414,15 +418,15 @@ def calculate_total_score(events):
             elif "BODY" in event.type:
                 value = 3
             if "OPPONENT-1" in event.type:
-                round_scores["opponent2"] += value
+                round_scores["opponent1"] -= value
             elif "OPPONENT-2" in event.type:
-                round_scores["opponent1"] += value
+                round_scores["opponent2"] -= value
         scores[i - 1] = round_scores
     # Impose maximum score of 5
     for opponent in ["opponent1", "opponent2"]:
         for round_scores in scores:
-            if round_scores[opponent] > 5:
-                round_scores[opponent] = 5
+            if round_scores[opponent] < 0:
+                round_scores[opponent] = 0
     return scores
 
 
