@@ -66,32 +66,21 @@ def overview_api(request, **kwargs):
     for name in participant_names:
         participant = {
             "name": name,
-            "wins": 0,
-            "draws": 0,
-            "losses": 0,
-            "total": 0
+            "completed": 0,
+            "remaining": 0
         }
         participant_duels = [
             x for x in duels_processed
             if x["opponent1"] == name
             or x["opponent2"] == name
         ]
+        participant["completed"] = len(participant_duels)
+        # participant["remaining"] = 15 * len(participant_duels)
         for duel in participant_duels:
             if duel["opponent1"] == name:
-                if duel["score1"] > duel["score2"]:
-                    participant["wins"] += 1
-                elif duel["score1"] < duel["score2"]:
-                    participant["losses"] += 1
-                else:
-                    participant["draws"] += 1
+                participant["remaining"] += duel["score1"]
             else:
-                if duel["score1"] < duel["score2"]:
-                    participant["wins"] += 1
-                elif duel["score1"] > duel["score2"]:
-                    participant["losses"] += 1
-                else:
-                    participant["draws"] += 1
-        participant["total"] = participant["wins"] - participant["losses"]
+                participant["remaining"] += duel["score2"]
         participants.append(participant)
     return JsonResponse({
         "duels": duels_processed,
