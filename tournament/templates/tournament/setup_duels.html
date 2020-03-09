@@ -336,6 +336,7 @@
   <script type="text/javascript">
     // Confirm duels, create in database
     function confirmDuels() {
+      let confirmButton = document.getElementById("confirm");
       confirmButton.disabled = true;
       let data = vueApplication.allduels;
       const POST_URL = "/tournament/api/v1/confirm_duels";
@@ -353,8 +354,7 @@
         if(json["success"]) {
           // Redirect to new duel page
         } else {
-          // Re-enable button
-          let confirmButton = document.getElementById("confirm");
+          // Re-enable button          
           confirmButton.disabled = false;
         }
       })
