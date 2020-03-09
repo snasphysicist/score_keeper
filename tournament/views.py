@@ -89,7 +89,13 @@ def overview_api(request, **kwargs):
 
 
 def setup_duels(request):
-    # First get data for context
+    template = loader.get_template('tournament/setup_duels.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+
+def setup_duels_groups_participants_api(request):
+    # Get group and participant details
     tournament = list(Tournament.objects.all())[0]
     stages = list(Stage.objects.filter(tournament__exact=tournament))
     groups = list()
@@ -113,7 +119,9 @@ def setup_duels(request):
         context["groups"].append(
             {
                 "id": group.id,
-                "number": group.number
+                "number": group.number,
+                "index": len(context["groups"]),
+                "members": []
             }
         )
     context["participants"] = []
@@ -121,9 +129,8 @@ def setup_duels(request):
         context["participants"].append(
             {
                 "id": participant.id,
-                "battle_name": participant.battle_name
+                "battlename": participant.battle_name
             }
         )
-    # Finally, load page template
-    template = loader.get_template('tournament/setup_duels.html')
-    return HttpResponse(template.render(context, request))
+    context["success"] = True
+    return JsonResponse(context)
