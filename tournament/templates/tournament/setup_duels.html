@@ -27,10 +27,13 @@
     .page-contatiner {
       margin: auto;
     }
-    .two-columns{
+    .two-columns {
       grid-template-columns: 1fr 1fr;
     }
-    .three-columns{
+    .two-columns-thirds {
+      grid-template-columns: 1fr 0.5fr;
+    }
+    .three-columns {
       grid-template-columns: 1fr 1fr 1fr;
     }
     .selected {
@@ -62,10 +65,17 @@
         <div class="grid-container two-columns">
             <div v-for="group in groups" class="grid-container">
                 <h2>GROUP {{ group.number }}</h2>
-                <p v-for="member in group.members">{{ member.battlename }}</p>
+                <div class="grid-container two-columns-thirds">
+                  <template v-for="member in group.members">
+                    <p>{{ member.battlename }}</p>
+                    <input :participantid="member.participantid" type="button"
+                      onclick="unassignParticipant(event)" value="REMOVE"/>
+                  </template>
+                </div>
             </div>
         </div>
-        <input id="generate" type="button" value="Generate Duels" disabled=true/>
+        <input id="generate" type="button"
+          onclick="generateDuels()" value="Generate Duels" disabled=true/>
     </div>
     {% endverbatim %}
   <script type="text/javascript">
@@ -79,6 +89,55 @@
       })
   </script>
   <script type="text/javascript">
+    // Patterns for duel generation
+    const DUEL_PATTERNS = {
+      2: [
+        [0, 1]
+      ],
+      3: [
+        [0, 1],
+        [0, 2],
+        [1, 2]
+      ],
+      4: [
+        [0, 1],
+        [2, 3],
+        [0, 2],
+        [1, 3],
+        [3, 0],
+        [1, 2]
+      ],
+      5: [
+        [0, 1],
+        [2, 3],
+        [4, 0],
+        [1, 2],
+        [3, 4],
+        [0, 2],
+        [1, 3],
+        [2, 4],
+        [3, 0],
+        [4, 1]
+      ],
+      6: [
+        [0, 1],
+        [2, 3],
+        [4, 5],
+        [3, 0],
+        [4, 1],
+        [5, 2],
+        [0, 4],
+        [1, 2],
+        [3, 5],
+        [0, 2],
+        [1, 5],
+        [3, 4],
+        [5, 0],
+        [1, 3],
+        [2, 4]
+      ]
+    }
+
     let selected = null;
     function toggleGroupSelect(event) {
         // Update selected group
@@ -184,6 +243,32 @@
           generateButton.disabled = true;
         }
     }
+    function generateDuels() {
+      // Geneate duels for each group
+      for (let i = 0; i < vueApplication.groups.length; i++) {
+        // Shuffle members
+        let group = vueApplication.groups[i];
+        let members = group["members"];
+        members = shuffle(members);
+        let combinations = DUEL_PATTERNS[members.length];
+        for (let j = 0; j < combinations.length; j++) {
+          let duel = {
+            opponent1: members[combinations[j][0]],
+            opponent2: members[combinations[j][1]]
+          };
+          group.duels.push(duel);
+        }
+      }
+    }
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+          let j = Math.floor(Math.random() * (i + 1));
+          let x = array[i];
+          array[i] = array[j];
+          array[j] = x;
+      }
+      return array;
+  }
   </script>
   <script type="text/javascript">
     function getSetupDetails() {

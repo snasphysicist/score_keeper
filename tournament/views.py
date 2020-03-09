@@ -121,7 +121,8 @@ def setup_duels_groups_participants_api(request):
                 "id": group.id,
                 "number": group.number,
                 "index": len(context["groups"]),
-                "members": []
+                "members": [],
+                "duels": []
             }
         )
     context["participants"] = []
