@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style type="text/css">
+    body, h1, h2, p, input, div {
+      background-color: black;
+      color: white;
+      margin: 5px;
+      text-align: center;
+      font-family: sans-serif;
+    }
+    input {
+      min-width: 30%;
+      min-height: 50px;
+      font-family: sans-serif;
+    }
+    input[type=button]:active {
+      background-color: #8b0000;
+    }
+    .grid-container {
+      display: grid;
+      justify-content: center;
+      align-items: center;
+      width: 90vw;
+    }
+    .page-contatiner {
+      margin: auto;
+    }
+    .two-columns {
+      grid-template-columns: 1fr 1fr;
+    }
+    .two-columns-thirds {
+      grid-template-columns: 1fr 0.5fr;
+    }
+    .three-columns {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+    .selected {
+      background-color: #003d01;
+    }
+    input[disabled] {
+      color: #773334;
+      background-color: #111111;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    {% verbatim %}
+    <div id="vue" class="grid-container">
+        <h1>Stage {{ currentstage["number"] }} Setup</h1>
+        <div class="grid-container three-columns">
+            <input v-for="group in groups"
+                :id="'group-' + group.number" :groupid="group.id"
+                type="button" :value="'GROUP ' + group.number"
+                onclick="toggleGroupSelect(event)"/>
+        </div>
+        <div id="all-participants" class="grid-container three-columns">
+            <input v-for="participant in participants"
+                :id="participant.battlename" :participantid="participant.id"
+                type="button" :value="participant.battlename"
+                onclick="assignParticipant(event)"/>
+        </div>
+        <div class="grid-container two-columns">
+            <div v-for="group in groups" class="grid-container">
+                <h2>Group {{ group.number }}</h2>
+                <div class="grid-container two-columns-thirds">
+                  <template v-for="member in group.members">
+                    <p>{{ member.battlename }}</p>
+                    <input :participantid="member.participantid" type="button"
+                      onclick="unassignParticipant(event)" value="REMOVE"/>
+                  </template>
+                </div>
+            </div>
+        </div>
+        <input id="generate" type="button"
+          onclick="generateDuels()" value="Generate Duels" disabled=true/>
+        <h2>All Duels</h2>
+        <div class="grid-container three-columns">
+          <template v-for="duel in allduels">
+            <p>{{ duel.opponent1["battlename"] }}</p>
+            <p>vs</p>
+            <p>{{ duel.opponent2["battlename"] }}</p>
+          </template>
+        </div>
+        <input id="confirm" type="button" onclick="confirmDuels()"
+          value="Confirm Duels" disabled=true/>
+    </div>
+    {% endverbatim %}
+  <script type="text/javascript">
+      var vueApplication = new Vue({
+        el: '#vue',
+        data: {
+          currentstage: 0,
+          groups: [],
+          participants: [],
+          allduels: []
+        }
+      })
+  </script>
+  <script type="text/javascript">
+    // Patterns for duel generation
+    const DUEL_PATTERNS = {
+      2: [
+        [0, 1]
+      ],
+      3: [
+        [0, 1],
+        [0, 2],
+        [1, 2]
+      ],
+      4: [
+        [0, 1],
+        [2, 3],
+        [0, 2],
+        [1, 3],
+        [3, 0],
+        [1, 2]
+      ],
+      5: [
+        [0, 1],
+        [2, 3],
+        [4, 0],
+        [1, 2],
+        [3, 4],
+        [0, 2],
+        [1, 3],
+        [2, 4],
+        [3, 0],
+        [4, 1]
+      ],
+      6: [
+        [0, 1],
+        [2, 3],
+        [4, 5],
+        [3, 0],
+        [4, 1],
+        [5, 2],
+        [0, 4],
+        [1, 2],
+        [3, 5],
+        [0, 2],
+        [1, 5],
+        [3, 4],
+        [5, 0],
+        [1, 3],
+        [2, 4]
+      ]
+    }
+
+    let selected = null;
+    function toggleGroupSelect(event) {
+        // Update selected group
+        selected = event.target;
+        // Update display to reflect this
+        // First clear any selected buttons
+        let currently_selected = document.querySelectorAll(".selected");
+        for (let i = 0; i < currently_selected.length ; i++) {
+            currently_selected[i].classList.remove("selected");
+        }
+        // Now display clicked one as selected
+        selected.classList.add("selected");
+    }
+    function assignParticipant(event) {
+        // Get participant id from button
+        let participantId = event.target.getAttribute("participantid");
+        let battleName = event.target.id;
+        // Do nothing if no group selected
+        if (!selected) {
+            return;
+        }
+        // Assume group already exists
+        let groupId = selected.getAttribute("groupid");
+        let group = findGroupById(groupId);
+        // if (!group) {
+        //     // If not, create it
+        //     vueApplication.groups.push(
+        //         {
+        //             groupid: groupId,
+        //             members: [
+        //                 {
+        //                     participantid: participantId,
+        //                     battlename: battleName
+        //                 }
+        //             ]
+        //         }
+        //     );
+        // } else {
+            group["members"].push(
+                {
+                    participantid: participantId,
+                    battlename: battleName
+                }
+            );
+        // }
+        hideParticipants();
+    }
+    function findGroupById(groupId) {
+        for (let i = 0; i < vueApplication.groups.length; i++) {
+            let group = vueApplication.groups[i];
+            if (group["id"] == groupId) {
+                return group;
+            }
+        }
+        return null;
+    }
+    function unassignParticipant(event) {
+        let participantId = event.target.getAttribute("participantid");
+        for (let i = 0; i < vueApplication.groups.length; i++) {
+            let group = vueApplication.groups[i];
+            for (let j = 0; j < vueApplication.groups[i]["members"].length; j++) {
+                let member = group["members"][j];
+                if (member["participantid"] == participantId) {
+                    vueApplication.groups[i]["members"].splice(j, 1);
+                    j--;
+                }
+            }
+        }
+        hideParticipants();
+    }
+    function hideParticipants() {
+        // First get all assigned participants
+        let assigned = [];
+        // We'll also check if everyone has already been assigned
+        let allAssigned = true;
+        for (let i = 0; i < vueApplication.groups.length; i++) {
+            let group = vueApplication.groups[i];
+            for (let j = 0; j < group.members.length; j++) {
+                assigned.push(group.members[j]["participantid"]);
+            }
+        }
+        // Now get all participant inputs
+        let participantSection = document.getElementById("all-participants");
+        let participantInputs = participantSection.children;
+        for (let i = 0; i < participantInputs.length; i++) {
+            if (
+                assigned.indexOf(
+                    participantInputs[i].getAttribute("participantid")
+                ) > -1
+            ) {
+                // Disable when assigned
+                participantInputs[i].disabled = true;
+            } else {
+                // Enable when unassigned
+                participantInputs[i].disabled = false;
+                allAssigned = false;
+            }
+        }
+        /*
+         * Generate should be clickable
+         * if all fighters assigned
+         * AND duels not yet generated
+         */
+        let generateButton = document.getElementById("generate");
+        if(allAssigned && vueApplication.allduels.length == 0) {
+          generateButton.disabled = false;
+        } else {
+          generateButton.disabled = true;
+        }
+    }
+    function generateDuels() {
+      // Generate duels for each group
+      let maxDuels = 0;
+      for (let i = 0; i < vueApplication.groups.length; i++) {
+        // Shuffle members
+        let group = vueApplication.groups[i];
+        let members = group["members"];
+        members = shuffle(members);
+        // Get combinations for this number of duellists
+        let combinations = DUEL_PATTERNS[members.length];
+        // Set up duels with those combinations
+        for (let j = 0; j < combinations.length; j++) {
+          let duel = {
+            group: group["id"],
+            opponent1: members[combinations[j][0]],
+            opponent2: members[combinations[j][1]]
+          };
+          group.duels.push(duel);
+        }
+        if (group.duels.length > maxDuels) {
+          maxDuels = group.duels.length;
+        }
+      }
+      // Display on screen
+      for (let i = 0; i < maxDuels; i++) {
+        for (let j = 0; j < vueApplication.groups.length; j++) {
+          if (i < vueApplication.groups[j]["duels"].length) {
+            vueApplication.allduels.push(
+              vueApplication.groups[j]["duels"][i]
+            )
+          }
+        }
+      }
+      // Disable generate button
+      let generateButton = document.getElementById("generate");
+      generateButton.disabled = true;
+      // Enable confirm button
+      let confirmButton = document.getElementById("confirm");
+      confirmButton.disabled = false;
+    }
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+          let j = Math.floor(Math.random() * (i + 1));
+          let x = array[i];
+          array[i] = array[j];
+          array[j] = x;
+      }
+      return array;
+  }
+  </script>
+  <script type="text/javascript">
+    // Get initial details - groups, participants, etc...
+    function getSetupDetails() {
+      const GET_URL = "/tournament/api/v1/setup_duels";
+      fetch(
+        GET_URL,
+        {
+          method: "GET",
+        }
+      ).then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      }).then((json) => {
+        if (json["success"]) {
+          vueApplication.currentStage = json["currentStage"];
+          vueApplication.groups = json["groups"];
+          vueApplication.participants = json["participants"];
+          vueApplication.allDuels = json["allduels"];
+        }
+      })
+    }
+    getSetupDetails();
+  </script>
+  <script type="text/javascript">
+    // Confirm duels, create in database
+    function confirmDuels() {
+      let confirmButton = document.getElementById("confirm");
+      confirmButton.disabled = true;
+      let data = vueApplication.allduels;
+      const POST_URL = "/tournament/api/v1/confirm_duels";
+      fetch(
+        POST_URL,
+        {
+          method: "POST",
+          body: JSON.stringify(data)
+        }
+      ).then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      }).then((json) => {
+        if(json["success"]) {
+          // Redirect to new duel page
+        } else {
+          // Re-enable button          
+          confirmButton.disabled = false;
+        }
+      })
+    }
+  </script>
+</body>
+</html>
