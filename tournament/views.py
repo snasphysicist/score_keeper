@@ -4,7 +4,7 @@ import json
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 
-from run_duel.models import Duel
+from run_duel.models import Duel, Round
 from run_duel.views import calculate_duel_data
 from tournament.models import Group, Participant, Stage, Tournament
 
@@ -157,6 +157,13 @@ def generate_duels_api(request):
             current=False
         )
         next_duel.save()
+        # Each duel also needs three rounds
+        for i in [1, 2, 3]:
+            next_round = Round(
+                number=i,
+                duel=next_duel
+            )
+            next_round.save()
     return JsonResponse(
         {
             "success": True
