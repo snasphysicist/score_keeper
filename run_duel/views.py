@@ -28,7 +28,7 @@ def new_duel_api(request):
     # Basically, just make the selected
     # duel the current one
     duel = list(Duel.objects.filter(id__exact=data["id"]))[0]
-    duel["current"] = True
+    duel.current = True
     duel.save()
     return JsonResponse({
         "success": True

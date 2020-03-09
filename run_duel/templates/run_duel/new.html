@@ -16,7 +16,7 @@
       text-align: center;
     }
     option {
-      text-align: center; 
+      text-align: center;
     }
   </style>
 </head>
@@ -147,11 +147,20 @@
   <script type="text/javascript">
     function startNewDuel() {
       const POST_URL = "/run_duel/api/v1/new_duel";
-      let opponent1Name = document.getElementById("opponent-1").value;
-      let opponent2Name = document.getElementById("opponent-2").value;
+      // Need to find id of selected duel
+      // Get all elements with duelid attribute
+      let duels = document.querySelectorAll("option[duelid]");
+      // Find inner html that matches selection
+      let duelid;
+      for (let i = 0; i < duels.length; i++) {
+        let duel = duels[i];
+        if (duel.innerText == vueApplication.selectedduel) {
+          duelid = duel.getAttribute("duelid");
+          break;
+        }
+      }
       let data = {
-        "opponent1": opponent1Name,
-        "opponent2": opponent2Name
+        "id": duelid
       };
       fetch(
         POST_URL,
