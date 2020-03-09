@@ -6,24 +6,156 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
 <body>
-    <h1>Stage {{ current_stage }} Setup</h1>
-    <div>
-        {% for group in groups %}
-        <input id="group-{{ group.number }}" type="button" value="GROUP {{ group.number }}"/>
-        {% endfor %}
-    </div>
-    <div>
-        {% for participant in participants %}
-        <input id="{{ participant.battle_name }}" type="button" value="{{ participant.battle_name }}"/>
-        {% endfor %}
-    </div>
-    <div>
-        {% for group in groups %}
-        <div id="group-{{ group.number }}-participants">
-            <h2>GROUP {{ group.number }}</h2>
-            <p v-for="member in members({{ group.number }})">{% verbatim %}{{ member.battle_name }}{% endverbatim %}</p>
+    {% verbatim %}
+    <div id="vue">
+        <h1>Stage {{ currentStage }} Setup</h1>
+        <div>
+            <input v-for="group in groups"
+                :id="'group-' + group.number" :groupid="group.id"
+                type="button" :value="'GROUP ' + group.number"
+                onclick="toggleGroupSelect(event)"/>
         </div>
-        {% endfor %}
+        <div id="all-participants">
+            <input v-for="participant in participants"
+                :id="participant.battlename" :participantid="participant.id"
+                type="button" :value="participant.battlename"
+                onclick="assignParticipant(event)"/>
+        </div>
+        <div>
+            <div v-for="group in groups">
+                <h2>GROUP {{ group.number }}</h2>
+                <p v-for="member in group.members">{{ member.battlename }}</p>
+            </div>
+        </div>
     </div>
+    {% endverbatim %}
+  <script type="text/javascript">
+      var vueApplication = new Vue({
+        el: '#vue',
+        data: {
+          currentStage: 0,
+          groups: [],
+          participants: []
+        }
+      })
+  </script>
+  <script type="text/javascript">
+    let selected = null;
+    function toggleGroupSelect(event) {
+        // Update selected group
+        selected = event.target;
+        // Update display to reflect this
+        // First clear any selected buttons
+        let currently_selected = document.querySelectorAll(".selected");
+        for (let i = 0; i < currently_selected.length ; i++) {
+            currently_selected[i].classList.remove("selected");
+        }
+        // Now display clicked one as selected
+        selected.classList.add("selected");
+    }
+    function assignParticipant(event) {
+        // Get participant id from button
+        let participantId = event.target.getAttribute("participantid");
+        let battleName = event.target.id;
+        // Do nothing if no group selected
+        if (!selected) {
+            return;
+        }
+        // Assume group already exists
+        let groupId = selected.getAttribute("groupid");
+        let group = findGroupById(groupId);
+        // if (!group) {
+        //     // If not, create it
+        //     vueApplication.groups.push(
+        //         {
+        //             groupid: groupId,
+        //             members: [
+        //                 {
+        //                     participantid: participantId,
+        //                     battlename: battleName
+        //                 }
+        //             ]
+        //         }
+        //     );
+        // } else {
+            group["members"].push(
+                {
+                    participantid: participantId,
+                    battlename: battleName
+                }
+            );
+        // }
+        hideParticipants();
+    }
+    function findGroupById(groupId) {
+        for (let i = 0; i < vueApplication.groups.length; i++) {
+            let group = vueApplication.groups[i];
+            if (group["id"] == groupId) {
+                return group;
+            }
+        }
+        return null;
+    }
+    function unassignParticipant(event) {
+        let participantId = event.target.getAttribute("participantid");
+        for (let i = 0; i < vueApplication.groups.length; i++) {
+            let group = vueApplication.groups[i];
+            for (let j = 0; j < vueApplication.groups[i]["members"].length; j++) {
+                let member = group["members"][j];
+                if (member["participantid"] == participantId) {
+                    vueApplication.groups[i]["members"].splice(j, 1);
+                    j--;
+                }
+            }
+        }
+        hideParticipants();
+    }
+    function hideParticipants() {
+        // First get all assigned participants
+        let assigned = [];
+        for (let i = 0; i < vueApplication.groups.length; i++) {
+            let group = vueApplication.groups[i];
+            for (let j = 0; j < group.members.length; j++) {
+                assigned.push(group.members[j]["participantid"]);
+            }
+        }
+        // Now get all participant inputs
+        let participantSection = document.getElementById("all-participants");
+        let participantInputs = participantSection.children;
+        for (let i = 0; i < participantInputs.length; i++) {
+            if (
+                assigned.indexOf(
+                    participantInputs[i].getAttribute("participantid")
+                ) > -1
+            ) {
+                participantInputs[i].disabled = true;
+            } else {
+                participantInputs[i].disabled = false;
+            }
+        }
+    }
+  </script>
+  <script type="text/javascript">
+    function getSetupDetails() {
+      const GET_URL = "/tournament/api/v1/setup_duels";
+      fetch(
+        GET_URL,
+        {
+          method: "GET",
+        }
+      ).then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      }).then((json) => {
+        if (json["success"]) {
+          vueApplication.currentStage = json["currentStage"];
+          vueApplication.groups = json["groups"];
+          vueApplication.participants = json["participants"];
+        }
+      })
+    }
+    getSetupDetails();
+  </script>
 </body>
 </html>
