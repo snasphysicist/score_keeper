@@ -1,6 +1,7 @@
 
 import datetime
 import json
+import os
 
 from django.db import IntegrityError
 from django.http import HttpResponse, JsonResponse
@@ -74,7 +75,10 @@ def new_duel_api(request):
 # Render current duel page
 def current_duel(request):
     template = loader.get_template('run_duel/current.html')
-    context = {}
+    context = {
+        "websocket_protocol": os.environ["SCORE_KEEPER_WEBSOCKET_PROTOCOL"],
+        "base_url": os.environ["SCORE_KEEPER_BASE_URL"]
+    }
     return HttpResponse(template.render(context, request))
 
 
@@ -319,7 +323,7 @@ def next_time_interval(events):
             events[stop_index:]
         )
 
-    
+
 # Is there a start/resume in events?
 def has_start_or_resume(events):
     return len([x for x in events if x.type == "START-ROUND" or x.type == "CONTINUE-ROUND"]) > 0
