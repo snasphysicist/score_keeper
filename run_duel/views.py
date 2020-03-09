@@ -38,7 +38,7 @@ def new_duel_api(request):
 # List pending duels
 def pending_duel_api(request):
     # Get all groups for current tournament
-    tournament = list(Tournament.objects.filter(id__exact=CURRENT_TOURNAMENT))
+    tournament = list(Tournament.objects.filter(id__exact=CURRENT_TOURNAMENT))[0]
     stages = list(Stage.objects.filter(tournament__exact=tournament))
     groups = list()
     for stage in stages:
@@ -73,6 +73,9 @@ def pending_duel_api(request):
             full_data.pop(i)
             i -= 1
         i += 1
+    # Don't need full data after popping finished
+    for duel in full_data:
+        del duel["data"]
     return JsonResponse(
         {
             "success": True,
