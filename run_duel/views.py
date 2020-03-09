@@ -74,7 +74,10 @@ def pending_duel_api(request):
             i -= 1
         i += 1
     return JsonResponse(
-        full_data
+        {
+            "success": True,
+            "pending": full_data
+        }
     )
 
 
