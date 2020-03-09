@@ -157,3 +157,8 @@ def generate_duels_api(request):
             current=False
         )
         next_duel.save()
+    return JsonResponse(
+        {
+            "success": True
+        }
+    )
