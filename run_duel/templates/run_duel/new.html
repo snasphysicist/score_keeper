@@ -15,17 +15,130 @@
       font-family: sans-serif;
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
 <body>
-  <h1>New Duel</h1>
-  <div>
-    <p>Opponent 1</p>
-    <input id="opponent-1" type="text">
-    <p>Opponent 2</p>
-    <input id="opponent-2" type="text">
+  <div id="vue">
+    <h1>Next Duel</h1>
+    <div>
+      <p>Stage</p>
+      <select v-model="selectedstage">
+        <option v-for:"stage in allStages" :stageid="stage.id">{{ stage.number }}</option>
+      </select>
+      <p>Group</p>
+      <select v-model="selectedgroup">
+        <option v-for:"group in stageGroups" :groupid="group.id">{{ group.number }}</option>
+      </select>
+      <select v-model="selectedduel">
+        <option v-for:"duel in groupDuels" :duelid="duel.id">{{ duel.opponent1 }} vs {{ duel.opponent2 }}</option>
+      </select>
+    </div>
+    <input type="button" id="fight" onclick="startNewDuel()" value="READY!"/>
   </div>
-  <input type="button" id="fight" onclick="startNewDuel()" value="READY!"/>
-
+  <!-- Set up Vue -->
+  <script type="text/javascript">
+    let vueApplication = new Vue({
+      el: "vue",
+      data: {
+        selectedstage: "",
+        selectedgroup: "",
+        selectedduel: "",
+        pending_duels: []
+      },
+      computed: {
+        allStages: function() {
+          let stages = [];
+          for (let i = 0; i < this.pending_duels.length; i++) {
+            let duel = this.pending_duels[i];
+            let inArray = false;
+            for (let j = 0; j < stages.length; j++) {
+              if (stages[j]["id"] == duel["stageid"]) {
+                inArray = true;
+                break;
+              }
+            }
+            if (!inArray) {
+              stages.push(
+                {
+                  "id": duel["stageid"],
+                  "number": duel["stagenumber"]
+                }
+              )
+            }
+          }
+          return stages;
+        },
+        stageGroups: function() {
+          // Get all groups for the selected stage
+          let groups = [];
+          let stagenumber = this.selectedstage;
+          for (let i = 0; i < this.pending_duels.length; i++) {
+            let duel = this.pending_duels[i];
+            // Immediately stop if this duel is not even in the right stage
+            if (duel["stagenumber"] != stagenumber) {
+              continue;
+            }
+            let inArray = false;
+            for (let j = 0; j < groups.length; j++) {
+              if (groups[j]["id"] == duel["groupid"]) {
+                inArray = true;
+                break;
+              }
+            }
+            if (!inArray) {
+              groups.push(
+                {
+                  "id": duel["groupid"],
+                  "number": duel["groupnumber"]
+                }
+              )
+            }
+          }
+          return groups;
+        },
+        groupDuels: function() {
+          let duels = [];
+          let stagenumber = this.selectedstage;
+          let groupnumber = this.selectedgroup;
+          for (let i = 0; i < this.pending_duels.length; i++) {
+            let duel = this.pending_duels[i];
+            // Immediately stop if this duel is not even in the right stage
+            if (duel["stagenumber"] != stagenumber) {
+              continue;
+            }
+            // Stop this iteration if this duel is not in the right group
+            if (duel["groupnumber"] != groupnumber) {
+              continue;
+            }
+            // If we made it here, this duel is in the stage & group
+            duels.push(duel);
+          }
+          return duels;
+        }
+      }
+    });
+  </script>
+  <script type="text/javascript">
+    // Fetch all pending duel details from api
+    const GET_URL = "/run_duel/api/v1/pending_duels";
+    fetch(
+      GET_URL,
+      {
+        method: "GET"
+      }
+    ).then((response) => {
+      if(response.ok) {
+        reponse.json();
+      } else {
+        // Handle error
+      }
+    }).then((json) =>{
+      if (json["success"]) {
+        vueApplication.pendingDuels = json["pending"];
+      }
+    })
+  }
+  </script>
   <!-- JS to submit form -->
   <script type="text/javascript">
     function startNewDuel() {
