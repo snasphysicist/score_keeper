@@ -2,20 +2,23 @@
 <html>
 <head>
   <style type="text/css">
-    body, h1, h2, p, input, div {
+    body, h1, h2, p, input, div, select {
       background-color: black;
       color: white;
       margin: 5px;
       text-align: center;
       font-family: sans-serif;
     }
-    input {
+    input, select {
       min-width: 70%;
       min-height: 50px;
       font-family: sans-serif;
+      text-align: center;
+    }
+    option {
+      text-align: center; 
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
 <body>
   <div id="vue">
@@ -23,33 +26,35 @@
     <div>
       <p>Stage</p>
       <select v-model="selectedstage">
-        <option v-for:"stage in allStages" :stageid="stage.id">{{ stage.number }}</option>
+        <option v-for="stage in allStages" :stageid="stage.id">{% verbatim %}{{ stage.number }}{% endverbatim %}</option>
       </select>
       <p>Group</p>
       <select v-model="selectedgroup">
-        <option v-for:"group in stageGroups" :groupid="group.id">{{ group.number }}</option>
+        <option v-for="group in stageGroups" :groupid="group.id">{% verbatim %}{{ group.number }}{% endverbatim %}</option>
       </select>
+      <p>Duel</p>
       <select v-model="selectedduel">
-        <option v-for:"duel in groupDuels" :duelid="duel.id">{{ duel.opponent1 }} vs {{ duel.opponent2 }}</option>
+        <option v-for="duel in groupDuels" :duelid="duel.id">{% verbatim %}{{ duel.opponent1 }} vs {{ duel.opponent2 }}{% endverbatim %}</option>
       </select>
     </div>
     <input type="button" id="fight" onclick="startNewDuel()" value="READY!"/>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <!-- Set up Vue -->
   <script type="text/javascript">
     let vueApplication = new Vue({
-      el: "vue",
+      el: "#vue",
       data: {
         selectedstage: "",
         selectedgroup: "",
         selectedduel: "",
-        pending_duels: []
+        pendingduels: []
       },
       computed: {
         allStages: function() {
           let stages = [];
-          for (let i = 0; i < this.pending_duels.length; i++) {
-            let duel = this.pending_duels[i];
+          for (let i = 0; i < this.pendingduels.length; i++) {
+            let duel = this.pendingduels[i];
             let inArray = false;
             for (let j = 0; j < stages.length; j++) {
               if (stages[j]["id"] == duel["stageid"]) {
@@ -72,8 +77,8 @@
           // Get all groups for the selected stage
           let groups = [];
           let stagenumber = this.selectedstage;
-          for (let i = 0; i < this.pending_duels.length; i++) {
-            let duel = this.pending_duels[i];
+          for (let i = 0; i < this.pendingduels.length; i++) {
+            let duel = this.pendingduels[i];
             // Immediately stop if this duel is not even in the right stage
             if (duel["stagenumber"] != stagenumber) {
               continue;
@@ -100,8 +105,8 @@
           let duels = [];
           let stagenumber = this.selectedstage;
           let groupnumber = this.selectedgroup;
-          for (let i = 0; i < this.pending_duels.length; i++) {
-            let duel = this.pending_duels[i];
+          for (let i = 0; i < this.pendingduels.length; i++) {
+            let duel = this.pendingduels[i];
             // Immediately stop if this duel is not even in the right stage
             if (duel["stagenumber"] != stagenumber) {
               continue;
@@ -128,16 +133,15 @@
       }
     ).then((response) => {
       if(response.ok) {
-        reponse.json();
+        return response.json();
       } else {
         // Handle error
       }
-    }).then((json) =>{
+    }).then((json) => {
       if (json["success"]) {
-        vueApplication.pendingDuels = json["pending"];
+        vueApplication.pendingduels = json["pending"];
       }
-    })
-  }
+    });
   </script>
   <!-- JS to submit form -->
   <script type="text/javascript">
