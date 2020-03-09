@@ -8,11 +8,15 @@ from run_duel.models import Duel, Round
 from run_duel.views import calculate_duel_data
 from tournament.models import Group, Participant, Stage, Tournament
 
+CURRENT_TOURNAMENT = 3
+
 
 # Tournament overview page
 def tournament_overview(request):
     template = loader.get_template('tournament/overview.html')
-    context = {}
+    context = {
+        "current_tournament": CURRENT_TOURNAMENT
+    }
     return HttpResponse(template.render(context, request))
 
 
@@ -50,13 +54,18 @@ def overview_api(request, **kwargs):
             "opponent1": 0,
             "opponent2": 0
         }
+        # Also check if duel complete
+        is_finished = True
         for a_round in duel_data_raw["rounds"]:
             total_score["opponent1"] += a_round["score"]["opponent1"]
             total_score["opponent2"] += a_round["score"]["opponent2"]
+            if a_round["status"] != "FINISHED":
+                is_finished = False
         duel_data_processed["opponent1"] = duel_data_raw["duel"]["opponent1"]
         duel_data_processed["opponent2"] = duel_data_raw["duel"]["opponent2"]
         duel_data_processed["score1"] = total_score["opponent1"]
         duel_data_processed["score2"] = total_score["opponent2"]
+        duel_data_processed["finished"] = is_finished
         duels_processed.append(duel_data_processed)
     # Have the duels
     # Work out the participants
@@ -76,8 +85,11 @@ def overview_api(request, **kwargs):
             if x["opponent1"] == name
             or x["opponent2"] == name
         ]
-        participant["completed"] = len(participant_duels)
         for duel in participant_duels:
+            # Only count duels that have finished
+            if not duel["finished"]:
+                continue
+            participant["completed"] += 1
             if duel["opponent1"] == name:
                 participant["remaining"] += duel["score1"]
             else:
