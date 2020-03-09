@@ -133,5 +133,6 @@ def setup_duels_groups_participants_api(request):
                 "battlename": participant.battle_name
             }
         )
+    context["allduels"] = []
     context["success"] = True
     return JsonResponse(context)
