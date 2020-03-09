@@ -160,7 +160,7 @@ def generate_duels_api(request):
         # Each duel also needs three rounds
         for i in [1, 2, 3]:
             next_round = Round(
-                number=i,
+                round_number=i,
                 duel=next_duel
             )
             next_round.save()
