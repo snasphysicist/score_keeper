@@ -64,7 +64,7 @@
         </div>
         <div class="grid-container two-columns">
             <div v-for="group in groups" class="grid-container">
-                <h2>GROUP {{ group.number }}</h2>
+                <h2>Group {{ group.number }}</h2>
                 <div class="grid-container two-columns-thirds">
                   <template v-for="member in group.members">
                     <p>{{ member.battlename }}</p>
@@ -84,6 +84,8 @@
             <p>{{ duel.opponent2["battlename"] }}</p>
           </template>
         </div>
+        <input id="confirm" type="button" onclick="confirmDuels()"
+          value="Confirm Duels" disabled=true/>
     </div>
     {% endverbatim %}
   <script type="text/javascript">
@@ -245,8 +247,13 @@
                 allAssigned = false;
             }
         }
+        /*
+         * Generate should be clickable
+         * if all fighters assigned
+         * AND duels not yet generated
+         */
         let generateButton = document.getElementById("generate");
-        if(allAssigned) {
+        if(allAssigned && vueApplication.allduels.length == 0) {
           generateButton.disabled = false;
         } else {
           generateButton.disabled = true;
@@ -284,6 +291,12 @@
           }
         }
       }
+      // Disable generate button
+      let generateButton = document.getElementById("generate");
+      generateButton.disabled = true;
+      // Enable confirm button
+      let confirmButton = document.getElementById("confirm");
+      confirmButton.disabled = false;
     }
     function shuffle(array) {
       for (let i = array.length - 1; i > 0; i--) {
@@ -296,6 +309,7 @@
   }
   </script>
   <script type="text/javascript">
+    // Get initial details - groups, participants, etc...
     function getSetupDetails() {
       const GET_URL = "/tournament/api/v1/setup_duels";
       fetch(
@@ -317,6 +331,28 @@
       })
     }
     getSetupDetails();
+  </script>
+  <script type="text/javascript">
+    // Confirm duels, create in database
+    function confirmDuels() {
+      let data = vueApplication.groups;
+      const POST_URL = "/tournament/api/v1/confirm_duels";
+      fetch(
+        POST_URL,
+        {
+          method: "POST",
+          body: JSON.stringify(data)
+        }
+      ).then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      }).then((json) => {
+        if(json["success"]) {
+          // Redirect to new duel page
+        }
+      })
+    }
   </script>
 </body>
 </html>
