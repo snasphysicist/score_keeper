@@ -160,8 +160,8 @@ def calculate_duel_data(duel):
     event_data = {
         "duel": {
             "duel_id": duel.id,
-            "opponent1": duel.opponent1,
-            "opponent2": duel.opponent2
+            "opponent1": duel.opponent1.battle_name,
+            "opponent2": duel.opponent2.battle_name
         },
         "rounds": []
     }
