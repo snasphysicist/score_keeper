@@ -8,7 +8,9 @@ from django.http import HttpResponse, JsonResponse
 from django.template import loader
 
 from run_duel.models import Duel, FightEvent, Round
-from tournament.models import Group
+from tournament.models import Group, Stage, Tournament
+
+CURRENT_TOURNAMENT = 3
 
 
 # Render new duel page
@@ -18,58 +20,62 @@ def new_duel(request):
     return HttpResponse(template.render(context, request))
 
 
-# Create a new duel
+# Move on to a different duel
 def new_duel_api(request):
     data = json.loads(
         request.body.decode('utf-8')
     )
-    if (
-        'opponent1' not in data.keys()
-        or 'opponent2' not in data.keys()
-    ):
-        return JsonResponse({
-            "success": False,
-            "reason": "Required key missing from json request"
-        })
-    if (
-        len(data['opponent1']) == 0
-        or len(data['opponent2']) == 0
-    ):
-        return JsonResponse({
-            "success": False,
-            "reason": "The opponents' names cannot be empty"
-        })
-    # Ensure no other duels are current
-    old_duels = list(
-        Duel.objects.filter(current__exact=True)
-    )
-    for old_duel in old_duels:
-        old_duel.current = False
-        old_duel.save()
-    # Get group object for testing
-    # TODO delete later
-    groups = list(Group.objects.all())
-    if len(groups) > 0:
-        group = groups[-1]
-    else:
-        group = None
-    new_duel_object = Duel(
-        opponent1=data['opponent1'],
-        opponent2=data['opponent2'],
-        current=True,   # This is now current duel
-        group=group
-    )
-    new_duel_object.save()
-    # Also need to create three rounds in this duel
-    for i in [1, 2, 3]:
-        create_round = Round(
-            duel=new_duel_object,
-            round_number=i
-        )
-        create_round.save()
+    # Basically, just make the selected
+    # duel the current one
+    duel = list(Duel.objects.filter(id__exact=data["id"]))[0]
+    duel["current"] = True
+    duel.save()
     return JsonResponse({
         "success": True
     })
+
+
+# List pending duels
+def pending_duel_api(request):
+    # Get all groups for current tournament
+    tournament = list(Tournament.objects.filter(id__exact=CURRENT_TOURNAMENT))
+    stages = list(Stage.objects.filter(tournament__exact=tournament))
+    groups = list()
+    for stage in stages:
+        groups += list(Group.objects.filter(stage__exact=stage))
+    # Get all duels for current tournament
+    duels = list()
+    for group in groups:
+        duels += list(Duel.objects.filter(group__exact=group))
+    full_data = []
+    for duel in duels:
+        full_data.append(
+            {
+                "id": duel.id,
+                "number": duel.sequence_number,
+                "groupid": duel.group.id,
+                "groupnumber": duel.group.number,
+                "stageid": duel.group.stage.id,
+                "stagenumber": duel.group.stage.number,
+                "opponent1": duel.opponent1.battle_name,
+                "opponent2": duel.opponent2.battle_name,
+                "data": calculate_duel_data(duel)
+            }
+        )
+    # Remove finished duels
+    i = 0
+    while i < len(full_data):
+        is_finished = True
+        for a_round in full_data[i]["data"]["rounds"]:
+            if a_round["status"] != "FINISHED":
+                is_finished = False
+        if is_finished:
+            full_data.pop(i)
+            i -= 1
+        i += 1
+    return JsonResponse(
+        full_data
+    )
 
 
 # Render current duel page
