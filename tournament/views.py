@@ -110,7 +110,7 @@ def setup_duels_groups_participants_api(request):
             break
     participants = list(Participant.objects.filter(tournaments=tournament))
     context = {}
-    context["stage"] = {
+    context["currentstage"] = {
         "id": current_stage.id,
         "number": current_stage.number
     }

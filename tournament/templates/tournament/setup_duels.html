@@ -49,7 +49,7 @@
 <body>
     {% verbatim %}
     <div id="vue" class="grid-container">
-        <h1>Stage {{ currentStage }} Setup</h1>
+        <h1>Stage {{ currentstage["number"] }} Setup</h1>
         <div class="grid-container three-columns">
             <input v-for="group in groups"
                 :id="'group-' + group.number" :groupid="group.id"
@@ -76,16 +76,24 @@
         </div>
         <input id="generate" type="button"
           onclick="generateDuels()" value="Generate Duels" disabled=true/>
+        <h2>All Duels</h2>
+        <div class="grid-container three-columns">
+          <template v-for="duel in allduels">
+            <p>{{ duel.opponent1["battlename"] }}</p>
+            <p>vs</p>
+            <p>{{ duel.opponent2["battlename"] }}</p>
+          </template>
+        </div>
     </div>
     {% endverbatim %}
   <script type="text/javascript">
       var vueApplication = new Vue({
         el: '#vue',
         data: {
-          currentStage: 0,
+          currentstage: 0,
           groups: [],
           participants: [],
-          allDuels: []
+          allduels: []
         }
       })
   </script>
@@ -270,8 +278,8 @@
       for (let i = 0; i < maxDuels; i++) {
         for (let j = 0; j < vueApplication.groups.length; j++) {
           if (i < vueApplication.groups[j]["duels"].length) {
-            vueApplication.allDuels.push(
-              vueApplication.groups[j]["duels"][i];
+            vueApplication.allduels.push(
+              vueApplication.groups[j]["duels"][i]
             )
           }
         }
