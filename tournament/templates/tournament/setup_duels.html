@@ -272,6 +272,7 @@
         // Set up duels with those combinations
         for (let j = 0; j < combinations.length; j++) {
           let duel = {
+            group: group["id"],
             opponent1: members[combinations[j][0]],
             opponent2: members[combinations[j][1]]
           };
@@ -335,7 +336,7 @@
   <script type="text/javascript">
     // Confirm duels, create in database
     function confirmDuels() {
-      let data = vueApplication.groups;
+      let data = vueApplication.allduels;
       const POST_URL = "/tournament/api/v1/confirm_duels";
       fetch(
         POST_URL,
