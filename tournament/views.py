@@ -1,4 +1,6 @@
 
+import json
+
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 
@@ -136,3 +138,22 @@ def setup_duels_groups_participants_api(request):
     context["allduels"] = []
     context["success"] = True
     return JsonResponse(context)
+
+
+def generate_duels_api(request):
+    data = json.loads(
+        request.body.decode('utf-8')
+    )
+    for duel in data:
+        # Find group
+        group = list(Group.objects.filter(id__exact=duel["group"]))[0]
+        opponent1 = list(Participant.objects.filter(id__exact=duel["opponent1"]["participantid"]))[0]
+        opponent2 = list(Participant.objects.filter(id__exact=duel["opponent2"]["participantid"]))[0]
+        next_duel = Duel(
+            sequence_number=(data.index(duel) + 1),
+            group=group,
+            opponent1=opponent1,
+            opponent2=opponent2,
+            current=False
+        )
+        next_duel.save()
