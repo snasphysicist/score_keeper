@@ -65,6 +65,7 @@
                 <p v-for="member in group.members">{{ member.battlename }}</p>
             </div>
         </div>
+        <input id="generate" type="button" value="Generate Duels" disabled=true/>
     </div>
     {% endverbatim %}
   <script type="text/javascript">
@@ -151,6 +152,8 @@
     function hideParticipants() {
         // First get all assigned participants
         let assigned = [];
+        // We'll also check if everyone has already been assigned
+        let allAssigned = true;
         for (let i = 0; i < vueApplication.groups.length; i++) {
             let group = vueApplication.groups[i];
             for (let j = 0; j < group.members.length; j++) {
@@ -166,10 +169,19 @@
                     participantInputs[i].getAttribute("participantid")
                 ) > -1
             ) {
+                // Disable when assigned
                 participantInputs[i].disabled = true;
             } else {
+                // Enable when unassigned
                 participantInputs[i].disabled = false;
+                allAssigned = false;
             }
+        }
+        let generateButton = document.getElementById("generate");
+        if(allAssigned) {
+          generateButton.disabled = false;
+        } else {
+          generateButton.disabled = true;
         }
     }
   </script>
