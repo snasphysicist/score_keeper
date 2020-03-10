@@ -25,11 +25,24 @@
     .three-columns{
       grid-template-columns: 1fr 0.5fr 0.5fr;
     }
+    .four-columns{
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
 <body>
   <div id="vue">
+    <div class="grid-container four-columns">
+      <p>Stage</p>
+      <select v-model="selectedstage">
+        <option v-for="stage in stages" :stageid="stage.id">{% verbatim %}{{ stage.number }}{% endverbatim %}</option>
+      </select>
+      <p>Group</p>
+      <select v-model="selectedgroup">
+        <option v-for="group in groups" :groupid="group.id">{% verbatim %}{{ group.number }}{% endverbatim %}</option>
+      </select>
+    </div>
     <h1>Duels</h1>
     <div class="grid-container five-columns">
       <p>Opponent 1</p>
@@ -61,14 +74,45 @@
   var vueApplication = new Vue({
     el: '#vue',
     data: {
-      "duels": [
+      duels: [
       ],
-      "participants": [
-      ]
+      participants: [
+      ],
+      stages: [
+      ],
+      groups: [
+      ],
+      selectedstage: 0,
+      selectedgroup: 0
     },
   })
   </script>
   <script type="text/javascript">
+    function getTournamentStagesGroups() {
+      const TOURNAMENT_ID = "{{ current_tournament }}";
+      const GET_URL = "/tournament/api/v1/<0>/stagesgroups";
+      // Insert ID into url
+      let url = GET_URL.replace(
+        "<0>",
+        TOURNAMENT_ID
+      );
+      fetch(
+        url,
+        {
+          method: "GET",
+        }
+      ).then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      }).then((json) => {
+        if (json["success"]) {
+          vueApplication.stages = json["stages"];
+          vueApplication.groups = json["groups"];
+        }
+      })
+    }
+    getTournamentStagesGroups();
     function getTournamentDetails() {
       const TOURNAMENT_ID = "{{ current_tournament }}";
       const GET_URL = "/tournament/api/v1/<0>/overview";
@@ -93,7 +137,7 @@
         }
       })
     }
-    getTournamentDetails();
+//    getTournamentDetails();
   </script>
 </body>
 </html>
