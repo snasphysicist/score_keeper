@@ -21,29 +21,15 @@ def tournament_overview(request):
 
 
 def overview_api(request, **kwargs):
-    # Get tournament from id in url
-    tournament_id = kwargs["id"]
-    tournament = list(
-        Tournament.objects.filter(id__exact=tournament_id)
+    # Group id comes from url
+    group_id = kwargs["id"]
+    group = list(
+        Group.objects.filter(id__exact=group_id)
     )[0]
-    # Get duels for this tournament
-    # via Stages then Groups
-    # Get stages
-    stages = list(
-        Stage.objects.filter(tournament__exact=tournament)
-    )
-    # Get groups
-    groups = list()
-    for stage in stages:
-        groups += list(
-            Group.objects.filter(stage__exact=stage)
-        )
     # Get duels
-    duels = list()
-    for group in groups:
-        duels += list(
-            Duel.objects.filter(group__exact=group)
-        )
+    duels = list(
+        Duel.objects.filter(group__exact=group_id)
+    )
     # Get data for all duels
     # and calculate overall scores
     duels_processed = []
@@ -181,3 +167,40 @@ def generate_duels_api(request):
             "success": True
         }
     )
+
+
+def stages_groups_api(request, **kwargs):
+    # Get tournament from id in url
+    tournament_id = kwargs["id"]
+    tournament = list(
+        Tournament.objects.filter(id__exact=tournament_id)
+    )[0]
+    # Assemble data into format front end expects
+    stagesgroups = {
+        "stages": [],
+    }
+    # Get stages and groups for stages
+    stages = list(
+        Stage.objects.filter(tournament__exact=tournament)
+    )
+    for stage in stages:
+        current_stage = {
+            "id": stage.id,
+            "number": stage.number,
+            "groups": []
+        }
+        groups = list(
+            Group.objects.filter(stage__exact=stage)
+        )
+        for group in groups:
+            current_stage["groups"].append(
+                {
+                    "id": group.id,
+                    "number": group.number
+                }
+            )
+        stagesgroups["stages"].append(
+            current_stage
+        )
+    stagesgroups["success"] = True
+    return JsonResponse(stagesgroups)
