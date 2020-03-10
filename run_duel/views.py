@@ -28,6 +28,11 @@ def new_duel_api(request):
     # Basically, just make the selected
     # duel the current one
     duel = list(Duel.objects.filter(id__exact=data["id"]))[0]
+    # All other duels not current
+    old_duels = list(Duel.objects.filter(current__exact=True))
+    for old_duel in old_duels:
+        old_duel.current = False
+        old_duel.save()
     duel.current = True
     duel.save()
     return JsonResponse({
@@ -138,6 +143,8 @@ def event_stream(request):
     current_duel_object = Duel.objects.filter(
         current__exact=True
     )[0]
+    print(current_duel_object.id)
+    print(current_duel_object.current)
     event_data = calculate_duel_data(current_duel_object)
     # TODO add latest event
     return JsonResponse(event_data)
