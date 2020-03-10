@@ -189,7 +189,7 @@
     // Web socket handling
     let ws = null;
     function manageWebSocketConnection() {
-      ws = new WebSocket("{{ websocket_protocol }}://{{ base_url }}:8001/");
+      ws = new WebSocket("{{ websocket_protocol }}://{{ base_url }}:{{ websocket_port }}/");
       ws.onmessage = function (event) {
         console.log(event.data);
         jsonData = JSON.parse(event.data);

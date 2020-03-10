@@ -89,7 +89,8 @@ def current_duel(request):
     template = loader.get_template('run_duel/current.html')
     context = {
         "websocket_protocol": os.environ["SCORE_KEEPER_WEBSOCKET_PROTOCOL"],
-        "base_url": os.environ["SCORE_KEEPER_BASE_URL"]
+        "base_url": os.environ["SCORE_KEEPER_BASE_URL"],
+        "websocket_port": os.environ["SCORE_KEEPER_WEBSOCKET_PORT"]
     }
     return HttpResponse(template.render(context, request))
 
