@@ -70,7 +70,7 @@
       <p>Participant</p>
       <p>Duels Completed</p>
       <p>HP Remaining</p>
-      <template v-for="participant in participants">
+      <template v-for="participant in sortedParticipants">
         <p>{% verbatim %}{{ participant.name }}{% endverbatim %}</p>
         <p>{% verbatim %}{{ participant.completed }}{% endverbatim %}</p>
         <p>{% verbatim %}{{ participant.remaining }}{% endverbatim %}</p>
@@ -112,6 +112,18 @@
           }
         }
         return null;
+      },
+      sortedParticipants: function() {
+        let array = this.participants;
+        array.sort(
+          (a, b) => {
+            return (
+              -1 * (1000 * (a.completed - b.completed))
+              - (a.remaining - b.remaining)
+            );
+          }
+        );
+        return array;
       }
     }
   })
