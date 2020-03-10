@@ -2,17 +2,21 @@
 <html>
 <head>
   <style type="text/css">
-    body, h1, h2, p, input, div {
+    body, h1, h2, p, input, div, select {
       background-color: black;
       color: white;
       margin: 5px;
       text-align: center;
       font-family: sans-serif;
     }
-    input {
-      min-width: 30%;
+    input, select {
+      min-width: 70%;
       min-height: 50px;
       font-family: sans-serif;
+      text-align: center;
+    }
+    option {
+      text-align: center;
     }
     .grid-container{
       display: grid;
@@ -27,6 +31,7 @@
     }
     .four-columns{
       grid-template-columns: 1fr 1fr 1fr 1fr;
+      align-items: center;
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -35,11 +40,13 @@
   <div id="vue">
     <div class="grid-container four-columns">
       <p>Stage</p>
-      <select v-model="selectedstage">
+      <select v-model="selectedstage" onchange="getDuelsForGroup()">
+        <option value="" disabled selected style="display:none;">Default</option>
         <option v-for="stage in stages" :stageid="stage.id">{% verbatim %}{{ stage.number }}{% endverbatim %}</option>
       </select>
       <p>Group</p>
-      <select v-model="selectedgroup">
+      <select v-model="selectedgroup" onchange="setTimeout(getDuelsForGroup, 100);">
+        <option value="" disabled selected style="display:none;">Default</option>
         <option v-for="group in groups" :groupid="group.id">{% verbatim %}{{ group.number }}{% endverbatim %}</option>
       </select>
     </div>
@@ -80,11 +87,33 @@
       ],
       stages: [
       ],
-      groups: [
-      ],
       selectedstage: 0,
       selectedgroup: 0
     },
+    computed: {
+      groups: function() {
+        let groups = [];
+        if (this.selectedstage == 0) {
+          return groups;
+        }
+        for (let i = 0; i < this.stages.length; i++) {
+          if (this.stages[i]["number"] == this.selectedstage) {
+            groups = this.stages[i]["groups"];
+            break;
+          }
+        }
+        return groups;
+      },
+      selectedGroupId: function() {
+        let groupNumber = this.selectedgroup;
+        for (let i = 0; i < this.groups.length; i++) {
+          if (this.groups[i]["number"] == groupNumber) {
+            return this.groups[i]["id"];
+          }
+        }
+        return null;
+      }
+    }
   })
   </script>
   <script type="text/javascript">
@@ -108,18 +137,23 @@
       }).then((json) => {
         if (json["success"]) {
           vueApplication.stages = json["stages"];
-          vueApplication.groups = json["groups"];
         }
       })
     }
     getTournamentStagesGroups();
-    function getTournamentDetails() {
-      const TOURNAMENT_ID = "{{ current_tournament }}";
+    function getDuelsForGroup() {
+      console.log("FIRED");
+      let groupId = vueApplication.selectedGroupId;
+      console.log(groupId);
+      // Exit if group id invalid
+      if (groupId == null) {
+        return;
+      }
       const GET_URL = "/tournament/api/v1/<0>/overview";
       // Insert ID into url
       let url = GET_URL.replace(
         "<0>",
-        TOURNAMENT_ID
+        groupId
       );
       fetch(
         url,
