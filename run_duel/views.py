@@ -502,9 +502,9 @@ def filter_one_rounds_events(events, round_number):
 
 # Can a user start duels?
 def can_start_duels(request):
-    return request.user.groups.filter(name="umpires").exists()
+    return request.user.groups.filter(name="umpire").exists()
 
 
 # Can a user decide scores?
 def can_record_score(request):
-    return request.user.groups.filter(name="umpires").exists()
+    return request.user.groups.filter(name="umpire").exists()

@@ -223,4 +223,4 @@ def stages_groups_api(request, **kwargs):
 
 # Can a user start duels?
 def can_administer_duels(request):
-    return request.user.groups.filter(name="duel_administrators").exists()
+    return request.user.groups.filter(name="duel_administrator").exists()
