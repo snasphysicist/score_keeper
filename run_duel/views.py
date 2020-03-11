@@ -5,6 +5,7 @@ import os
 
 from django.db import IntegrityError
 from django.http import HttpResponse, JsonResponse
+from django.shortcuts import redirect
 from django.template import loader
 
 from run_duel.models import Duel, FightEvent, Round
@@ -15,6 +16,8 @@ CURRENT_TOURNAMENT = 3
 
 # Render new duel page
 def new_duel(request):
+    if not can_start_duels(request):
+        return redirect('current')
     template = loader.get_template('run_duel/new.html')
     context = {}
     return HttpResponse(template.render(context, request))
@@ -22,6 +25,13 @@ def new_duel(request):
 
 # Move on to a different duel
 def new_duel_api(request):
+    if not can_start_duels(request):
+        return JsonResponse(
+            {
+                "success": False,
+                "reason": "You do not have permission to perform this operation"
+            }
+        )
     data = json.loads(
         request.body.decode('utf-8')
     )
@@ -42,6 +52,13 @@ def new_duel_api(request):
 
 # List pending duels
 def pending_duel_api(request):
+    if not can_start_duels(request):
+        return JsonResponse(
+            {
+                "success": False,
+                "reason": "You do not have permission to perform this operation"
+            }
+        )
     # Get all groups for current tournament
     tournament = list(Tournament.objects.filter(id__exact=CURRENT_TOURNAMENT))[0]
     stages = list(Stage.objects.filter(tournament__exact=tournament))
@@ -102,6 +119,11 @@ def current_duel(request):
 
 # Event recording api
 def new_event_api(request):
+    if not can_record_score(request):
+        return JsonResponse({
+            "success": False,
+            "reason": "You do not have permission to perform this operation"
+        })
     data = json.loads(
         request.body.decode('utf-8')
     )
@@ -474,3 +496,15 @@ def filter_one_rounds_events(events, round_number):
         x for x in events
         if x.round.round_number == round_number
     ]
+
+
+### Authorisation helper functions
+
+# Can a user start duels?
+def can_start_duels(request):
+    return request.user.groups.filter(name="umpires").exists()
+
+
+# Can a user decide scores?
+def can_record_score(request):
+    return request.user.groups.filter(name="umpires").exists()
