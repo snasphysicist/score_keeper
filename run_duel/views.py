@@ -17,7 +17,7 @@ CURRENT_TOURNAMENT = 3
 # Render new duel page
 def new_duel(request):
     if not can_start_duels(request):
-        return redirect('current')
+        return redirect('/run_duel/current')
     template = loader.get_template('run_duel/new.html')
     context = {}
     return HttpResponse(template.render(context, request))
@@ -112,7 +112,9 @@ def current_duel(request):
     context = {
         "websocket_protocol": os.environ["SCORE_KEEPER_WEBSOCKET_PROTOCOL"],
         "base_url": os.environ["SCORE_KEEPER_BASE_URL"],
-        "websocket_port": os.environ["SCORE_KEEPER_WEBSOCKET_PORT"]
+        "websocket_port": os.environ["SCORE_KEEPER_WEBSOCKET_PORT"],
+        # Only enable scoring for umpires
+        "can_record_score": can_record_score(request)
     }
     return HttpResponse(template.render(context, request))
 
@@ -498,7 +500,9 @@ def filter_one_rounds_events(events, round_number):
     ]
 
 
-### Authorisation helper functions
+#
+# Authorisation helper functions
+#
 
 # Can a user start duels?
 def can_start_duels(request):

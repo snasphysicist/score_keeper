@@ -14,9 +14,11 @@
           min-height: 50px;
           font-family: sans-serif;
         }
+        {% if can_record_score %}
         input[type=button]:active {
           background-color: #8b0000;
         }
+        {% endif %}
         .grid-container {
           display: grid;
           justify-content: center;
@@ -50,10 +52,18 @@
           <p>HP: {% verbatim %}{{ currentRoundOpponent1Score }} : {{ currentRoundOpponent2Score }}{% endverbatim %}</p>
         </div>
         <div class="grid-container two-columns">
-          <input id="start-round" onclick="submitEvent(event)" type="button" value="Start Next Round"/>
-          <input id="pause-round" onclick="submitEvent(event)" type="button" value="Pause"/>
-          <input id="finish-round" onclick="submitEvent(event)" type="button" value="Finish"/>
-          <input id="continue-round" onclick="submitEvent(event)" type="button" value="Continue"/>
+          <input id="start-round"
+                 {% if can_record_score %} onclick="submitEvent(event)" {% endif %}
+                 type="button" value="Start Next Round"/>
+          <input id="pause-round"
+                 {% if can_record_score %}  onclick="submitEvent(event)" {% endif %}
+                 type="button" value="Pause"/>
+          <input id="finish-round"
+                 {% if can_record_score %} onclick="submitEvent(event)" {% endif %}
+                 type="button" value="Finish"/>
+          <input id="continue-round"
+                 {% if can_record_score %} onclick="submitEvent(event)" {% endif %}
+                 type="button" value="Continue"/>
         </div>
       </div>
       <div class="grid-container">
@@ -62,9 +72,15 @@
           <p id="hp1">HP: {% verbatim %}{{ currentRoundOpponent1Score }}{% endverbatim %}</p>
         </div>
         <div class="grid-container three-columns">
-          <input id="opponent-1-head" onclick="submitEvent(event)" type="button" value="Head">
-          <input id="opponent-1-hand" onclick="submitEvent(event)" type="button" value="Hand">
-          <input id="opponent-1-body" onclick="submitEvent(event)" type="button" value="Body">
+          <input id="opponent-1-head"
+                 {% if can_record_score %} onclick="submitEvent(event)" {% endif %}
+                 type="button" value="Head">
+          <input id="opponent-1-hand"
+                 {% if can_record_score %} onclick="submitEvent(event)" {% endif %}
+                 type="button" value="Hand">
+          <input id="opponent-1-body"
+                 {% if can_record_score %} onclick="submitEvent(event)" {% endif %}
+                 type="button" value="Body">
         </div>
       </div>
       <div class="grid-container">
@@ -73,9 +89,15 @@
           <p id="hp2">HP: {% verbatim %}{{ currentRoundOpponent2Score }}{% endverbatim %}</p>
         </div>
         <div class="grid-container three-columns">
-          <input id="opponent-2-head" onclick="submitEvent(event)" type="button" value="Head">
-          <input id="opponent-2-hand" onclick="submitEvent(event)" type="button" value="Hand">
-          <input id="opponent-2-body" onclick="submitEvent(event)" type="button" value="Body">
+          <input id="opponent-2-head"
+                 {% if can_record_score %} onclick="submitEvent(event)" {% endif %}
+                 type="button" value="Head">
+          <input id="opponent-2-hand"
+                 {% if can_record_score %} onclick="submitEvent(event)" {% endif %}
+                 type="button" value="Hand">
+          <input id="opponent-2-body"
+                 {% if can_record_score %} onclick="submitEvent(event)" {% endif %}
+                 type="button" value="Body">
         </div>
       </div>
     </div>
@@ -247,7 +269,6 @@
       hp2Element.classList.remove("flash");
     }
   </script>
-  </script>
   <script type="text/javascript">
     // Web socket handling
     let ws = null;
@@ -290,6 +311,7 @@
     }
     manageWebSocketConnection();
   </script>
+  {% if can_record_score %}
   <script type="text/javascript">
     function submitEvent(event) {
       let eventType = event.target.id;
@@ -310,4 +332,5 @@
       })
     }
   </script>
+  {% endif %}
 </html>
