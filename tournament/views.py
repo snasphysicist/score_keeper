@@ -2,6 +2,7 @@
 import json
 
 from django.http import HttpResponse, JsonResponse
+from django.shortcuts import redirect
 from django.template import loader
 
 from run_duel.models import Duel, Round
@@ -90,10 +91,7 @@ def overview_api(request, **kwargs):
 
 def setup_duels(request):
     if not can_administer_duels(request):
-        return JsonResponse({
-            "success": False,
-            "reason": "You do not have permission to perform this operation"
-        })
+        return redirect('/score_keeper/login')
     template = loader.get_template('tournament/setup_duels.html')
     context = {}
     return HttpResponse(template.render(context, request))
