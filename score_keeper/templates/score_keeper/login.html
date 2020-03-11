@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style type="text/css">
+    body, h1, h2, p, input, div {
+      background-color: black;
+      color: white;
+      margin: 5px;
+      text-align: center;
+      font-family: sans-serif;
+    }
+    input {
+      min-width: 30%;
+      min-height: 50px;
+      font-family: sans-serif;
+    }
+    input[type=button]:active {
+      background-color: #8b0000;
+    }
+    .grid-container {
+      display: grid;
+      justify-content: center;
+      align-items: center;
+      width: 90vw;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-container">
+    <p>Username</p>
+    <input id="username" type="text"/>
+    <p>Password</p>
+    <input id="password" type="password"/>
+  </div>
+  <input type="button" value="Login" onclick="login()"/>
+</body>
+<script type="text/javascript">
+  function login() {
+    let username = document.getElementById("username").value;
+    let password = document.getElementById("password").value;
+    let data = {
+      username: username,
+      password: password
+    };
+    const POST_URL = "api/v1/login";
+    // console.log(JSON.stringify(data));
+    fetch(
+      POST_URL,
+      {
+        method: "POST",
+        body: JSON.stringify(data)
+      }
+    ).then((response) => {
+        if(response.ok) {
+          return response.json();
+        } else {
+          // Error handling
+        }
+    }).then((json) => {
+      if (json["success"]) {
+        window.location.href = "/tournament/overview";
+      } else {
+        // Display error message
+      }
+    })
+  }
+</script>
