@@ -2,6 +2,7 @@
 import json
 
 from django.http import HttpResponse, JsonResponse
+from django.shortcuts import redirect
 from django.template import loader
 
 from run_duel.models import Duel, Round
@@ -89,12 +90,19 @@ def overview_api(request, **kwargs):
 
 
 def setup_duels(request):
+    if not can_administer_duels(request):
+        return redirect('/score_keeper/login')
     template = loader.get_template('tournament/setup_duels.html')
     context = {}
     return HttpResponse(template.render(context, request))
 
 
 def setup_duels_groups_participants_api(request):
+    if not can_administer_duels(request):
+        return JsonResponse({
+            "success": False,
+            "reason": "You do not have permission to perform this operation"
+        })
     # Get group and participant details
     tournament = list(Tournament.objects.all())[0]
     stages = list(Stage.objects.filter(tournament__exact=tournament))
@@ -139,6 +147,11 @@ def setup_duels_groups_participants_api(request):
 
 
 def generate_duels_api(request):
+    if not can_administer_duels(request):
+        return JsonResponse({
+            "success": False,
+            "reason": "You do not have permission to perform this operation"
+        })
     data = json.loads(
         request.body.decode('utf-8')
     )
@@ -204,3 +217,8 @@ def stages_groups_api(request, **kwargs):
         )
     stagesgroups["success"] = True
     return JsonResponse(stagesgroups)
+
+
+# Can a user start duels?
+def can_administer_duels(request):
+    return request.user.groups.filter(name="duel_administrator").exists()
