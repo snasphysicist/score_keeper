@@ -68,7 +68,9 @@ def pending_duel_api(request):
     # Get all duels for current tournament
     duels = list()
     for group in groups:
-        duels += list(Duel.objects.filter(group__exact=group))
+        duels += list(
+            Duel.objects.filter(group__exact=group).order_by("sequence_number")
+        )
     full_data = []
     for duel in duels:
         full_data.append(
