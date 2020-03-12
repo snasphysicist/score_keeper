@@ -469,7 +469,7 @@ def calculate_total_score(events):
                 value = 3
             elif "ADJUST-UP" in event.type:
                 value = 1
-            elif "ADJUST-DOWN" in event.type
+            elif "ADJUST-DOWN" in event.type:
                 value = -1
             if "OPPONENT-1" in event.type:
                 round_scores["opponent1"] -= value
