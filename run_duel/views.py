@@ -635,6 +635,62 @@ def get_all_events(duel):
     return events
 
 
+def adjust_score_page(request):
+    if not can_administer_duels_all(request) or can_record_score(request):
+        return redirect('/run_duel/current')
+    template = loader.get_template('run_duel/administration/adjust_score.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+
+def adjust_score_api(request):
+    if not can_administer_duels_all(request) or can_record_score(request):
+        return JsonResponse(
+            {
+                "success": False,
+                "reason": "You do not have permission to perform this operation"
+            }
+        )
+    data = json.loads(
+        request.body.decode("utf-8")
+    )
+    the_round = list(Round.objects.filter(id__exact=data["roundid"]))
+    if len(the_round) == 0:
+        return JsonResponse(
+            {
+                "success": False,
+                "reason": "Could not find specified round"
+            }
+        )
+    adjustment_type = data["adjustmenttype"]
+    adjustment = FightEvent(
+        time=datetime.datetime.now(),
+        type=adjustment_type,
+        round=the_round
+    )
+    adjustment.save()
+    return JsonResponse(
+        {
+            "success": True
+        }
+    )
+
+
+def single_duel_data_api(request, **kwargs):
+    duel_id = kwargs["duelid"]
+    duel = list(Duel.objects.filter(id__exact=duel_id))
+    if len(duel) == 0:
+        return JsonResponse(
+            {
+                "success": False,
+                "reason": "Could not find duel with provided id"
+            }
+        )
+    data = calculate_duel_data(duel[0])
+    data["success"] = True
+    return JsonResponse(data)
+
+
 #
 # Authorisation helper functions
 #
