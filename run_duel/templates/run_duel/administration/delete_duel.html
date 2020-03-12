@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <style type="text/css">
+      body, h1, h2, p, input, div {
+        background-color: black;
+        color: white;
+        margin: 5px;
+        text-align: center;
+        font-family: sans-serif;
+      }
+      input {
+        min-width: 30%;
+        min-height: 50px;
+        font-family: sans-serif;
+      }
+      input[type=button]:active {
+        background-color: #8b0000;
+      }
+      .grid-container {
+        display: grid;
+        justify-content: center;
+        align-items: center;
+        width: 90vw;
+      }
+      .page-contatiner {
+        margin: auto;
+      }
+      .two-columns {
+        grid-template-columns: 1fr 1fr;
+      }
+      .two-columns-thirds {
+        grid-template-columns: 1fr 0.5fr;
+      }
+      .three-columns {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+      .selected {
+        background-color: #003d01;
+      }
+      input[disabled] {
+        color: #773334;
+        background-color: #111111;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="vue" class="grid-container two-columns">
+      <h1>Delete Duel</h1>
+      <template v-for="duel in duels">
+        <p>{{ duel.opponent1 }} vs {{ duel.opponent2 }}</p>
+        <input type="button" :duelid="duel.id"
+          onclick="deleteDuel(event)" value="Delete"/>
+      </template>
+    </div>
+    <script type="text/javascript">
+      var vueApplication = new Vue({
+        el: '#vue',
+        data: {
+          duels: []
+        }
+      })
+    </script>
+    <script>
+      function deleteDuel(event) {
+        let duelId = event.target.getAttribute("duelid");
+        let data = {
+          "duelid": duelId
+        };
+        const DELETE_URL = "/run_duel/api/v1/duel/delete";
+        fetch(
+          DELETE_URL,
+          {
+            method: "DELETE",
+            body: JSON.stringify(data)
+          }
+        ).then((response) => {
+          if (response.ok) {
+            return response.json();
+          }
+        }).then((json) => {
+          if(json["success"]) {
+            // Re-fetch duel list
+          } else {
+            // Handle error
+          }
+        })
+      }
+    </script>
+    <script>
+      function fetchDuelList() {
+        const TOURNAMENT_ID = 3;
+        const GET_URL = "/run_duel/api/v1/<0>/duel/list";
+        // Insert ID into url
+        let url = GET_URL.replace(
+          "<0>",
+          TOURNAMENT_ID
+        );
+        fetch(
+          GET_URL,
+          {
+            method: "GET",
+          }
+        ).then((response) => {
+          if (response.ok) {
+            return response.json();
+          }
+        }).then((json) => {
+          if(json["success"]) {
+            // Re-fetch duel list
+          } else {
+            // Handle error
+          }
+        })
+      }
+    </script>
+  </body>
+</html>
