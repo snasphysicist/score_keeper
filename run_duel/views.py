@@ -506,12 +506,13 @@ def filter_one_rounds_events(events, round_number):
 # Administration pages
 #
 def delete_duel_page(request):
-    template = loader.get_template('tournament/administration/delete_duel.html')
+    template = loader.get_template('run_duel/administration/delete_duel.html')
     context = {}
     return HttpResponse(template.render(context, request))
 
 
-def get_all_duels_api(tournament_id):
+def get_all_duels_api(request, **kwargs):
+    tournament_id = kwargs["id"]
     duels = get_all_duels_for_tournament(tournament_id)
     duel_details = {
         "duels": []
@@ -529,9 +530,10 @@ def get_all_duels_api(tournament_id):
 
 
 def get_all_duels_for_tournament(tournament_id):
-    tournament = list(Tournament.objects.all())
-    if len(tournament) == 0:
+    tournaments = list(Tournament.objects.all())
+    if len(tournaments) == 0:
         return []
+    tournament = tournaments[0]
     stages = list(Stage.objects.filter(tournament__exact=tournament))
     if len(stages) == 0:
         return []

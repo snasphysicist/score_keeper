@@ -47,10 +47,12 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   </head>
   <body>
+    <h1>Delete Duel</h1>
     <div id="vue" class="grid-container two-columns">
-      <h1>Delete Duel</h1>
       <template v-for="duel in duels">
+        {% verbatim %}
         <p>{{ duel.opponent1 }} vs {{ duel.opponent2 }}</p>
+        {% endverbatim %}
         <input type="button" :duelid="duel.id"
           onclick="deleteDuel(event)" value="Delete"/>
       </template>
@@ -100,7 +102,7 @@
           TOURNAMENT_ID
         );
         fetch(
-          GET_URL,
+          url,
           {
             method: "GET",
           }
@@ -110,12 +112,13 @@
           }
         }).then((json) => {
           if(json["success"]) {
-            // Re-fetch duel list
+            vueApplication.duels = json["duels"];
           } else {
             // Handle error
           }
         })
       }
+      fetchDuelList();
     </script>
   </body>
 </html>
