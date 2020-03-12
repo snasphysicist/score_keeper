@@ -263,9 +263,9 @@
     function generateDuels() {
       // DISABLE ONLY ON SUCCESS
       let didGenerate = false;
-      if (vueApplication.stageformat == "ROUND-ROBIN") {
+      if (vueApplication.currentStage["format"] == "ROUND-ROBIN") {
         didGenerate = generateRoundRobinDuels();
-      } else if (vueApplication.stageformat == "CROSS-ROUND-ROBIN") {
+      } else if (vueApplication.currentStage["format"] == "CROSS-ROUND-ROBIN") {
         didGenerate = generateCrossRoundRobinDuels();
       }
       if (didGenerate) {
@@ -334,9 +334,14 @@
           group2
         )
         for (let j = 0; j < groupPairs.length; j++) {
+          let duel = {
+            // group: group["id"],
+            opponent1: groupPairs[j][0],
+            opponent2: groupPairs[j][1]
+          };
           vueApplication.allduels.push(
-            groupPairs[j];
-          )
+            duel
+          );
         }
         // Next pair
         i = i + 2;
@@ -350,19 +355,21 @@
       group1,
       group2
     ) {
-      let totalDuels = group1.length * group2.length;
+      let totalDuels = group1.members.length * group2.members.length;
       let pairs = [];
       let offset = 0;
       // Create arrays that pair participants
       for (let i = 0; i < totalDuels ; i++) {
         let nextPair = [];
         nextPair.push(
-          group1[i % group1.length];
+          group1.members[i % group1.members.length]
         );
         nextPair.push(
-          group2[(i + offset) % group2.length];
+          group2.members[(i + offset) % group2.members.length]
         );
         // Check if pair already added
+        console.log(pairs);
+        console.log(nextPair);
         if (pairAlreadyAdded(pairs, nextPair)) {
           /*
            * Shift one of the arrays by one
@@ -421,10 +428,10 @@
         }
       }).then((json) => {
         if (json["success"]) {
-          vueApplication.currentStage = json["currentStage"];
+          vueApplication.currentStage = json["currentstage"];
           vueApplication.groups = json["groups"];
           vueApplication.participants = json["participants"];
-          vueApplication.allDuels = json["allduels"];
+          vueApplication.allduels = json["allduels"];
         }
       })
     }
