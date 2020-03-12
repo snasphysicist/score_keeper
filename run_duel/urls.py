@@ -13,5 +13,7 @@ urlpatterns = [
     # Administration urls
     path('administration/delete_duel', views.delete_duel_page, name="delete_duel"),
     path('api/v1/<int:id>/duel/list', views.get_all_duels_api, name="get_all_duels_api"),
-    path('api/v1/duel/delete', views.delete_duel_api, name="delete_duel_api")
+    path('api/v1/duel/delete', views.delete_duel_api, name="delete_duel_api"),
+    path('administration/reset_duel', views.reset_duel_page, name="reset_duel"),
+    path('api/v1/duel/reset', views.reset_duel_api, name="reset_duel_api")
 ]

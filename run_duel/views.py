@@ -567,6 +567,43 @@ def delete_duel_api(request):
     return JsonResponse(result)
 
 
+def reset_duel_page(request):
+    template = loader.get_template('run_duel/administration/reset_duel.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+
+def reset_duel_api(request):
+    data = json.loads(
+        request.body.decode("utf-8")
+    )
+    duel_id = data["duelid"]
+    duels = list(Duel.objects.filter(id__exact=duel_id))
+    if len(duels) == 0:
+        result = {
+            "success": False,
+            "reason": "Could not find duel with provided identifier"
+        }
+    else:
+        delete_all_events(duels[0])
+        result = {"success": True}
+    return JsonResponse(result)
+
+
+def delete_all_events(duel):
+    events = get_all_events(duel)
+    for event in events:
+        event.delete()
+
+
+def get_all_events(duel):
+    rounds = list(Round.objects.filter(duel__exact=duel))
+    events = list()
+    for a_round in rounds:
+        events += list(FightEvent.objects.filter(round__exact=a_round))
+    return events
+
+
 #
 # Authorisation helper functions
 #
