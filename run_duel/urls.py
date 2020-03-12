@@ -12,5 +12,6 @@ urlpatterns = [
     path('api/v1/event_stream', views.event_stream, name='event_stream'),
     # Administration urls
     path('administration/delete_duel', views.delete_duel_page, name="delete_duel"),
-    path('api/v1/<int:id>/duel/list', views.get_all_duels_api, name="get_all_duels_api")
+    path('api/v1/<int:id>/duel/list', views.get_all_duels_api, name="get_all_duels_api"),
+    path('api/v1/duel/delete', views.delete_duel_api, name="delete_duel_api")
 ]

@@ -548,6 +548,23 @@ def get_all_duels_for_tournament(tournament_id):
     return duels
 
 
+def delete_duel_api(request):
+    data = json.loads(
+        request.body.decode("utf-8")
+    )
+    duel_id = data["duelid"]
+    duels = list(Duel.objects.filter(id__exact=duel_id))
+    if len(duels) == 0:
+        result = {
+            "success": False,
+            "reason": "Could not find duel with provided identifier"
+        }
+    else:
+        duels[0].delete()
+        result = {"success": True}
+    return JsonResponse(result)
+
+
 #
 # Authorisation helper functions
 #

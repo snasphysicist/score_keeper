@@ -83,6 +83,7 @@
         }).then((json) => {
           if(json["success"]) {
             // Re-fetch duel list
+            fetchDuelList();
           } else {
             // Handle error
           }
