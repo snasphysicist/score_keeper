@@ -124,24 +124,43 @@
     });
   </script>
   <script type="text/javascript">
+    /*
+     * When fetching a list of pending
+     * duels, suggest which should be next
+     */
+    function setSuggestedNextDuel() {
+      let stageNumber = vueApplication.pendingduels[0]["stagenumber"];
+      let groupNumber = vueApplication.pendingduels[0]["groupnumber"];
+      let opponent1 = vueApplication.pendingduels[0]["opponent1"];
+      let opponent2 = vueApplication.pendingduels[0]["opponent2"];
+      vueApplication.selectedstage = stageNumber;
+      vueApplication.selectedgroup = groupNumber;
+      vueApplication.selectedduel = opponent1 + " vs " + opponent2;
+    }
     // Fetch all pending duel details from api
-    const GET_URL = "/run_duel/api/v1/pending_duels";
-    fetch(
-      GET_URL,
-      {
-        method: "GET"
-      }
-    ).then((response) => {
-      if(response.ok) {
-        return response.json();
-      } else {
-        // Handle error
-      }
-    }).then((json) => {
-      if (json["success"]) {
-        vueApplication.pendingduels = json["pending"];
-      }
-    });
+    function fetchPendingDuels() {
+      const GET_URL = "/run_duel/api/v1/pending_duels";
+      fetch(
+        GET_URL,
+        {
+          method: "GET"
+        }
+      ).then((response) => {
+        if(response.ok) {
+          return response.json();
+        } else {
+          // Handle error
+        }
+      }).then((json) => {
+        if (json["success"]) {
+          vueApplication.pendingduels = json["pending"];
+          if (json["pending"].length > 0) {
+            setTimeout(setSuggestedNextDuel, 100);
+          }
+        }
+      });
+    }
+    fetchPendingDuels();
   </script>
   <!-- JS to submit form -->
   <script type="text/javascript">
