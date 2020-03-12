@@ -505,13 +505,23 @@ def filter_one_rounds_events(events, round_number):
 #
 # Administration pages
 #
+
 def delete_duel_page(request):
+    if not can_administer_duels_all(request):
+        return redirect('/run_duel/current')
     template = loader.get_template('run_duel/administration/delete_duel.html')
     context = {}
     return HttpResponse(template.render(context, request))
 
 
 def get_all_duels_api(request, **kwargs):
+    if not can_administer_duels_all(request):
+        return JsonResponse(
+            {
+                "success": False,
+                "reason": "You do not have permission to perform this operation"
+            }
+        )
     tournament_id = kwargs["id"]
     duels = get_all_duels_for_tournament(tournament_id)
     duel_details = {
@@ -551,6 +561,13 @@ def get_all_duels_for_tournament(tournament_id):
 
 
 def delete_duel_api(request):
+    if not can_administer_duels_all(request):
+        return JsonResponse(
+            {
+                "success": False,
+                "reason": "You do not have permission to perform this operation"
+            }
+        )
     data = json.loads(
         request.body.decode("utf-8")
     )
@@ -568,12 +585,21 @@ def delete_duel_api(request):
 
 
 def reset_duel_page(request):
+    if not can_administer_duels_all(request):
+        return redirect('/run_duel/current')
     template = loader.get_template('run_duel/administration/reset_duel.html')
     context = {}
     return HttpResponse(template.render(context, request))
 
 
 def reset_duel_api(request):
+    if not can_administer_duels_all(request):
+        return JsonResponse(
+            {
+                "success": False,
+                "reason": "You do not have permission to perform this operation"
+            }
+        )
     data = json.loads(
         request.body.decode("utf-8")
     )
@@ -616,3 +642,8 @@ def can_start_duels(request):
 # Can a user decide scores?
 def can_record_score(request):
     return request.user.groups.filter(name="umpire").exists()
+
+
+# Can a user administer duels all powerfully?
+def can_administer_duels_all(request):
+    return request.user.groups.filter(name="duel_administrator").exists()
