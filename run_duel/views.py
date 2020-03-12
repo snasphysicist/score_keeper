@@ -489,6 +489,7 @@ def filter_only_score_events(events):
         if "HEAD" in x.type
            or "HAND" in x.type
            or "BODY" in x.type
+           or "ADJUST" in x.type
     ]
 
 
