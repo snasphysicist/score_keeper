@@ -95,7 +95,8 @@
           currentstage: 0,
           groups: [],
           participants: [],
-          allduels: []
+          allduels: [],
+          stageformat: ""
         }
       })
   </script>
@@ -260,6 +261,29 @@
         }
     }
     function generateDuels() {
+      // DISABLE ONLY ON SUCCESS
+      let didGenerate = false;
+      if (vueApplication.stageformat == "ROUND-ROBIN") {
+        didGenerate = generateRoundRobinDuels();
+      } else if (vueApplication.stageformat == "CROSS-ROUND-ROBIN") {
+        didGenerate = generateCrossRoundRobinDuels();
+      }
+      if (didGenerate) {
+        // Disable generate button
+        let generateButton = document.getElementById("generate");
+        generateButton.disabled = true;
+        // Enable confirm button
+        let confirmButton = document.getElementById("confirm");
+        confirmButton.disabled = false;
+      }
+    }
+    /*
+     * Functions for different
+     * stage format duel
+     * combination algorithms
+     */
+    // Simple round robin
+    function generateRoundRobinDuels() {
       // Generate duels for each group
       let maxDuels = 0;
       for (let i = 0; i < vueApplication.groups.length; i++) {
@@ -292,12 +316,85 @@
           }
         }
       }
-      // Disable generate button
-      let generateButton = document.getElementById("generate");
-      generateButton.disabled = true;
-      // Enable confirm button
-      let confirmButton = document.getElementById("confirm");
-      confirmButton.disabled = false;
+      return true;
+    }
+    // Cross round robin
+    function generateCrossRoundRobinDuels() {
+      // Only works with even number of groups
+      if (vueApplication.groups.length % 2 != 0) {
+        return false;
+      }
+      // For each pair of groups
+      let i = 0;
+      while (i < vueApplication.groups.length) {
+        let group1 = vueApplication.groups[i];
+        let group2 = vueApplication.groups[i + 1];
+        let groupPairs = twoGroupsCrossRoundRobinDuels(
+          group1,
+          group2
+        )
+        for (let j = 0; j < groupPairs.length; j++) {
+          vueApplication.allduels.push(
+            groupPairs[j];
+          )
+        }
+        // Next pair
+        i = i + 2;
+      }
+      return true;
+    }
+    /* Different cases for cross round robin
+     * Returns an array of pairs for duel
+     */
+    function twoGroupsCrossRoundRobinDuels(
+      group1,
+      group2
+    ) {
+      let totalDuels = group1.length * group2.length;
+      let pairs = [];
+      let offset = 0;
+      // Create arrays that pair participants
+      for (let i = 0; i < totalDuels ; i++) {
+        let nextPair = [];
+        nextPair.push(
+          group1[i % group1.length];
+        );
+        nextPair.push(
+          group2[(i + offset) % group2.length];
+        );
+        // Check if pair already added
+        if (pairAlreadyAdded(pairs, nextPair)) {
+          /*
+           * Shift one of the arrays by one
+           * to generate new pairs next time
+           */
+          offset++;
+          /*
+           * Since the current iteration won't
+           * get added, do it again on the
+           * next loop iteration
+           */
+          i--;
+        } else {
+          pairs.push(nextPair);
+        }
+      }
+      return pairs;
+    }
+    function pairAlreadyAdded(
+      pairs,
+      nextPair
+    ) {
+      for (let i = 0; i < pairs.length; i++) {
+        let aPair = pairs[i];
+        if (
+          aPair[0]["participantid"] == nextPair[0]["participantid"]
+          && aPair[1]["participantid"] == nextPair[1]["participantid"]
+        ) {
+          return true;
+        }
+      }
+      return false;
     }
     function shuffle(array) {
       for (let i = array.length - 1; i > 0; i--) {
@@ -354,7 +451,7 @@
         if(json["success"]) {
           // Redirect to new duel page
         } else {
-          // Re-enable button          
+          // Re-enable button
           confirmButton.disabled = false;
         }
       })
