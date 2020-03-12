@@ -335,7 +335,7 @@
         )
         for (let j = 0; j < groupPairs.length; j++) {
           let duel = {
-            // group: group["id"],
+            group: group1["id"],
             opponent1: groupPairs[j][0],
             opponent2: groupPairs[j][1]
           };
@@ -368,8 +368,6 @@
           group2.members[(i + offset) % group2.members.length]
         );
         // Check if pair already added
-        console.log(pairs);
-        console.log(nextPair);
         if (pairAlreadyAdded(pairs, nextPair)) {
           /*
            * Shift one of the arrays by one
