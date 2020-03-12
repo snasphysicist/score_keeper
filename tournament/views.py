@@ -120,7 +120,8 @@ def setup_duels_groups_participants_api(request):
     context = {}
     context["currentstage"] = {
         "id": current_stage.id,
-        "number": current_stage.number
+        "number": current_stage.number,
+        "format": current_stage.stage_format
     }
     context["groups"] = []
     for group in groups:
