@@ -62,7 +62,7 @@
                 type="button" :value="participant.battlename"
                 onclick="assignParticipant(event)"/>
         </div>
-        <div class="grid-container two-columns">
+        <div class="grid-container">
             <div v-for="group in groups" class="grid-container">
                 <h2>Group {{ group.number }}</h2>
                 <div class="grid-container two-columns-thirds">
@@ -354,7 +354,7 @@
         if(json["success"]) {
           // Redirect to new duel page
         } else {
-          // Re-enable button          
+          // Re-enable button
           confirmButton.disabled = false;
         }
       })
