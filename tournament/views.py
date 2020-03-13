@@ -220,26 +220,6 @@ def stages_groups_api(request, **kwargs):
     return JsonResponse(stagesgroups)
 
 
-def get_all_duels_for_tournament(tournament_id):
-    tournament = list(Tournament.objects.all())
-    if len(tournament) == 0:
-        return []
-    stages = list(Stage.objects.filter(tournament__exact=tournament))
-    if len(stages) == 0:
-        return []
-    groups = list()
-    for stage in stages:
-        next_groups = list(Group.objects.filter(stage__exact=stage))
-        groups += next_groups
-    if len(groups) == 0:
-        return []
-    duels = list()
-    for group in groups:
-        next_duels = list(Duel.objects.filter(group__exact=group))
-        duels += next_duels
-    return duels
-
-
 # Can a user start duels?
 def can_administer_duels(request):
     return request.user.groups.filter(name="duel_administrator").exists()

@@ -467,6 +467,10 @@ def calculate_total_score(events):
                 value = 1
             elif "BODY" in event.type:
                 value = 3
+            elif "ADJUST-UP" in event.type:
+                value = -1
+            elif "ADJUST-DOWN" in event.type:
+                value = +1
             if "OPPONENT-1" in event.type:
                 round_scores["opponent1"] -= value
             elif "OPPONENT-2" in event.type:
@@ -489,6 +493,7 @@ def filter_only_score_events(events):
         if "HEAD" in x.type
            or "HAND" in x.type
            or "BODY" in x.type
+           or "ADJUST" in x.type
     ]
 
 
@@ -503,6 +508,218 @@ def filter_one_rounds_events(events, round_number):
 
 
 #
+# Administration pages
+#
+
+def delete_duel_page(request):
+    if not can_administer_duels_all(request):
+        return redirect('/run_duel/current')
+    template = loader.get_template('run_duel/administration/delete_duel.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+
+def get_all_duels_api(request, **kwargs):
+    if not can_administer_duels_all(request):
+        return JsonResponse(
+            {
+                "success": False,
+                "reason": "You do not have permission to perform this operation"
+            }
+        )
+    tournament_id = kwargs["id"]
+    duels = get_all_duels_for_tournament(tournament_id)
+    duel_details = {
+        "duels": []
+    }
+    for duel in duels:
+        duel_details["duels"].append(
+            {
+                "id": duel.id,
+                "opponent1": duel.opponent1.battle_name,
+                "opponent2": duel.opponent2.battle_name,
+                "groupid": duel.group.id,
+                "groupnumber": duel.group.number,
+                "stageid": duel.group.stage.id,
+                "stagenumber": duel.group.stage.number,
+            }
+        )
+    duel_details["success"] = True
+    return JsonResponse(duel_details)
+
+
+def get_all_duels_for_tournament(tournament_id):
+    tournaments = list(Tournament.objects.all())
+    if len(tournaments) == 0:
+        return []
+    tournament = tournaments[0]
+    stages = list(Stage.objects.filter(tournament__exact=tournament))
+    if len(stages) == 0:
+        return []
+    groups = list()
+    for stage in stages:
+        next_groups = list(Group.objects.filter(stage__exact=stage))
+        groups += next_groups
+    if len(groups) == 0:
+        return []
+    duels = list()
+    for group in groups:
+        next_duels = list(Duel.objects.filter(group__exact=group))
+        duels += next_duels
+    return duels
+
+
+def delete_duel_api(request):
+    if not can_administer_duels_all(request):
+        return JsonResponse(
+            {
+                "success": False,
+                "reason": "You do not have permission to perform this operation"
+            }
+        )
+    data = json.loads(
+        request.body.decode("utf-8")
+    )
+    duel_id = data["duelid"]
+    duels = list(Duel.objects.filter(id__exact=duel_id))
+    if len(duels) == 0:
+        result = {
+            "success": False,
+            "reason": "Could not find duel with provided identifier"
+        }
+    else:
+        duels[0].delete()
+        result = {"success": True}
+    return JsonResponse(result)
+
+
+def reset_duel_page(request):
+    if not can_administer_duels_all(request):
+        return redirect('/run_duel/current')
+    template = loader.get_template('run_duel/administration/reset_duel.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+
+def reset_duel_api(request):
+    if not can_administer_duels_all(request):
+        return JsonResponse(
+            {
+                "success": False,
+                "reason": "You do not have permission to perform this operation"
+            }
+        )
+    data = json.loads(
+        request.body.decode("utf-8")
+    )
+    duel_id = data["duelid"]
+    duels = list(Duel.objects.filter(id__exact=duel_id))
+    if len(duels) == 0:
+        result = {
+            "success": False,
+            "reason": "Could not find duel with provided identifier"
+        }
+    else:
+        delete_all_events(duels[0])
+        result = {"success": True}
+    return JsonResponse(result)
+
+
+def delete_all_events(duel):
+    events = get_all_events(duel)
+    for event in events:
+        event.delete()
+
+
+def get_all_events(duel):
+    rounds = list(Round.objects.filter(duel__exact=duel))
+    events = list()
+    for a_round in rounds:
+        events += list(FightEvent.objects.filter(round__exact=a_round))
+    return events
+
+
+def adjust_score_page(request):
+    if not (can_administer_duels_all(request) or can_record_score(request)):
+        return redirect('/run_duel/current')
+    template = loader.get_template('run_duel/administration/adjust_score.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+
+def adjust_score_api(request):
+    if not (can_administer_duels_all(request) or can_record_score(request)):
+        return JsonResponse(
+            {
+                "success": False,
+                "reason": "You do not have permission to perform this operation"
+            }
+        )
+    data = json.loads(
+        request.body.decode("utf-8")
+    )
+    print(data)
+    the_round = list(Round.objects.filter(id__exact=data["roundid"]))
+    if len(the_round) == 0:
+        return JsonResponse(
+            {
+                "success": False,
+                "reason": "Could not find specified round"
+            }
+        )
+    the_round = the_round[0]
+    adjustment_type = ""
+    if data["opponent"] == 1:
+        adjustment_type = "OPPONENT-1-ADJUST-"
+    elif data["opponent"] == 2:
+        adjustment_type = "OPPONENT-2-ADJUST-"
+    else:
+        return JsonResponse(
+            {
+                "success": False,
+                "reason": "Opponent must be 1 or 2"
+            }
+        )
+    if data["action"] == "UP":
+        adjustment_type += "UP"
+    elif data["action"] == "DOWN":
+        adjustment_type += "DOWN"
+    else:
+        return JsonResponse(
+            {
+                "success": False,
+                "reason": "Adjustment must be UP or DOWN"
+            }
+        )
+    adjustment = FightEvent(
+        time=datetime.datetime.now(),
+        type=adjustment_type,
+        round=the_round
+    )
+    adjustment.save()
+    return JsonResponse(
+        {
+            "success": True
+        }
+    )
+
+
+def single_duel_data_api(request, **kwargs):
+    duel_id = kwargs["id"]
+    duel = list(Duel.objects.filter(id__exact=duel_id))
+    if len(duel) == 0:
+        return JsonResponse(
+            {
+                "success": False,
+                "reason": "Could not find duel with provided id"
+            }
+        )
+    data = calculate_duel_data(duel[0])
+    data["success"] = True
+    return JsonResponse(data)
+
+
+#
 # Authorisation helper functions
 #
 
@@ -514,3 +731,8 @@ def can_start_duels(request):
 # Can a user decide scores?
 def can_record_score(request):
     return request.user.groups.filter(name="umpire").exists()
+
+
+# Can a user administer duels all powerfully?
+def can_administer_duels_all(request):
+    return request.user.groups.filter(name="duel_administrator").exists()
