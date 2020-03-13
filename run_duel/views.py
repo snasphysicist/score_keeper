@@ -513,7 +513,7 @@ def filter_one_rounds_events(events, round_number):
 
 def delete_duel_page(request):
     if not can_administer_duels_all(request):
-        return redirect('/run_duel/current')
+        return redirect('/score_keeper/login')
     template = loader.get_template('run_duel/administration/delete_duel.html')
     context = {}
     return HttpResponse(template.render(context, request))
@@ -595,7 +595,7 @@ def delete_duel_api(request):
 
 def reset_duel_page(request):
     if not can_administer_duels_all(request):
-        return redirect('/run_duel/current')
+        return redirect('/score_keeper/login')
     template = loader.get_template('run_duel/administration/reset_duel.html')
     context = {}
     return HttpResponse(template.render(context, request))
@@ -641,7 +641,7 @@ def get_all_events(duel):
 
 def adjust_score_page(request):
     if not (can_administer_duels_all(request) or can_record_score(request)):
-        return redirect('/run_duel/current')
+        return redirect('/score_keeper/login')
     template = loader.get_template('run_duel/administration/adjust_score.html')
     context = {}
     return HttpResponse(template.render(context, request))
