@@ -30,50 +30,51 @@
     .one-column {
       grid-template-columns: 1fr;
     }
-    .five-columns {
-      grid-template-columns: 1fr 0.4fr 0.4fr 1fr 0.4fr;
-    }
-    .three-columns {
-      grid-template-columns: 1fr 0.5fr 0.5fr;
-    }
-    .four-columns {
-      grid-template-columns: 1fr 1fr 1fr 1fr;
-      align-items: center;
+    .two-columns {
+      grid-template-columns: 1fr 1fr;
     }
   </style>
   <h1>Acolyte Tournament</h1>
 </head>
 <body>
-  <div class="grid-container two-columns">
+  <div class="grid-container">
     <div class="grid-container one-column">
       <h2>Duel</h2>
-      <input id="current-duel" type="button"
-        onclick="navigate(event)" value="Current"/>
-      <input id="new-duel" type="button"
-        onclick="navigate(event)" value="New"/>
+      <div class="grid-container two-columns">
+        <input id="current-duel" type="button"
+          onclick="navigate(event)" value="Current"/>
+        <input id="new-duel" type="button"
+          onclick="navigate(event)" value="New"/>
+      </div>
     </div>
     <div class="grid-container one-column">
       <h2>Tournament</h2>
-      <input id="tournament-overview" type="button"
-        onclick="navigate(event)" value="Overview"/>
-      <input id="setup-duels" type="button"
-        onclick="navigate(event)" value="Set Up Duels"/>
+      <div class="grid-container two-columns">
+        <input id="tournament-overview" type="button"
+          onclick="navigate(event)" value="Overview"/>
+        <input id="setup-duels" type="button"
+          onclick="navigate(event)" value="Set Up Duels"/>
+      </div>
     </div>
     <div class="grid-container one-column">
       <h2>Administration</h2>
-      <input id="delete-duel" type="button"
-        onclick="navigate(event)" value="Delete Duel"/>
-      <input id="reset-duel" type="button"
-        onclick="navigate(event)" value="Reset Duel"/>
-      <input id="adjust-score" type="button"
-        onclick="navigate(event)" value="Adjust Score"/>
+      <div class="grid-container two-columns">
+        <input id="delete-duel" type="button"
+          onclick="navigate(event)" value="Delete Duel"/>
+        <input id="reset-duel" type="button"
+          onclick="navigate(event)" value="Reset Duel"/>
+        <input id="adjust-score" type="button"
+          onclick="navigate(event)" value="Adjust Score"/>
+        </div>
     </div>
     <div class="grid-container one-column">
       <h2>Login/Logout</h2>
-      <input id="login" type="button"
-        onclick="navigate(event)" value="Login"/>
-      <input id="logout" type="button"
-        onclick="doLogout()" value="Logout"/>
+      <div class="grid-container two-columns">
+        <input id="login" type="button"
+          onclick="navigate(event)" value="Login"/>
+        <input id="logout" type="button"
+          onclick="doLogout()" value="Logout"/>
+      </div>
     </div>
   </div>
   <script type="text/javascript">
