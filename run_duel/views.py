@@ -520,13 +520,6 @@ def delete_duel_page(request):
 
 
 def get_all_duels_api(request, **kwargs):
-    if not can_administer_duels_all(request):
-        return JsonResponse(
-            {
-                "success": False,
-                "reason": "You do not have permission to perform this operation"
-            }
-        )
     tournament_id = kwargs["id"]
     duels = get_all_duels_for_tournament(tournament_id)
     duel_details = {
