@@ -24,5 +24,6 @@ urlpatterns = [
     path('tournament/', include('tournament.urls')),
     path('score_keeper/login', views.login_page, name="login"),
     path('score_keeper/api/v1/login', views.login_api, name="login_api"),
-    path('score_keeper/api/v1/logout', views.logout_api, name="logout_api")
+    path('score_keeper/api/v1/logout', views.logout_api, name="logout_api"),
+    path('score_keeper/main', views.main_page, name="main")
 ]

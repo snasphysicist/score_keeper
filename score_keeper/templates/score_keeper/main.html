@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style type="text/css">
+    body, h1, h2, p, input, div, select {
+      background-color: black;
+      color: white;
+      margin: 5px;
+      text-align: center;
+      font-family: sans-serif;
+    }
+    input, select {
+      min-width: 70%;
+      min-height: 50px;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    option {
+      text-align: center;
+    }
+    .grid-container{
+      display: grid;
+      justify-content: center;
+      width: 90vw;
+      margin: auto;
+    }
+    .one-column {
+      grid-template-columns: 1fr;
+    }
+    .five-columns {
+      grid-template-columns: 1fr 0.4fr 0.4fr 1fr 0.4fr;
+    }
+    .three-columns {
+      grid-template-columns: 1fr 0.5fr 0.5fr;
+    }
+    .four-columns {
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      align-items: center;
+    }
+  </style>
+  <h1>Acolyte Tournament</h1>
+</head>
+<body>
+  <div class="grid-container two-columns">
+    <div class="grid-container one-column">
+      <h2>Duel</h2>
+      <input id="current-duel" type="button"
+        onclick="navigate(event)" value="Current"/>
+      <input id="new-duel" type="button"
+        onclick="navigate(event)" value="New"/>
+    </div>
+    <div class="grid-container one-column">
+      <h2>Tournament</h2>
+      <input id="tournament-overview" type="button"
+        onclick="navigate(event)" value="Overview"/>
+      <input id="setup-duels" type="button"
+        onclick="navigate(event)" value="Set Up Duels"/>
+    </div>
+  </div>
+  <script type="text/javascript">
+    const LINKS = {
+      "current-duel": "/run_duel/current",
+      "new-duel": "/run_duel/new",
+      "tournament-overview": "/tournament/overview",
+      "setup-duels": "/tournament/setup_duels"
+    }
+    function navigate(event) {
+      let to = event.target.id;
+      let url = LINKS[to];
+      if (url) {
+        window.location.href = url;
+      }
+    }
+  </script>
+</body>
+</html>

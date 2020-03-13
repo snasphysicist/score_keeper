@@ -17,7 +17,7 @@ CURRENT_TOURNAMENT = 3
 # Render new duel page
 def new_duel(request):
     if not can_start_duels(request):
-        return redirect('/run_duel/current')
+        return redirect('/score_keeper/login')
     template = loader.get_template('run_duel/new.html')
     context = {}
     return HttpResponse(template.render(context, request))

@@ -10,7 +10,7 @@ from django.template import loader
 def login_page(request):
     # If user already logged in, redirect
     if request.user.is_authenticated:
-        return redirect('/tournament/overview')
+        return redirect('/score_keeper/main')
     else:
         template = loader.get_template("score_keeper/login.html")
         context = {}
@@ -46,3 +46,9 @@ def login_api(request):
 def logout_api(request):
     logout(request)
     return redirect('login')
+
+
+def main_page(request):
+    template = loader.get_template("score_keeper/main.html")
+    context = {}
+    return HttpResponse(template.render(context, request))
