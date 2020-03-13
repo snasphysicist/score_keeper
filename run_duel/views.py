@@ -468,9 +468,9 @@ def calculate_total_score(events):
             elif "BODY" in event.type:
                 value = 3
             elif "ADJUST-UP" in event.type:
-                value = 1
-            elif "ADJUST-DOWN" in event.type:
                 value = -1
+            elif "ADJUST-DOWN" in event.type:
+                value = +1
             if "OPPONENT-1" in event.type:
                 round_scores["opponent1"] -= value
             elif "OPPONENT-2" in event.type:
@@ -537,7 +537,11 @@ def get_all_duels_api(request, **kwargs):
             {
                 "id": duel.id,
                 "opponent1": duel.opponent1.battle_name,
-                "opponent2": duel.opponent2.battle_name
+                "opponent2": duel.opponent2.battle_name,
+                "groupid": duel.group.id,
+                "groupnumber": duel.group.number,
+                "stageid": duel.group.stage.id,
+                "stagenumber": duel.group.stage.number,
             }
         )
     duel_details["success"] = True
@@ -636,7 +640,7 @@ def get_all_events(duel):
 
 
 def adjust_score_page(request):
-    if not can_administer_duels_all(request) or can_record_score(request):
+    if not (can_administer_duels_all(request) or can_record_score(request)):
         return redirect('/run_duel/current')
     template = loader.get_template('run_duel/administration/adjust_score.html')
     context = {}
@@ -644,7 +648,7 @@ def adjust_score_page(request):
 
 
 def adjust_score_api(request):
-    if not can_administer_duels_all(request) or can_record_score(request):
+    if not (can_administer_duels_all(request) or can_record_score(request)):
         return JsonResponse(
             {
                 "success": False,
@@ -654,6 +658,7 @@ def adjust_score_api(request):
     data = json.loads(
         request.body.decode("utf-8")
     )
+    print(data)
     the_round = list(Round.objects.filter(id__exact=data["roundid"]))
     if len(the_round) == 0:
         return JsonResponse(
@@ -662,7 +667,30 @@ def adjust_score_api(request):
                 "reason": "Could not find specified round"
             }
         )
-    adjustment_type = data["adjustmenttype"]
+    the_round = the_round[0]
+    adjustment_type = ""
+    if data["opponent"] == 1:
+        adjustment_type = "OPPONENT-1-ADJUST-"
+    elif data["opponent"] == 2:
+        adjustment_type = "OPPONENT-2-ADJUST-"
+    else:
+        return JsonResponse(
+            {
+                "success": False,
+                "reason": "Opponent must be 1 or 2"
+            }
+        )
+    if data["action"] == "UP":
+        adjustment_type += "UP"
+    elif data["action"] == "DOWN":
+        adjustment_type += "DOWN"
+    else:
+        return JsonResponse(
+            {
+                "success": False,
+                "reason": "Adjustment must be UP or DOWN"
+            }
+        )
     adjustment = FightEvent(
         time=datetime.datetime.now(),
         type=adjustment_type,
@@ -677,7 +705,7 @@ def adjust_score_api(request):
 
 
 def single_duel_data_api(request, **kwargs):
-    duel_id = kwargs["duelid"]
+    duel_id = kwargs["id"]
     duel = list(Duel.objects.filter(id__exact=duel_id))
     if len(duel) == 0:
         return JsonResponse(

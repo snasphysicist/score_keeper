@@ -42,33 +42,39 @@
       <div class="grid-container four-columns">
         <p>Stage</p>
         <select v-model="selectedstage" onchange="getDuelsForGroup()">
-          <option value="" disabled selected style="display:none;">Default</option>
-          <option v-for="stage in stages" :stageid="stage.id">{% verbatim %}{{ stage.number }}{% endverbatim %}</option>
+          <option value="" disabled selected style="display:none;"></option>
+          <option v-for="stage in allStages" :stageid="stage.id">{% verbatim %}{{ stage.number }}{% endverbatim %}</option>
         </select>
         <p>Group</p>
         <select v-model="selectedgroup" onchange="setTimeout(getDuelsForGroup, 100);">
-          <option value="" disabled selected style="display:none;">Default</option>
-          <option v-for="group in groups" :groupid="group.id">{% verbatim %}{{ group.number }}{% endverbatim %}</option>
+          <option value="" disabled selected style="display:none;"></option>
+          <option v-for="group in stageGroups" :groupid="group.id">{% verbatim %}{{ group.number }}{% endverbatim %}</option>
         </select>
         <p>Duel</p>
-        <select v-model="selectedduel">
-          <option value="" disabled selected style="display:none;">Default</option>
+        <select v-model="selectedduel" id="round-select" onchange="setTimeout(fetchDuelScores, 100);">
+          <option value="" disabled selected style="display:none;"></option>
           <option v-for="duel in groupDuels" :duelid="duel.id">{% verbatim %}{{ duel.opponent1 }} vs {{ duel.opponent2 }}{% endverbatim %}</option>
         </select>
         <p>Round</p>
-        <select v-model="selectedround" onchange="fetchDuelScores">
-          <option value="" disabled selected style="display:none;">Default</option>
+        <select v-model="selectedround">
+          <option value="" disabled selected style="display:none;"></option>
           <option v-for="round in allduelrounds" :roundid="round.round_id">{% verbatim %}{{ round.round_number }}{% endverbatim %}</option>
         </select>
+      </div>
+      <div type="grid-container">
         <p>Score</p>
         <p>{% verbatim %}{{ formattedRoundScore }}{% endverbatim %}</p>
         <p>Adjust</p>
-        <p>{% verbatim %}{{ duel.opponent1 }}{% endverbatim %}</p>
-        <input id="opponent1Up" type="button" value="HP ++"/>
-        <input id="opponent1Down" type="button" value="HP --"/>
-        <p>{% verbatim %}{{ duel.opponent2 }}{% endverbatim %}</p>
-        <input id="opponent2Up" type="button" value="HP ++"/>
-        <input id="opponent2Down" type="button" value="HP --"/>
+        <p>{% verbatim %}{{ alldueldata.opponent1 ? alldueldata.opponent1 : "---" }}{% endverbatim %}</p>
+        <input id="opponent-1-up" type="button"
+          onclick="doScoreAdjustment(event)" value="HP ++"/>
+        <input id="opponent-1-down" type="button"
+          onclick="doScoreAdjustment(event)" value="HP --"/>
+        <p>{% verbatim %}{{ alldueldata.opponent2 ? alldueldata.opponent2 : "---" }}{% endverbatim %}</p>
+        <input id="opponent-2-up" type="button"
+          onclick="doScoreAdjustment(event)" value="HP ++"/>
+        <input id="opponent-2-down" type="button"
+          onclick="doScoreAdjustment(event)" value="HP --"/>
       </div>
     </div>
     <script type="text/javascript">
@@ -78,6 +84,7 @@
           selectedstage: "",
           selectedgroup: "",
           selectedduel: "",
+          selectedround: "",
           tournamentduels: [],
           alldueldata: {},
           allduelrounds: []
@@ -151,6 +158,23 @@
               duels.push(duel);
             }
             return duels;
+          },
+          selectedRoundData: function() {
+            let roundNumber = this.selectedround;
+            for (let i = 0; i < this.allduelrounds.length; i++) {
+              let nextRound = this.allduelrounds[i];
+              if (nextRound["round_number"] == roundNumber) {
+                return nextRound;
+              }
+            }
+            return [];
+          },
+          formattedRoundScore: function() {
+            if (this.selectedRoundData["score"]) {
+              return this.selectedRoundData["score"]["opponent1"] + " : " + this.selectedRoundData["score"]["opponent2"];
+            } else {
+              return "---";
+            }
           }
         }
       });
@@ -185,7 +209,14 @@
     </script>
     <script>
       function fetchDuelScores() {
-        let duelId = vueApplication.selectedduel;
+        let dueltext = vueApplication.selectedduel;
+        let options = document.getElementById("round-select").children;
+        let duelId;
+        for (let i = 0; i < options.length; i++) {
+          if (options[i].innerHTML == dueltext) {
+            duelId = options[i].getAttribute("duelid");
+          }
+        }
         const GET_URL = "/run_duel/api/v1/duel/<0>/score";
         // Insert ID into url
         let url = GET_URL.replace(
@@ -210,6 +241,77 @@
           }
         })
       }
+    </script>
+    <script type="text/javascript">
+      function getDuelsForGroup() {
+        let groupId = vueApplication.selectedGroupId;
+        console.log(groupId);
+        // Exit if group id invalid
+        if (groupId == null) {
+          return;
+        }
+        const GET_URL = "/tournament/api/v1/<0>/overview";
+        // Insert ID into url
+        let url = GET_URL.replace(
+          "<0>",
+          groupId
+        );
+        fetch(
+          url,
+          {
+            method: "GET",
+          }
+        ).then((response) => {
+          if (response.ok) {
+            return response.json();
+          }
+        }).then((json) => {
+          if (json["success"]) {
+            vueApplication.duels = json["duels"];
+            vueApplication.participants = json["participants"];
+          }
+        })
+      }
+    </script>
+    <script type="text/javascript">
+      function doScoreAdjustment(event) {
+        let clickedId = event.target.id;
+        let whom;
+        let action;
+        if (clickedId.includes("1")) {
+          opponent = 1;
+        } else {
+          opponent = 2;
+        }
+        if (clickedId.includes("up")) {
+          action = "UP";
+        } else {
+          action = "DOWN";
+        }
+        let duelId = vueApplication.alldueldata["duel_id"];
+        let roundId = vueApplication.selectedRoundData["round_id"];
+        const POST_URL = "/run_duel/api/v1/duel/adjust";
+        data = {
+          duelid: duelId,
+          action: action,
+          opponent: opponent,
+          roundid: roundId,
+        }
+        fetch(
+          POST_URL,
+          {
+            method: "POST",
+            body: JSON.stringify(data)
+          }
+        ).then((response) => {
+          if (response.ok) {
+            return response.json();
+          }
+        }).then((json) => {
+          if (json["success"]) {
+            fetchDuelScores();
+          }
+        })
       }
     </script>
   </body>
