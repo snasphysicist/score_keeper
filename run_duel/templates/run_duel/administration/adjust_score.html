@@ -40,37 +40,37 @@
     <div id="vue">
       <h1>Adjust Duel Score</h1>
       <div class="grid-container four-columns">
-        <p>Stage</p>
+        <h2>Stage</h2>
         <select v-model="selectedstage" onchange="getDuelsForGroup()">
           <option value="" disabled selected style="display:none;"></option>
           <option v-for="stage in allStages" :stageid="stage.id">{% verbatim %}{{ stage.number }}{% endverbatim %}</option>
         </select>
-        <p>Group</p>
+        <h2>Group</h2>
         <select v-model="selectedgroup" onchange="setTimeout(getDuelsForGroup, 100);">
           <option value="" disabled selected style="display:none;"></option>
           <option v-for="group in stageGroups" :groupid="group.id">{% verbatim %}{{ group.number }}{% endverbatim %}</option>
         </select>
-        <p>Duel</p>
+        <h2>Duel</h2>
         <select v-model="selectedduel" id="round-select" onchange="setTimeout(fetchDuelScores, 100);">
           <option value="" disabled selected style="display:none;"></option>
           <option v-for="duel in groupDuels" :duelid="duel.id">{% verbatim %}{{ duel.opponent1 }} vs {{ duel.opponent2 }}{% endverbatim %}</option>
         </select>
-        <p>Round</p>
+        <h2>Round</h2>
         <select v-model="selectedround">
           <option value="" disabled selected style="display:none;"></option>
           <option v-for="round in allduelrounds" :roundid="round.round_id">{% verbatim %}{{ round.round_number }}{% endverbatim %}</option>
         </select>
       </div>
       <div type="grid-container">
-        <p>Score</p>
+        <h2>Score</h2>
         <p>{% verbatim %}{{ formattedRoundScore }}{% endverbatim %}</p>
-        <p>Adjust</p>
-        <p>{% verbatim %}{{ alldueldata.opponent1 ? alldueldata.opponent1 : "---" }}{% endverbatim %}</p>
+        <h2>Adjust</h2>
+        <h3>{% verbatim %}{{ alldueldata.opponent1 ? alldueldata.opponent1 : "---" }}{% endverbatim %}</h3>
         <input id="opponent-1-up" type="button"
           onclick="doScoreAdjustment(event)" value="HP ++"/>
         <input id="opponent-1-down" type="button"
           onclick="doScoreAdjustment(event)" value="HP --"/>
-        <p>{% verbatim %}{{ alldueldata.opponent2 ? alldueldata.opponent2 : "---" }}{% endverbatim %}</p>
+        <h3>{% verbatim %}{{ alldueldata.opponent2 ? alldueldata.opponent2 : "---" }}{% endverbatim %}</h3>
         <input id="opponent-2-up" type="button"
           onclick="doScoreAdjustment(event)" value="HP ++"/>
         <input id="opponent-2-down" type="button"
