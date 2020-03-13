@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Set Up Duels</title>  
+  <title>Set Up Duels</title>
   <meta charset="UTF-8">
   <style type="text/css">
     body, h1, h2, p, input, div {
@@ -33,6 +33,9 @@
     }
     .two-columns-thirds {
       grid-template-columns: 1fr 0.5fr;
+    }
+    .three-columns {
+      grid-template-columns: 1fr 0.2fr 1fr;
     }
     .five-columns {
       grid-template-columns: 1fr 0.2fr 0.2fr 0.2fr 1fr;
@@ -78,7 +81,7 @@
         <input id="generate" type="button"
           onclick="generateDuels()" value="Generate Duels" disabled=true/>
         <h2>All Duels</h2>
-        <div class="grid-container five-columns">
+        <div class="grid-container three-columns">
           <template v-for="duel in allduels">
             <p>{{ duel.opponent1["battlename"] }}</p>
             <p>vs</p>
