@@ -68,6 +68,13 @@
       <input id="adjust-score" type="button"
         onclick="navigate(event)" value="Adjust Score"/>
     </div>
+    <div class="grid-container one-column">
+      <h2>Login/Logout</h2>
+      <input id="login" type="button"
+        onclick="navigate(event)" value="Login"/>
+      <input id="logout" type="button"
+        onclick="doLogout()" value="Logout"/>
+    </div>
   </div>
   <script type="text/javascript">
     const LINKS = {
@@ -77,7 +84,8 @@
       "setup-duels": "/tournament/setup_duels",
       "delete-duel": "/run_duel/administration/delete_duel",
       "reset-duel": "/run_duel/administration/reset_duel",
-      "adjust-score": "/run_duel/administration/adjust_score"
+      "adjust-score": "/run_duel/administration/adjust_score",
+      "login": "/score_keeper/login"
     }
     function navigate(event) {
       let to = event.target.id;
@@ -85,6 +93,21 @@
       if (url) {
         window.location.href = url;
       }
+    }
+    function doLogout() {
+      const DELETE_URL = "/score_keeper/api/v1/logout";
+      fetch(
+        DELETE_URL,
+        {
+          method: "DELETE",
+        }
+      ).then((response) => {
+          if(response.ok) {
+            // Handle success
+          } else {
+            // Handle error
+          }
+      })
     }
   </script>
 </body>
