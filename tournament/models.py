@@ -20,7 +20,7 @@ class Tournament(models.Model):
         return json.dumps(
             self.dictionary()
         )
-    
+
 
 # Stage of a tournament
 class Stage(models.Model):
@@ -35,6 +35,18 @@ class Stage(models.Model):
         on_delete=models.CASCADE,
         default=0
     )
+
+    def dictionary(self):
+        return {
+            "number": self.number,
+            "format": self.stage_format,
+            "tournament": self.tournament.json()
+        }
+
+    def json(self):
+        return json.dumps(
+            self.dictionary()
+        )
 
 
 class Group(models.Model):
