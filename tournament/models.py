@@ -58,6 +58,13 @@ class Group(models.Model):
         default=0
     )
 
+    def dictionary(self):
+        return {
+            "number": self.number,
+            "contestant_number": self.contestant_number,
+            "stage": self.stage.json()
+        }
+
 
 class Participant(models.Model):
     battle_name = models.CharField(max_length=50)
