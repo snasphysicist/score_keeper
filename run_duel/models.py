@@ -1,4 +1,6 @@
 
+import json
+
 from django.db import models
 
 from tournament.models import Participant
@@ -26,6 +28,20 @@ class Duel(models.Model):
         on_delete=models.SET_NULL,
         default=None
     )
+
+    def dictionary(self):
+        return {
+            "current": self.current,
+            "opponent1": self.opponent1.json(),
+            "opponent2": self.opponent2.json(),
+            "number": self.sequence_number,
+            "group": self.group.json()
+        }
+
+    def as_json(self):
+        return json.dumps(
+            self.dictionary()
+        )
 
 
 # Round object
