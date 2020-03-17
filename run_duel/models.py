@@ -80,3 +80,14 @@ class FightEvent(models.Model):
     time = models.DateTimeField('Occurred At')
     type = models.CharField(max_length=20)
 
+    def dictionary(self):
+        return {
+            "round": self.round.json(),
+            "time": self.time,
+            "type": self.type
+        }
+
+    def json(self):
+        return json.dumps(
+            self.dictionary()
+        )
