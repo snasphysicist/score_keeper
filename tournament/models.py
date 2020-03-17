@@ -4,6 +4,8 @@ import json
 from django.db import models
 from django.utils import timezone
 
+from run_duel.models import Duel
+
 
 # Tournament model
 class Tournament(models.Model):
@@ -20,6 +22,20 @@ class Tournament(models.Model):
         return json.dumps(
             self.dictionary()
         )
+
+    def all_stages(self):
+        return list(Stage.objects.filter(tournament__exact=self))
+
+    def all_groups(self):
+        groups = list()
+        for stage in self.all_stages():
+            groups += list(Group.objects.filter(stage__exact=stage))
+        return groups
+
+    def all_duels(self):
+        duels = list()
+        for group in self.all_groups():
+            duels += list(Duel.objects.filter(group__exact=group))
 
 
 # Stage of a tournament
