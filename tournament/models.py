@@ -1,4 +1,6 @@
 
+import json
+
 from django.db import models
 from django.utils import timezone
 
@@ -8,6 +10,17 @@ class Tournament(models.Model):
     name = models.CharField(max_length=100)
     date = models.DateField(default=timezone.now)
 
+    def dictionary(self):
+        return {
+            "name": self.name,
+            "date": self.date
+        }
+
+    def json(self):
+        return json.dumps(
+            self.dictionary()
+        )
+    
 
 # Stage of a tournament
 class Stage(models.Model):
