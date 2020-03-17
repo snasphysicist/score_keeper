@@ -38,7 +38,7 @@ class Duel(models.Model):
             "group": self.group.json()
         }
 
-    def as_json(self):
+    def json(self):
         return json.dumps(
             self.dictionary()
         )
@@ -56,6 +56,18 @@ class Round(models.Model):
         max_length=20,
         default="NOT STARTED"   # RUNNING, PAUSED, FINISHED
     )
+
+    def dictionary(self):
+        return {
+            "duel": self.duel.json(),
+            "number": self.round_number,
+            "status": self.status
+        }
+
+    def json(self):
+        return json.dumps(
+            self.dictionary()
+        )
 
 
 # Event object
