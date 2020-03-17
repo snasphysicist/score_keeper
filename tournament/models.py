@@ -13,7 +13,7 @@ class Tournament(models.Model):
     def dictionary(self):
         return {
             "name": self.name,
-            "date": self.date
+            "date": str(self.date)
         }
 
     def json(self):
