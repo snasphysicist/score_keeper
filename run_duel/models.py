@@ -1,4 +1,6 @@
 
+import json
+
 from django.db import models
 
 from tournament.models import Participant
@@ -27,6 +29,20 @@ class Duel(models.Model):
         default=None
     )
 
+    def dictionary(self):
+        return {
+            "current": self.current,
+            "opponent1": self.opponent1.json(),
+            "opponent2": self.opponent2.json(),
+            "number": self.sequence_number,
+            "group": self.group.json()
+        }
+
+    def json(self):
+        return json.dumps(
+            self.dictionary()
+        )
+
 
 # Round object
 class Round(models.Model):
@@ -41,6 +57,18 @@ class Round(models.Model):
         default="NOT STARTED"   # RUNNING, PAUSED, FINISHED
     )
 
+    def dictionary(self):
+        return {
+            "duel": self.duel.json(),
+            "number": self.round_number,
+            "status": self.status
+        }
+
+    def json(self):
+        return json.dumps(
+            self.dictionary()
+        )
+
 
 # Event object
 class FightEvent(models.Model):
@@ -52,3 +80,14 @@ class FightEvent(models.Model):
     time = models.DateTimeField('Occurred At')
     type = models.CharField(max_length=20)
 
+    def dictionary(self):
+        return {
+            "round": self.round.json(),
+            "time": self.time,
+            "type": self.type
+        }
+
+    def json(self):
+        return json.dumps(
+            self.dictionary()
+        )

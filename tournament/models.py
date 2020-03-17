@@ -1,4 +1,6 @@
 
+import json
+
 from django.db import models
 from django.utils import timezone
 
@@ -7,6 +9,17 @@ from django.utils import timezone
 class Tournament(models.Model):
     name = models.CharField(max_length=100)
     date = models.DateField(default=timezone.now)
+
+    def dictionary(self):
+        return {
+            "name": self.name,
+            "date": self.date
+        }
+
+    def json(self):
+        return json.dumps(
+            self.dictionary()
+        )
 
 
 # Stage of a tournament
@@ -23,6 +36,18 @@ class Stage(models.Model):
         default=0
     )
 
+    def dictionary(self):
+        return {
+            "number": self.number,
+            "format": self.stage_format,
+            "tournament": self.tournament.json()
+        }
+
+    def json(self):
+        return json.dumps(
+            self.dictionary()
+        )
+
 
 class Group(models.Model):
     number = models.IntegerField(default=0)
@@ -33,9 +58,33 @@ class Group(models.Model):
         default=0
     )
 
+    def dictionary(self):
+        return {
+            "number": self.number,
+            "contestant_number": self.contestant_number,
+            "stage": self.stage.json()
+        }
+
+    def json(self):
+        return json.dumps(
+            self.dictionary()
+        )
+
 
 class Participant(models.Model):
     battle_name = models.CharField(max_length=50)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     tournaments = models.ManyToManyField(Tournament)
+
+    def dictionary(self):
+        return {
+            "battle_name": self.battle_name,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+        }
+
+    def json(self):
+        return json.dumps(
+            self.dictionary()
+        )
