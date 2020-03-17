@@ -76,3 +76,15 @@ class Participant(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     tournaments = models.ManyToManyField(Tournament)
+
+    def dictionary(self):
+        return {
+            "battle_name": self.battle_name,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+        }
+
+    def json(self):
+        return json.dumps(
+            self.dictionary()
+        )
