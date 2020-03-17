@@ -65,6 +65,11 @@ class Group(models.Model):
             "stage": self.stage.json()
         }
 
+    def json(self):
+        return json.dumps(
+            self.dictionary()
+        )
+
 
 class Participant(models.Model):
     battle_name = models.CharField(max_length=50)
