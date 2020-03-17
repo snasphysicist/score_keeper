@@ -3,8 +3,6 @@ import json
 
 from django.db import models
 
-from tournament.models import Participant
-
 
 # Duel object
 class Duel(models.Model):
@@ -43,6 +41,15 @@ class Duel(models.Model):
             self.dictionary()
         )
 
+    def all_rounds(self):
+        return list(Round.objects.filter(duel__exact=self))
+
+    def all_events(self):
+        events = list()
+        for a_round in self.all_rounds():
+            events += a_round.all_events()
+        return events
+
 
 # Round object
 class Round(models.Model):
@@ -68,6 +75,9 @@ class Round(models.Model):
         return json.dumps(
             self.dictionary()
         )
+
+    def all_events(self):
+        return list(FightEvent.objects.filter(round__exact=self))
 
 
 # Event object
