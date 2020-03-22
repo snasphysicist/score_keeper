@@ -24,13 +24,9 @@ def tournament_overview(request):
 def overview_api(request, **kwargs):
     # Group id comes from url
     group_id = kwargs["id"]
-    group = list(
-        Group.objects.filter(id__exact=group_id)
-    )[0]
+    group = Group.by_id(group_id)
     # Get duels
-    duels = list(
-        Duel.objects.filter(group__exact=group_id)
-    )
+    duels = group.all_duels()
     # Get data for all duels
     # and calculate overall scores
     duels_processed = []
@@ -105,18 +101,18 @@ def setup_duels_groups_participants_api(request):
         })
     # Get group and participant details
     tournament = list(Tournament.objects.all())[0]
-    stages = list(Stage.objects.filter(tournament__exact=tournament))
+    stages = tournament.all_stages()
     groups = list()
     current_stage = None
     for stage in stages:
-        groups += list(Group.objects.filter(stage__exact=stage))
+        groups += stage.all_groups()
         duels = list()
         for group in groups:
-            duels += list(Duel.objects.filter(group__exact=group))
+            duels += group.all_duels()
         if len(duels) == 0:
             current_stage = stage
             break
-    participants = list(Participant.objects.filter(tournaments=tournament))
+    participants = tournament.all_participants()
     context = {}
     context["currentstage"] = {
         "id": current_stage.id,
@@ -186,26 +182,20 @@ def generate_duels_api(request):
 def stages_groups_api(request, **kwargs):
     # Get tournament from id in url
     tournament_id = kwargs["id"]
-    tournament = list(
-        Tournament.objects.filter(id__exact=tournament_id)
-    )[0]
+    tournament = Tournament.by_id(tournament_id)
     # Assemble data into format front end expects
     stagesgroups = {
         "stages": [],
     }
     # Get stages and groups for stages
-    stages = list(
-        Stage.objects.filter(tournament__exact=tournament)
-    )
+    stages = tournament.all_stages()
     for stage in stages:
         current_stage = {
             "id": stage.id,
             "number": stage.number,
             "groups": []
         }
-        groups = list(
-            Group.objects.filter(stage__exact=stage)
-        )
+        groups = stage.all_groups()
         for group in groups:
             current_stage["groups"].append(
                 {
