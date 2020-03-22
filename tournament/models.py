@@ -37,6 +37,16 @@ class Tournament(models.Model):
         for group in self.all_groups():
             duels += list(Duel.objects.filter(group__exact=group))
 
+    def all_participants(self):
+        return list(Participant.objects.filter(tournaments=self))
+
+    def by_id(self, identifier):
+        results = list(Tournament.objects.filter(id__exact=identifier))
+        if len(results) > 0:
+            return results[0]
+        else:
+            return None
+
 
 # Stage of a tournament
 class Stage(models.Model):
@@ -64,6 +74,9 @@ class Stage(models.Model):
             self.dictionary()
         )
 
+    def all_groups(self):
+        return list(Group.objects.filter(stage__exact=self))
+
 
 class Group(models.Model):
     number = models.IntegerField(default=0)
@@ -85,6 +98,16 @@ class Group(models.Model):
         return json.dumps(
             self.dictionary()
         )
+
+    def by_id(self, identifier):
+        group = list(Group.objects.filter(id__exact=identifier))
+        if len(group) > 0:
+            return group[0]
+        else:
+            return None
+
+    def all_duels(self):
+        return list(Duel.objects.filter(group__exact=self))
 
 
 class Participant(models.Model):
