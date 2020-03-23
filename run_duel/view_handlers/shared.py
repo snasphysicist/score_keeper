@@ -44,7 +44,9 @@ def tournament_all_duels(tournament_id):
             )
         # Now we have all stage info
         # push to tournament's stages array
-        tournament_info["stages"].append(stage)
+        tournament_info["stages"].append(
+            stage_info
+        )
     return tournament_info
 
 
