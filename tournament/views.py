@@ -6,7 +6,6 @@ from django.shortcuts import redirect
 from django.template import loader
 
 from run_duel.models import Duel, Round
-from run_duel.views import calculate_duel_data
 from tournament.models import Group, Participant, Stage, Tournament
 
 CURRENT_TOURNAMENT = 3
@@ -31,7 +30,8 @@ def overview_api(request, **kwargs):
     # and calculate overall scores
     duels_processed = []
     for duel in duels:
-        duel_data_raw = calculate_duel_data(duel)
+        # TODO: refactor, not use this
+        # duel_data_raw = calculate_duel_data(duel)
         duel_data_processed = {}
         total_score = {
             "opponent1": 0,

@@ -7,7 +7,7 @@ CURRENT_TOURNAMENT = 3
 # Get all duels' information
 # for a given tournament
 def tournament_all_duels(tournament_id):
-    tournament = Tournament.by_id(tournament_id)
+    tournament = Tournament.by_id(None, tournament_id)
     # Empty info if tournament doesn't exist
     if tournament is None:
         return {}
@@ -44,7 +44,9 @@ def tournament_all_duels(tournament_id):
             )
         # Now we have all stage info
         # push to tournament's stages array
-        tournament_info["stages"].append(stage)
+        tournament_info["stages"].append(
+            stage_info
+        )
     return tournament_info
 
 

@@ -16,6 +16,7 @@ class FightEvent(models.Model):
 
     def dictionary(self):
         return {
+            "id": self.id,
             "round": self.round.json(),
             "time": str(self.time),
             "type": self.type
