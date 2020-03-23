@@ -100,7 +100,7 @@ def delete_duel_page(request):
 
 def get_all_duels_api(request, **kwargs):
     tournament_id = kwargs["id"]
-    return get_all_duels_api_handler(request, tournament_id)
+    return get_all_duels_api_handler(tournament_id)
 
 
 def delete_duel_api(request):
