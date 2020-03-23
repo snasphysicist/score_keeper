@@ -9,9 +9,9 @@ from django.template import loader
 
 from run_duel.models import Duel, FightEvent, Round
 
-from .views.get_all_duels_api import handle as get_all_duels_api_handler
-from .views.new_event_api import handle as new_event_api_handler
-from .views.pending_duel_api import handle as pending_duel_api_handler
+from .view_handlers.get_all_duels_api import handle as get_all_duels_api_handler
+from .view_handlers.new_event_api import handle as new_event_api_handler
+from .view_handlers.pending_duel_api import handle as pending_duel_api_handler
 
 CURRENT_TOURNAMENT = 3
 
