@@ -1,0 +1,16 @@
+body, h1, h2, p, input, div, select {
+  background-color: black;
+  color: white;
+  margin: 5px;
+  text-align: center;
+  font-family: sans-serif;
+}
+input, select {
+  min-width: 70%;
+  min-height: 50px;
+  font-family: sans-serif;
+  text-align: center;
+}
+option {
+  text-align: center;
+}
