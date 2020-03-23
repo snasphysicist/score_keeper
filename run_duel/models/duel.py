@@ -31,6 +31,7 @@ class Duel(models.Model):
 
     def dictionary(self):
         return {
+            "id": self.id,
             "current": self.current,
             "opponent1": self.opponent1.json(),
             "opponent2": self.opponent2.json(),

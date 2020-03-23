@@ -26,6 +26,7 @@ class Round(models.Model):
     def dictionary(self):
         events = self.all_events()
         return {
+            "id": self.id,
             "duel": self.duel.json(),
             "number": self.round_number,
             "status": determine_status(events),
