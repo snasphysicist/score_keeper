@@ -11,11 +11,11 @@
     <div>
       <p>Stage</p>
       <select v-model="selectedstage">
-        <option v-for="stage in allStages" :stageid="stage.id">{% verbatim %}{{ stage.number }}{% endverbatim %}</option>
+        <option v-for="stage in allStages" :stageid="stage.stage.id">{% verbatim %}{{ stage.stage.number }}{% endverbatim %}</option>
       </select>
       <p>Group</p>
       <select v-model="selectedgroup">
-        <option v-for="group in stageGroups" :groupid="group.id">{% verbatim %}{{ group.number }}{% endverbatim %}</option>
+        <option v-for="group in stageGroups" :groupid="group.group.id">{% verbatim %}{{ group.group.number }}{% endverbatim %}</option>
       </select>
       <p>Duel</p>
       <select v-model="selectedduel">

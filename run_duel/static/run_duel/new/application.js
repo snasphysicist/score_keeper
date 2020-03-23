@@ -17,14 +17,17 @@ let vueApplication = new Vue({
     stageGroups: function() {
       // Get all groups for the selected stage
       if (!this.pendingduels["stages"]) {
+        console.log("1");
         return [];
       }
       let stage = this.pendingduels["stages"].filter(function(stage) {
         return stage["stage"]["number"] == this.selectedstage;
       });
       if (stage.length == 0) {
+        console.log("2");
         return [];
       }
+      console.log("3");
       return stage[0]["groups"];
     },
     groupDuels: function() {
@@ -62,16 +65,16 @@ let vueApplication = new Vue({
  * duels, suggest which should be next
  */
 function setSuggestedNextDuel() {
-  if (!pendingduels["stage"]) {
+  if (!vueApplication.pendingduels["stages"]) {
     return;
   }
   // Get stages/groups with duels
-  let pendingStages = this.pendingduels["stages"].filter(function(stage) {
+  let pendingStages = vueApplication.pendingduels["stages"].filter(function(stage) {
     let groups = stage["groups"].filter(function(group) {
       return group["duels"].length > 0;
     })
     return groups.length > 0;
-  })
+  });
   if (pendingStages[0]) {
     let suggestedStage = pendingStages[0];
     let suggestedGroup = pendingStages[0]["groups"][0];
@@ -140,3 +143,4 @@ function startNewDuel() {
 }
 
 fetchPendingDuels();
+setSuggestedNextDuel();
