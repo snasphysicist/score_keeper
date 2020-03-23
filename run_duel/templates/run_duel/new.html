@@ -62,38 +62,43 @@
         },
         stageGroups: function() {
           // Get all groups for the selected stage
-          let stage;
-          if (pendingduels["stages"]) {
-            stage = pendingduels["stages"].filter(function(stage) {
-              stage["stage"]["number"] == this.selectedstage;
-            })
-          } else {
+          if (!pendingduels["stages"]) {
             return [];
           }
-          if (stage.length > 0) {
-            return stage[0]["groups"];
-          } else {
+          let stage = pendingduels["stages"].filter(function(stage) {
+            return stage["stage"]["number"] == this.selectedstage;
+          });
+          if (stage.length == 0) {
             return [];
           }
+          return stage[0]["groups"];
         },
         groupDuels: function() {
-          let duels = [];
-          let stagenumber = this.selectedstage;
-          let groupnumber = this.selectedgroup;
-          for (let i = 0; i < this.pendingduels.length; i++) {
-            let duel = this.pendingduels[i];
-            // Immediately stop if this duel is not even in the right stage
-            if (duel["stagenumber"] != stagenumber) {
-              continue;
-            }
-            // Stop this iteration if this duel is not in the right group
-            if (duel["groupnumber"] != groupnumber) {
-              continue;
-            }
-            // If we made it here, this duel is in the stage & group
-            duels.push(duel);
+          if (!pendingduels["stages"]) {
+            return [];
           }
-          return duels;
+          /*
+           * Filter down to selected stage
+           * Map to extract groups
+           * Will then have array in array [[group1, group2, ...]]
+           * So extract first element
+           */
+          let groups = pendingduels["stages"].filter(function(stage) {
+            return stage["stage"]["number"] == this.selectedstage;
+          }).map(function(stage) {
+            return stage["groups"];
+          })[0];
+          if (!groups) {
+            return [];
+          }
+          // Filter down to selected group
+          let group = groups.filter(function(group) {
+            return group["group"]["number"] == this.selectedgroup;
+          })
+          if (group.length == 0) {
+            return [];
+          }
+          return group[0]["duels"];
         }
       }
     });
