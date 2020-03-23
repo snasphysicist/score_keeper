@@ -8,7 +8,6 @@ from django.shortcuts import redirect
 from django.template import loader
 
 from run_duel.models import Duel, FightEvent, Round
-from tournament.models import Group, Stage, Tournament
 
 from .views.get_all_duels_api import handle as get_all_duels_api_handler
 from .views.new_event_api import handle as new_event_api_handler
