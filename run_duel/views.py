@@ -3,14 +3,13 @@ import datetime
 import json
 import os
 
-from django.db import IntegrityError
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.template import loader
 
 from run_duel.models import Duel, FightEvent, Round
-from tournament.models import Group, Stage, Tournament
 
+from .views.get_all_duels_api import handle as get_all_duels_api_handler
 from .views.new_event_api import handle as new_event_api_handler
 from .views.pending_duel_api import handle as pending_duel_api_handler
 
@@ -100,45 +99,7 @@ def delete_duel_page(request):
 
 def get_all_duels_api(request, **kwargs):
     tournament_id = kwargs["id"]
-    duels = get_all_duels_for_tournament(tournament_id)
-    duel_details = {
-        "duels": []
-    }
-    for duel in duels:
-        duel_details["duels"].append(
-            {
-                "id": duel.id,
-                "opponent1": duel.opponent1.battle_name,
-                "opponent2": duel.opponent2.battle_name,
-                "groupid": duel.group.id,
-                "groupnumber": duel.group.number,
-                "stageid": duel.group.stage.id,
-                "stagenumber": duel.group.stage.number,
-            }
-        )
-    duel_details["success"] = True
-    return JsonResponse(duel_details)
-
-
-def get_all_duels_for_tournament(tournament_id):
-    tournaments = list(Tournament.objects.all())
-    if len(tournaments) == 0:
-        return []
-    tournament = tournaments[0]
-    stages = list(Stage.objects.filter(tournament__exact=tournament))
-    if len(stages) == 0:
-        return []
-    groups = list()
-    for stage in stages:
-        next_groups = list(Group.objects.filter(stage__exact=stage))
-        groups += next_groups
-    if len(groups) == 0:
-        return []
-    duels = list()
-    for group in groups:
-        next_duels = list(Duel.objects.filter(group__exact=group))
-        duels += next_duels
-    return duels
+    return get_all_duels_api_handler(tournament_id)
 
 
 def delete_duel_api(request):
