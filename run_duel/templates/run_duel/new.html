@@ -50,58 +50,31 @@
         selectedstage: "",
         selectedgroup: "",
         selectedduel: "",
-        pendingduels: []
+        pendingduels: {}
       },
       computed: {
         allStages: function() {
-          let stages = [];
-          for (let i = 0; i < this.pendingduels.length; i++) {
-            let duel = this.pendingduels[i];
-            let inArray = false;
-            for (let j = 0; j < stages.length; j++) {
-              if (stages[j]["id"] == duel["stageid"]) {
-                inArray = true;
-                break;
-              }
-            }
-            if (!inArray) {
-              stages.push(
-                {
-                  "id": duel["stageid"],
-                  "number": duel["stagenumber"]
-                }
-              )
-            }
+          if (pendingduels["stages"]) {
+            return pendingduels["stages"];
+          } else {
+            return [];
           }
-          return stages;
         },
         stageGroups: function() {
           // Get all groups for the selected stage
-          let groups = [];
-          let stagenumber = this.selectedstage;
-          for (let i = 0; i < this.pendingduels.length; i++) {
-            let duel = this.pendingduels[i];
-            // Immediately stop if this duel is not even in the right stage
-            if (duel["stagenumber"] != stagenumber) {
-              continue;
-            }
-            let inArray = false;
-            for (let j = 0; j < groups.length; j++) {
-              if (groups[j]["id"] == duel["groupid"]) {
-                inArray = true;
-                break;
-              }
-            }
-            if (!inArray) {
-              groups.push(
-                {
-                  "id": duel["groupid"],
-                  "number": duel["groupnumber"]
-                }
-              )
-            }
+          let stage;
+          if (pendingduels["stages"]) {
+            stage = pendingduels["stages"].filter(function(stage) {
+              stage["stage"]["number"] == this.selectedstage;
+            })
+          } else {
+            return [];
           }
-          return groups;
+          if (stage.length > 0) {
+            return stage[0]["groups"];
+          } else {
+            return [];
+          }
         },
         groupDuels: function() {
           let duels = [];
