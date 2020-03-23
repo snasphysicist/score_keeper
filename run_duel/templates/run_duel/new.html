@@ -54,18 +54,18 @@
       },
       computed: {
         allStages: function() {
-          if (pendingduels["stages"]) {
-            return pendingduels["stages"];
+          if (this.pendingduels["stages"]) {
+            return this.pendingduels["stages"];
           } else {
             return [];
           }
         },
         stageGroups: function() {
           // Get all groups for the selected stage
-          if (!pendingduels["stages"]) {
+          if (!this.pendingduels["stages"]) {
             return [];
           }
-          let stage = pendingduels["stages"].filter(function(stage) {
+          let stage = this.pendingduels["stages"].filter(function(stage) {
             return stage["stage"]["number"] == this.selectedstage;
           });
           if (stage.length == 0) {
@@ -74,7 +74,7 @@
           return stage[0]["groups"];
         },
         groupDuels: function() {
-          if (!pendingduels["stages"]) {
+          if (!this.pendingduels["stages"]) {
             return [];
           }
           /*
@@ -83,7 +83,7 @@
            * Will then have array in array [[group1, group2, ...]]
            * So extract first element
            */
-          let groups = pendingduels["stages"].filter(function(stage) {
+          let groups = this.pendingduels["stages"].filter(function(stage) {
             return stage["stage"]["number"] == this.selectedstage;
           }).map(function(stage) {
             return stage["groups"];
@@ -113,7 +113,7 @@
         return;
       }
       // Get stages/groups with duels
-      let pendingStages = pendingduels["stages"].filter(function(stage) {
+      let pendingStages = vueApplication.pendingduels["stages"].filter(function(stage) {
         let groups = stage["groups"].filter(function(group) {
           return group["duels"].length > 0;
         })
