@@ -1,0 +1,31 @@
+body, h1, h2, p, input, div, select {
+  background-color: black;
+  color: white;
+  margin: 5px;
+  text-align: center;
+  font-family: sans-serif;
+}
+input, select {
+  min-width: 70%;
+  min-height: 50px;
+  font-family: sans-serif;
+  text-align: center;
+}
+option {
+  text-align: center;
+}
+.grid-container{
+  display: grid;
+  justify-content: center;
+  width: 90vw;
+}
+.five-columns{
+  grid-template-columns: 1fr 0.4fr 0.4fr 1fr 0.4fr;
+}
+.three-columns{
+  grid-template-columns: 1fr 0.5fr 0.5fr;
+}
+.four-columns{
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  align-items: center;
+}

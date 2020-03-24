@@ -35,7 +35,7 @@ def tournament_all_duels(tournament_id):
             for duel in duels:
                 # Add duel info to duels array in group
                 group_info["duels"].append(
-                    duel.dictionary()
+                    duel.with_round_data()
                 )
             # Now we have all group info
             # push this to stage's groups array
