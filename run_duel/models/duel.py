@@ -1,4 +1,5 @@
 
+from functools import reduce
 import json
 
 from django.db import models
@@ -33,10 +34,10 @@ class Duel(models.Model):
         return {
             "id": self.id,
             "current": self.current,
-            "opponent1": self.opponent1.json(),
-            "opponent2": self.opponent2.json(),
+            "opponent1": self.opponent1.dictionary(),
+            "opponent2": self.opponent2.dictionary(),
             "number": self.sequence_number,
-            "group": self.group.json(),
+            "group": self.group.dictionary(),
             "status": self.status()
         }
 
@@ -89,9 +90,26 @@ class Duel(models.Model):
 
     def with_round_data(self):
         all_data = self.dictionary()
-        all_data["rounds"] = [
+        rounds = [
             x.dictionary() for x in self.all_rounds()
         ]
+        all_data["rounds"] = rounds
+        all_data["score"] = {
+            "opponent1": reduce(
+                lambda s1, s2: s1 + s2,
+                map(
+                    lambda d: d["score"]["opponent1"],
+                    rounds
+                )
+            ),
+            "opponent2": reduce(
+                lambda s1, s2: s1 + s2,
+                map(
+                    lambda d: d["score"]["opponent2"],
+                    rounds
+                )
+            )
+        }
         return all_data
 
     # This and next method

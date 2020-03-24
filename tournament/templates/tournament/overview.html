@@ -3,39 +3,7 @@
 <head>
   <title>Tournament Overview</title>
   <meta charset="UTF-8">
-  <style type="text/css">
-    body, h1, h2, p, input, div, select {
-      background-color: black;
-      color: white;
-      margin: 5px;
-      text-align: center;
-      font-family: sans-serif;
-    }
-    input, select {
-      min-width: 70%;
-      min-height: 50px;
-      font-family: sans-serif;
-      text-align: center;
-    }
-    option {
-      text-align: center;
-    }
-    .grid-container{
-      display: grid;
-      justify-content: center;
-      width: 90vw;
-    }
-    .five-columns{
-      grid-template-columns: 1fr 0.4fr 0.4fr 1fr 0.4fr;
-    }
-    .three-columns{
-      grid-template-columns: 1fr 0.5fr 0.5fr;
-    }
-    .four-columns{
-      grid-template-columns: 1fr 1fr 1fr 1fr;
-      align-items: center;
-    }
-  </style>
+  <link rel="stylesheet" href="static/tournament/overview/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
 <body>
@@ -60,11 +28,11 @@
       <p>Opponent 2</p>
       <p>Status</p>
       <template v-for="duel in duels">
-        <p>{% verbatim %}{{ duel.opponent1 }}{% endverbatim %}</p>
-        <p>{% verbatim %}{{ duel.score1 }}{% endverbatim %}</p>
-        <p>{% verbatim %}{{ duel.score2 }}{% endverbatim %}</p>
-        <p>{% verbatim %}{{ duel.opponent2 }}{% endverbatim %}</p>
-        <p>{% verbatim %}{{ duel.finished ? "FINISHED" : "PENDING" }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ duel.opponent1.battle_name }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ duel.score.opponent1 }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ duel.score.opponent1 }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ duel.opponent2.battle_name }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ duel.status == "FINISHED" ? "FINISHED" : "PENDING" }}{% endverbatim %}</p>
       </template>
     </div>
     <h1>Table</h1>
@@ -73,118 +41,16 @@
       <p>Duels Completed</p>
       <p>HP Remaining</p>
       <template v-for="participant in sortedParticipants">
-        <p>{% verbatim %}{{ participant.name }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ participant.battle_name }}{% endverbatim %}</p>
         <p>{% verbatim %}{{ participant.completed }}{% endverbatim %}</p>
         <p>{% verbatim %}{{ participant.remaining }}{% endverbatim %}</p>
       </template>
     </div>
   </div>
+  <!-- Kludge, improve when tournament handling improved -->
   <script type="text/javascript">
-  var vueApplication = new Vue({
-    el: '#vue',
-    data: {
-      duels: [
-      ],
-      participants: [
-      ],
-      stages: [
-      ],
-      selectedstage: 0,
-      selectedgroup: 0
-    },
-    computed: {
-      groups: function() {
-        let groups = [];
-        if (this.selectedstage == 0) {
-          return groups;
-        }
-        for (let i = 0; i < this.stages.length; i++) {
-          if (this.stages[i]["number"] == this.selectedstage) {
-            groups = this.stages[i]["groups"];
-            break;
-          }
-        }
-        return groups;
-      },
-      selectedGroupId: function() {
-        let groupNumber = this.selectedgroup;
-        for (let i = 0; i < this.groups.length; i++) {
-          if (this.groups[i]["number"] == groupNumber) {
-            return this.groups[i]["id"];
-          }
-        }
-        return null;
-      },
-      sortedParticipants: function() {
-        let array = this.participants;
-        array.sort(
-          (a, b) => {
-            return (
-              -1 * (1000 * (a.completed - b.completed))
-              - (a.remaining - b.remaining)
-            );
-          }
-        );
-        return array;
-      }
-    }
-  })
+    const CURRENT_TOURNAMENT = {{ current_tournament }};
   </script>
-  <script type="text/javascript">
-    function getTournamentStagesGroups() {
-      const TOURNAMENT_ID = "{{ current_tournament }}";
-      const GET_URL = "/tournament/api/v1/<0>/stagesgroups";
-      // Insert ID into url
-      let url = GET_URL.replace(
-        "<0>",
-        TOURNAMENT_ID
-      );
-      fetch(
-        url,
-        {
-          method: "GET",
-        }
-      ).then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-      }).then((json) => {
-        if (json["success"]) {
-          vueApplication.stages = json["stages"];
-        }
-      })
-    }
-    getTournamentStagesGroups();
-    function getDuelsForGroup() {
-      let groupId = vueApplication.selectedGroupId;
-      console.log(groupId);
-      // Exit if group id invalid
-      if (groupId == null) {
-        return;
-      }
-      const GET_URL = "/tournament/api/v1/<0>/overview";
-      // Insert ID into url
-      let url = GET_URL.replace(
-        "<0>",
-        groupId
-      );
-      fetch(
-        url,
-        {
-          method: "GET",
-        }
-      ).then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-      }).then((json) => {
-        if (json["success"]) {
-          vueApplication.duels = json["duels"];
-          vueApplication.participants = json["participants"];
-        }
-      })
-    }
-//    getTournamentDetails();
-  </script>
+  <script src="static/tournament/overview/application.js" type="text/javascript"></script>
 </body>
 </html>

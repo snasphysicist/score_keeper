@@ -23,61 +23,55 @@ def tournament_overview(request):
 def overview_api(request, **kwargs):
     # Group id comes from url
     group_id = kwargs["id"]
-    group = Group.by_id(group_id)
+    group = Group.by_id(
+        None,
+        group_id
+    )
+    if group is None:
+        return JsonResponse({
+            "success": False,
+            "reason": "Could not find group with this identifier"
+        })
     # Get duels
     duels = group.all_duels()
-    # Get data for all duels
-    # and calculate overall scores
-    duels_processed = []
+    # Start assembling response object
+    response_data = {
+        "group": group.dictionary(),
+        "duels": []
+    }
     for duel in duels:
-        # TODO: refactor, not use this
-        # duel_data_raw = calculate_duel_data(duel)
-        duel_data_processed = {}
-        total_score = {
-            "opponent1": 0,
-            "opponent2": 0
-        }
-        # Also check if duel complete
-        is_finished = True
-        for a_round in duel_data_raw["rounds"]:
-            total_score["opponent1"] += a_round["score"]["opponent1"]
-            total_score["opponent2"] += a_round["score"]["opponent2"]
-            if a_round["status"] != "FINISHED":
-                is_finished = False
-        duel_data_processed["opponent1"] = duel_data_raw["duel"]["opponent1"]
-        duel_data_processed["opponent2"] = duel_data_raw["duel"]["opponent2"]
-        duel_data_processed["score1"] = total_score["opponent1"]
-        duel_data_processed["score2"] = total_score["opponent2"]
-        duel_data_processed["finished"] = is_finished
-        duels_processed.append(duel_data_processed)
+        response_data["duels"].append(
+            duel.with_round_data()
+        )
     # Have the duels
     # Work out the participants
-    participants = []
-    participant_names = set(
-        [x["opponent1"] for x in duels_processed]
-        + [x["opponent2"] for x in duels_processed]
+    participants = set(
+        [x["opponent1"] for x in duels]
+        + [x["opponent2"] for x in duels]
     )
-    for name in participant_names:
-        participant = {
-            "name": name,
-            "completed": 0,
-            "remaining": 0
-        }
-        participant_duels = [
-            x for x in duels_processed
-            if x["opponent1"] == name
-            or x["opponent2"] == name
-        ]
-        for duel in participant_duels:
-            # Only count duels that have finished
-            if not duel["finished"]:
-                continue
-            participant["completed"] += 1
-            if duel["opponent1"] == name:
-                participant["remaining"] += duel["score1"]
-            else:
-                participant["remaining"] += duel["score2"]
-        participants.append(participant)
+    # Cast to dictionaries
+    participants = map(
+        lambda p: p.dictionary(),
+        participants
+    )
+    for participant in participants:
+        duel_scores = (
+                [
+                    d["score"]["opponent1"] for d in duels
+                    if d["opponent1"]["id"] == participant["id"]
+                    and d["status"] == "FINISHED"
+                ] +
+                [
+                    d["score"]["opponent2"] for d in duels
+                    if d["opponent2"]["id"] == participant["id"]
+                    and d["status"] == "FINISHED"
+                ]
+        )
+        participant["remaining"] = reduce(
+            lambda s1, s2: s1 + s2,
+            duel_scores
+        )
+        participant["completed"] = len(duel_scores)
     return JsonResponse({
         "duels": duels_processed,
         "participants": participants,
@@ -182,26 +176,23 @@ def generate_duels_api(request):
 def stages_groups_api(request, **kwargs):
     # Get tournament from id in url
     tournament_id = kwargs["id"]
-    tournament = Tournament.by_id(tournament_id)
+    tournament = Tournament.by_id(
+        None,
+        tournament_id
+    )
     # Assemble data into format front end expects
-    stagesgroups = {
-        "stages": [],
-    }
+    stagesgroups = {"stages": []}
     # Get stages and groups for stages
     stages = tournament.all_stages()
     for stage in stages:
         current_stage = {
-            "id": stage.id,
-            "number": stage.number,
-            "groups": []
+            "stage": stage.dictionary(),
+            "group": []
         }
         groups = stage.all_groups()
         for group in groups:
             current_stage["groups"].append(
-                {
-                    "id": group.id,
-                    "number": group.number
-                }
+                group.dictionary()
             )
         stagesgroups["stages"].append(
             current_stage
