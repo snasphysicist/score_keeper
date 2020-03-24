@@ -23,7 +23,10 @@ def tournament_overview(request):
 def overview_api(request, **kwargs):
     # Group id comes from url
     group_id = kwargs["id"]
-    group = Group.by_id(group_id)
+    group = Group.by_id(
+        None,
+        group_id
+    )
     # Get duels
     duels = group.all_duels()
     # Get data for all duels
@@ -182,26 +185,23 @@ def generate_duels_api(request):
 def stages_groups_api(request, **kwargs):
     # Get tournament from id in url
     tournament_id = kwargs["id"]
-    tournament = Tournament.by_id(tournament_id)
+    tournament = Tournament.by_id(
+        None,
+        tournament_id
+    )
     # Assemble data into format front end expects
-    stagesgroups = {
-        "stages": [],
-    }
+    stagesgroups = {"stages": []}
     # Get stages and groups for stages
     stages = tournament.all_stages()
     for stage in stages:
         current_stage = {
-            "id": stage.id,
-            "number": stage.number,
-            "groups": []
+            "stage": stage.dictionary(),
+            "group": []
         }
         groups = stage.all_groups()
         for group in groups:
             current_stage["groups"].append(
-                {
-                    "id": group.id,
-                    "number": group.number
-                }
+                group.dictionary()
             )
         stagesgroups["stages"].append(
             current_stage
