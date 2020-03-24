@@ -6,8 +6,7 @@ let vueApplication = new Vue({
     selectedduel: "",
     selectedround: "",
     tournament: {},
-    alldueldata: {},
-    allduelrounds: []
+    duel: {}
   },
   computed: {
     allStages: function() {
@@ -50,14 +49,16 @@ let vueApplication = new Vue({
       return group[0]["duels"];
     },
     selectedRoundData: function() {
-      let roundNumber = this.selectedround;
-      for (let i = 0; i < this.allduelrounds.length; i++) {
-        let nextRound = this.allduelrounds[i];
-        if (nextRound["round_number"] == roundNumber) {
-          return nextRound;
-        }
+      if (!this.duel["rounds"]) {
+        return [];
       }
-      return [];
+      let round = this.duel["rounds"].filter(function(round) {
+        return round["number"] == this.selectedround;
+      })
+      if (round.length != 1) {
+        return [];
+      }
+      return round[0];
     },
     formattedRoundScore: function() {
       if (this.selectedRoundData["score"]) {
