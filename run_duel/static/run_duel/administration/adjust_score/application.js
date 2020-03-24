@@ -5,79 +5,49 @@ let vueApplication = new Vue({
     selectedgroup: "",
     selectedduel: "",
     selectedround: "",
-    duels: [],
+    tournament: {},
     alldueldata: {},
     allduelrounds: []
   },
   computed: {
     allStages: function() {
-      let stages = [];
-      for (let i = 0; i < this.duels.length; i++) {
-        let duel = this.duels[i];
-        let inArray = false;
-        for (let j = 0; j < stages.length; j++) {
-          if (stages[j]["id"] == duel["stageid"]) {
-            inArray = true;
-            break;
-          }
-        }
-        if (!inArray) {
-          stages.push(
-            {
-              "id": duel["stageid"],
-              "number": duel["stagenumber"]
-            }
-          )
-        }
+      if (this.tournament["stages"]) {
+        return tournament["stages"];
+      } else {
+        return [];
       }
-      return stages;
     },
     stageGroups: function() {
-      // Get all groups for the selected stage
-      let groups = [];
-      let stagenumber = this.selectedstage;
-      for (let i = 0; i < this.duels.length; i++) {
-        let duel = this.duels[i];
-        // Immediately stop if this duel is not even in the right stage
-        if (duel["stagenumber"] != stagenumber) {
-          continue;
-        }
-        let inArray = false;
-        for (let j = 0; j < groups.length; j++) {
-          if (groups[j]["id"] == duel["groupid"]) {
-            inArray = true;
-            break;
-          }
-        }
-        if (!inArray) {
-          groups.push(
-            {
-              "id": duel["groupid"],
-              "number": duel["groupnumber"]
-            }
-          )
-        }
+      if (!this.tournament["stages"]) {
+        return [];
       }
-      return groups;
+      // Filter down to selected stage
+      let stage = this.tournament["stages"].filter(function(stage) {
+        return stage["stage"]["number"] == this.selectedstage;
+      })
+      if (stage.length != 1) {
+        return [];
+      }
+      return stage[0]["groups"];
     },
     groupDuels: function() {
-      let duels = [];
-      let stagenumber = this.selectedstage;
-      let groupnumber = this.selectedgroup;
-      for (let i = 0; i < this.duels.length; i++) {
-        let duel = this.duels[i];
-        // Immediately stop if this duel is not even in the right stage
-        if (duel["stagenumber"] != stagenumber) {
-          continue;
-        }
-        // Stop this iteration if this duel is not in the right group
-        if (duel["groupnumber"] != groupnumber) {
-          continue;
-        }
-        // If we made it here, this duel is in the stage & group
-        duels.push(duel);
+      if (!this.tournament["stages"]) {
+        return [];
       }
-      return duels;
+      // Filter down to selected stage
+      let stage = this.tournament["stages"].filter(function(stage) {
+        return stage["stage"]["number"] == this.selectedstage;
+      })
+      if (stage.length != 1) {
+        return [];
+      }
+      let group = stage[0]["groups"].filter(function(group) {
+        return group["group"]["number"] == this.selectedgroup;
+      })
+      if (group.length != 1) {
+        return [];
+      }
+      return group[0]["duels"];
     },
     selectedRoundData: function() {
       let roundNumber = this.selectedround;
