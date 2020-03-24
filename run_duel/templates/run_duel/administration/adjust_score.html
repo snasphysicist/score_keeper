@@ -11,12 +11,12 @@
       <h1>Adjust Duel Score</h1>
       <div class="grid-container four-columns">
         <h2>Stage</h2>
-        <select v-model="selectedstage" onchange="getDuelsForGroup()">
+        <select v-model="selectedstage">
           <option value="" disabled selected style="display:none;"></option>
           <option v-for="stage in allStages" :stageid="stage.stage.id">{% verbatim %}{{ stage.stage.number }}{% endverbatim %}</option>
         </select>
         <h2>Group</h2>
-        <select v-model="selectedgroup" onchange="setTimeout(getDuelsForGroup, 100);">
+        <select v-model="selectedgroup">
           <option value="" disabled selected style="display:none;"></option>
           <option v-for="group in stageGroups" :groupid="group.group.id">{% verbatim %}{{ group.group.number }}{% endverbatim %}</option>
         </select>
