@@ -5,15 +5,15 @@ let vueApplication = new Vue({
     selectedgroup: "",
     selectedduel: "",
     selectedround: "",
-    tournamentduels: [],
+    duels: [],
     alldueldata: {},
     allduelrounds: []
   },
   computed: {
     allStages: function() {
       let stages = [];
-      for (let i = 0; i < this.tournamentduels.length; i++) {
-        let duel = this.tournamentduels[i];
+      for (let i = 0; i < this.duels.length; i++) {
+        let duel = this.duels[i];
         let inArray = false;
         for (let j = 0; j < stages.length; j++) {
           if (stages[j]["id"] == duel["stageid"]) {
@@ -36,8 +36,8 @@ let vueApplication = new Vue({
       // Get all groups for the selected stage
       let groups = [];
       let stagenumber = this.selectedstage;
-      for (let i = 0; i < this.tournamentduels.length; i++) {
-        let duel = this.tournamentduels[i];
+      for (let i = 0; i < this.duels.length; i++) {
+        let duel = this.duels[i];
         // Immediately stop if this duel is not even in the right stage
         if (duel["stagenumber"] != stagenumber) {
           continue;
@@ -64,8 +64,8 @@ let vueApplication = new Vue({
       let duels = [];
       let stagenumber = this.selectedstage;
       let groupnumber = this.selectedgroup;
-      for (let i = 0; i < this.tournamentduels.length; i++) {
-        let duel = this.tournamentduels[i];
+      for (let i = 0; i < this.duels.length; i++) {
+        let duel = this.duels[i];
         // Immediately stop if this duel is not even in the right stage
         if (duel["stagenumber"] != stagenumber) {
           continue;
@@ -118,7 +118,7 @@ function fetchDuelList() {
     }
   }).then((json) => {
     if(json["success"]) {
-      vueApplication.tournamentduels = json["duels"];
+      vueApplication.duels = json["duels"];
     } else {
       // Handle error
     }
