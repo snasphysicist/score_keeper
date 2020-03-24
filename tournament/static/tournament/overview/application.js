@@ -11,16 +11,14 @@ var vueApplication = new Vue({
   computed: {
     groups: function() {
       let groups = [];
-      if (this.selectedstage == 0) {
+      // Filter down to selected stage
+      let stage = this.stages.filter(function(stage) {
+        return stage["stage"]["number"] == this.selectedstage;
+      })
+      if (stage.length != 0) {
         return groups;
       }
-      for (let i = 0; i < this.stages.length; i++) {
-        if (this.stages[i]["number"] == this.selectedstage) {
-          groups = this.stages[i]["groups"];
-          break;
-        }
-      }
-      return groups;
+      return stage[0]["groups"];
     },
     selectedGroupId: function() {
       let groupNumber = this.selectedgroup;
