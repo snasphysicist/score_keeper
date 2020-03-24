@@ -239,7 +239,7 @@ def adjust_score_api(request):
 
 def single_duel_data_api(request, **kwargs):
     duel_id = kwargs["id"]
-    duel = Duel. by_id(duel_id)
+    duel = Duel.by_id(duel_id)
     if duel is None:
         return JsonResponse(
             {

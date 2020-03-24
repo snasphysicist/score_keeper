@@ -89,7 +89,7 @@ function fetchDuelList() {
     }
   }).then((json) => {
     if(json["success"]) {
-      vueApplication.duels = json["duels"];
+      vueApplication.tournament = json["tournament"];
     } else {
       // Handle error
     }
@@ -101,12 +101,13 @@ fetchDuelList();
 function fetchDuelScores() {
   let dueltext = vueApplication.selectedduel;
   let options = document.getElementById("round-select").children;
-  let duelId;
-  for (let i = 0; i < options.length; i++) {
-    if (options[i].innerHTML == dueltext) {
-      duelId = options[i].getAttribute("duelid");
-    }
+  let option = options.filter(function(opt) {
+    return opt.innerHTML == dueltext;
+  })
+  if (option.length != 1) {
+    return;
   }
+  let duelId = option[0].getAttribute("duelid");
   const GET_URL = "/run_duel/api/v1/duel/<0>/score";
   // Insert ID into url
   let url = GET_URL.replace(
@@ -124,8 +125,7 @@ function fetchDuelScores() {
     }
   }).then((json) => {
     if(json["success"]) {
-      vueApplication.alldueldata = json["duel"];
-      vueApplication.allduelrounds = json["rounds"];
+      vueApplication.duel = json["duel"];
     } else {
       // Handle error
     }
