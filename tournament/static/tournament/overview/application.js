@@ -10,24 +10,32 @@ var vueApplication = new Vue({
   },
   computed: {
     groups: function() {
-      let groups = [];
       // Filter down to selected stage
       let stage = this.stages.filter(function(stage) {
         return stage["stage"]["number"] == this.selectedstage;
       })
       if (stage.length != 0) {
-        return groups;
+        return [];
       }
       return stage[0]["groups"];
     },
     selectedGroupId: function() {
-      let groupNumber = this.selectedgroup;
-      for (let i = 0; i < this.groups.length; i++) {
-        if (this.groups[i]["number"] == groupNumber) {
-          return this.groups[i]["id"];
-        }
+      // Filter down to selected stage
+      let stage = this.stages.filter(function(stage) {
+        return stage["stage"]["number"] == this.selectedstage;
+      })
+      if (stage.length != 0) {
+        return null;
       }
-      return null;
+      groups = stage[0]["groups"];
+      // Filter down to selected group
+      let group = groups.filter(function(group) {
+        return group["number"] == this.selectedgroup;
+      })
+      if (group.length != 0) {
+        return null;
+      }
+      return group[0]["id"];
     },
     sortedParticipants: function() {
       let array = this.participants;
