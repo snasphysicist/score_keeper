@@ -28,11 +28,11 @@
       <p>Opponent 2</p>
       <p>Status</p>
       <template v-for="duel in duels">
-        <p>{% verbatim %}{{ duel.opponent1 }}{% endverbatim %}</p>
-        <p>{% verbatim %}{{ duel.score1 }}{% endverbatim %}</p>
-        <p>{% verbatim %}{{ duel.score2 }}{% endverbatim %}</p>
-        <p>{% verbatim %}{{ duel.opponent2 }}{% endverbatim %}</p>
-        <p>{% verbatim %}{{ duel.finished ? "FINISHED" : "PENDING" }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ duel.opponent1.battle_name }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ duel.score.opponent1 }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ duel.score.opponent1 }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ duel.opponent2.battle_name }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ duel.status == "FINISHED" ? "FINISHED" : "PENDING" }}{% endverbatim %}</p>
       </template>
     </div>
     <h1>Table</h1>
@@ -41,7 +41,7 @@
       <p>Duels Completed</p>
       <p>HP Remaining</p>
       <template v-for="participant in sortedParticipants">
-        <p>{% verbatim %}{{ participant.name }}{% endverbatim %}</p>
+        <p>{% verbatim %}{{ participant.battle_name }}{% endverbatim %}</p>
         <p>{% verbatim %}{{ participant.completed }}{% endverbatim %}</p>
         <p>{% verbatim %}{{ participant.remaining }}{% endverbatim %}</p>
       </template>
