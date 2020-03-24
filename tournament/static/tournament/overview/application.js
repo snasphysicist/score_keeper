@@ -47,7 +47,7 @@ var vueApplication = new Vue({
 });
 
 function getTournamentStagesGroups() {
-  const TOURNAMENT_ID = "{{ current_tournament }}";
+  const TOURNAMENT_ID = CURRENT_TOURNAMENT;
   const GET_URL = "/tournament/api/v1/<0>/stagesgroups";
   // Insert ID into url
   let url = GET_URL.replace(
@@ -74,7 +74,6 @@ getTournamentStagesGroups();
 
 function getDuelsForGroup() {
   let groupId = vueApplication.selectedGroupId;
-  console.log(groupId);
   // Exit if group id invalid
   if (groupId == null) {
     return;
