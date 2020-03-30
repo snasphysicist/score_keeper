@@ -9,7 +9,13 @@
     }
   })
 
-// Patterns for duel generation
+/*
+ * Patterns used in round robin duel generation
+ * Explicitly written out since I have not
+ * yet found an algorithm that can avoid producing
+ * series of duels where someone has to duel
+ * multiple times in a row too often
+ */
 const DUEL_PATTERNS = {
   2: [
     [0, 1]
