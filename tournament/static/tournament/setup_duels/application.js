@@ -71,9 +71,9 @@ function toggleGroupSelect(event) {
     // Update display to reflect this
     // First clear any selected buttons
     let currently_selected = document.querySelectorAll(".selected");
-    for (let i = 0; i < currently_selected.length ; i++) {
-        currently_selected[i].classList.remove("selected");
-    }
+    currently_selected.forEach(function(button) {
+      button.classList.remove("selected");
+    })
     // Now display clicked one as selected
     selected.classList.add("selected");
 }
