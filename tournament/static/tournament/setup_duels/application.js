@@ -212,37 +212,25 @@ function generateDuels() {
 
 function generateRoundRobinDuels() {
   // Generate duels for each group
-  let maxDuels = 0;
-  for (let i = 0; i < vueApplication.groups.length; i++) {
+  vueApplication.groups.forEach(function(group) {
     // Shuffle members
-    let group = vueApplication.groups[i];
     let members = group["members"];
     members = shuffle(members);
     // Get combinations for this number of duellists
     let combinations = DUEL_PATTERNS[members.length];
     // Set up duels with those combinations
-    for (let j = 0; j < combinations.length; j++) {
-      let duel = {
+    group.duels = combinations.map(function(pairing) {
+      return {
         group: group["id"],
-        opponent1: members[combinations[j][0]],
-        opponent2: members[combinations[j][1]]
+        opponent1: members[pairing[0]],
+        opponent2: members[pairing[1]]
       };
-      group.duels.push(duel);
-    }
-    if (group.duels.length > maxDuels) {
-      maxDuels = group.duels.length;
-    }
-  }
+    });
+  });
   // Display on screen
-  for (let i = 0; i < maxDuels; i++) {
-    for (let j = 0; j < vueApplication.groups.length; j++) {
-      if (i < vueApplication.groups[j]["duels"].length) {
-        vueApplication.allduels.push(
-          vueApplication.groups[j]["duels"][i]
-        )
-      }
-    }
-  }
+  vueApplication.groups.forEach(function(group) {
+    vueApplication.allduels.concat(group["duels"]);
+  });
   return true;
 }
 
