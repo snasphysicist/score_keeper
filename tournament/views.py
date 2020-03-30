@@ -144,9 +144,12 @@ def generate_duels_api(request):
     )
     for duel in data:
         # Find group
-        group = list(Group.objects.filter(id__exact=duel["group"]))[0]
-        opponent1 = list(Participant.objects.filter(id__exact=duel["opponent1"]["participantid"]))[0]
-        opponent2 = list(Participant.objects.filter(id__exact=duel["opponent2"]["participantid"]))[0]
+        group = Group.by_id(
+            None,
+            duel["group"]["id"]
+        )
+        opponent1 = Participant.by_id(duel["opponent1"]["id"])
+        opponent2 = Participant.by_id(duel["opponent2"]["id"])
         next_duel = Duel(
             sequence_number=(data.index(duel) + 1),
             group=group,
