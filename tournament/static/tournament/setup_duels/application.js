@@ -347,7 +347,6 @@ function getSetupDetails() {
       vueApplication.currentStage = json["currentstage"];
       vueApplication.groups = json["groups"];
       vueApplication.participants = json["participants"];
-      vueApplication.allduels = json["allduels"];
     }
   })
 }
