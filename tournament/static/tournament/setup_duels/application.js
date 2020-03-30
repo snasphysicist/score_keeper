@@ -158,6 +158,7 @@ function hideParticipants() {
     // Now get all participant inputs
     let participantSection = document.getElementById("all-participants");
     let participantInputs = participantSection.children;
+    // Disable if assigned, enable if unassigned
     participantInputs.forEach(function(button) {
       if (
           assigned.indexOf(
