@@ -307,16 +307,11 @@ function pairAlreadyAdded(
   pairs,
   nextPair
 ) {
-  for (let i = 0; i < pairs.length; i++) {
-    let aPair = pairs[i];
-    if (
-      aPair[0]["participantid"] == nextPair[0]["participantid"]
-      && aPair[1]["participantid"] == nextPair[1]["participantid"]
-    ) {
-      return true;
-    }
-  }
-  return false;
+  let pair = pairs.filter(function(pair) {
+    return pair[0]["participantid"] == nextPair[0]["participantid"]
+            && pair[1]["participantid"] == nextPair[1]["participantid"];
+  });
+  return pair.length > 0;
 }
 
 function shuffle(array) {
