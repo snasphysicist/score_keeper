@@ -89,38 +89,24 @@ function assignParticipant(event) {
     // Assume group already exists
     let groupId = selected.getAttribute("groupid");
     let group = findGroupById(groupId);
-    // if (!group) {
-    //     // If not, create it
-    //     vueApplication.groups.push(
-    //         {
-    //             groupid: groupId,
-    //             members: [
-    //                 {
-    //                     participantid: participantId,
-    //                     battlename: battleName
-    //                 }
-    //             ]
-    //         }
-    //     );
-    // } else {
-        group["members"].push(
-            {
-                participantid: participantId,
-                battlename: battleName
-            }
-        );
-    // }
+    group["members"].push(
+      {
+        participantid: participantId,
+        battlename: battleName
+      }
+    );
     hideParticipants();
 }
 
 function findGroupById(groupId) {
-    for (let i = 0; i < vueApplication.groups.length; i++) {
-        let group = vueApplication.groups[i];
-        if (group["id"] == groupId) {
-            return group;
-        }
-    }
+  let group = vueApplication.groups.filter(function(group) {
+    return group["id"] == groupId;
+  });
+  if (group.length === 1) {
+    return group[0];
+  } else {
     return null;
+  }
 }
 
 function unassignParticipant(event) {
