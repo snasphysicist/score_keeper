@@ -148,29 +148,29 @@ function hideParticipants() {
     let assigned = [];
     // We'll also check if everyone has already been assigned
     let allAssigned = true;
-    for (let i = 0; i < vueApplication.groups.length; i++) {
-        let group = vueApplication.groups[i];
-        for (let j = 0; j < group.members.length; j++) {
-            assigned.push(group.members[j]["participantid"]);
-        }
-    }
+    vueApplication.groups.forEach(function(group) {
+      group["members"].forEach(function(member) {
+        assigned.push(
+          member["participantid"];
+        );
+      });
+    });
     // Now get all participant inputs
     let participantSection = document.getElementById("all-participants");
     let participantInputs = participantSection.children;
-    for (let i = 0; i < participantInputs.length; i++) {
-        if (
-            assigned.indexOf(
-                participantInputs[i].getAttribute("participantid")
-            ) > -1
-        ) {
-            // Disable when assigned
-            participantInputs[i].disabled = true;
-        } else {
-            // Enable when unassigned
-            participantInputs[i].disabled = false;
-            allAssigned = false;
-        }
-    }
+    participantInputs.forEach(function(button) {
+      if (
+          assigned.indexOf(
+              button.getAttribute("participantid")
+          ) > -1
+      ) {
+          // Disable when assigned
+          button.disabled = true;
+      } else {
+          // Enable when unassigned
+          button.disabled = false;
+          allAssigned = false;
+      }
     /*
      * Generate should be clickable
      * if all fighters assigned
