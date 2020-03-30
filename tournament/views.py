@@ -1,4 +1,5 @@
 
+from functools import reduce
 import json
 
 from django.http import HttpResponse, JsonResponse
@@ -6,7 +7,7 @@ from django.shortcuts import redirect
 from django.template import loader
 
 from run_duel.models import Duel, Round
-from tournament.models import Group, Participant, Stage, Tournament
+from tournament.models import Group, Participant, Tournament
 
 CURRENT_TOURNAMENT = 3
 
@@ -94,7 +95,15 @@ def setup_duels_groups_participants_api(request):
             "reason": "You do not have permission to perform this operation"
         })
     # Get group and participant details
-    tournament = list(Tournament.objects.all())[0]
+    tournament = Tournament.by_id(
+        None,
+        CURRENT_TOURNAMENT
+    )
+    if tournament is None:
+        return JsonResponse({
+            "success": False,
+            "reason": "There appears to be no currently active tournament"
+        })
     stages = tournament.all_stages()
     groups = list()
     current_stage = None
@@ -107,32 +116,19 @@ def setup_duels_groups_participants_api(request):
             current_stage = stage
             break
     participants = tournament.all_participants()
-    context = {}
-    context["currentstage"] = {
-        "id": current_stage.id,
-        "number": current_stage.number,
-        "format": current_stage.stage_format
+    context = {
+        "stage": current_stage.dictionary(),
+        "groups": [],
+        "participants": []
     }
-    context["groups"] = []
     for group in groups:
         context["groups"].append(
-            {
-                "id": group.id,
-                "number": group.number,
-                "index": len(context["groups"]),
-                "members": [],
-                "duels": []
-            }
+            group.dictionary()
         )
-    context["participants"] = []
     for participant in participants:
         context["participants"].append(
-            {
-                "id": participant.id,
-                "battlename": participant.battle_name
-            }
+            participant.dictionary()
         )
-    context["allduels"] = []
     context["success"] = True
     return JsonResponse(context)
 
@@ -148,9 +144,12 @@ def generate_duels_api(request):
     )
     for duel in data:
         # Find group
-        group = list(Group.objects.filter(id__exact=duel["group"]))[0]
-        opponent1 = list(Participant.objects.filter(id__exact=duel["opponent1"]["participantid"]))[0]
-        opponent2 = list(Participant.objects.filter(id__exact=duel["opponent2"]["participantid"]))[0]
+        group = Group.by_id(
+            None,
+            duel["group"]["id"]
+        )
+        opponent1 = Participant.by_id(duel["opponent1"]["id"])
+        opponent2 = Participant.by_id(duel["opponent2"]["id"])
         next_duel = Duel(
             sequence_number=(data.index(duel) + 1),
             group=group,

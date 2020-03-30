@@ -127,3 +127,10 @@ class Participant(models.Model):
         return json.dumps(
             self.dictionary()
         )
+
+    def by_id(an_id):
+        participant = list(Participant.objects.filter(id__exact=an_id))
+        if len(participant) > 0:
+            return participant[0]
+        else:
+            return None
