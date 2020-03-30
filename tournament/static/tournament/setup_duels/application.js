@@ -111,16 +111,35 @@ function findGroupById(groupId) {
 
 function unassignParticipant(event) {
     let participantId = event.target.getAttribute("participantid");
-    for (let i = 0; i < vueApplication.groups.length; i++) {
-        let group = vueApplication.groups[i];
-        for (let j = 0; j < vueApplication.groups[i]["members"].length; j++) {
-            let member = group["members"][j];
-            if (member["participantid"] == participantId) {
-                vueApplication.groups[i]["members"].splice(j, 1);
-                j--;
-            }
-        }
-    }
+    let groups = vueApplication.groups.filter(function(group) {
+      // Find members in group with correct participant id
+      let member = group["members"].filter(function(member) {
+        return member["participantid"] == participantId;
+      });
+      // Keep if this participant appears in members array
+      return (member.length > 0);
+    })
+    // For each group that contains this participant
+    groups.forEach(function(group) {
+      // Get the participant object in the group
+      let toRemove = group["members"].filter(function(member) {
+        return member["participantid"] == participantId;
+      });
+      if (toRemove.length != 1) {
+        return;
+      }
+      /*
+       * Remove the element at this participants' index
+       * (i.e. this participant)
+       */
+      group["members"].splice(
+        group["members"].indexOf(
+          toRemove[0]
+        ),
+        1
+      );
+    });
+    // Update which participants are shown/hidden
     hideParticipants();
 }
 
