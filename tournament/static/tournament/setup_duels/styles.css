@@ -1,0 +1,43 @@
+body, h1, h2, p, input, div {
+  background-color: black;
+  color: white;
+  margin: 5px;
+  text-align: center;
+  font-family: sans-serif;
+}
+input {
+  min-width: 30%;
+  min-height: 50px;
+  font-family: sans-serif;
+}
+input[type=button]:active {
+  background-color: #8b0000;
+}
+.grid-container {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  width: 90vw;
+}
+.page-contatiner {
+  margin: auto;
+}
+.two-columns {
+  grid-template-columns: 1fr 1fr;
+}
+.two-columns-thirds {
+  grid-template-columns: 1fr 0.5fr;
+}
+.three-columns {
+  grid-template-columns: 1fr 0.2fr 1fr;
+}
+.five-columns {
+  grid-template-columns: 1fr 0.2fr 0.2fr 0.2fr 1fr;
+}
+.selected {
+  background-color: #003d01;
+}
+input[disabled] {
+  color: #773334;
+  background-color: #111111;
+}
