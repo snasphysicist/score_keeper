@@ -249,17 +249,16 @@ function generateCrossRoundRobinDuels() {
       group1,
       group2
     )
-    for (let j = 0; j < groupPairs.length; j++) {
-      let duel = {
-        group: group1["id"],
-        opponent1: groupPairs[j][0],
-        opponent2: groupPairs[j][1]
-      };
+    groupPairs.forEach(function(pairing) {
       vueApplication.allduels.push(
-        duel
+        {
+          group: group1["id"],
+          opponent1: pairing[0],
+          opponent2: pairing[1]
+        }
       );
-    }
-    // Next pair
+    });
+    // Next pair of *groups*
     i = i + 2;
   }
   return true;
