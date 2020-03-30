@@ -186,7 +186,7 @@ function hideParticipants() {
 }
 
 function generateDuels() {
-  // DISABLE ONLY ON SUCCESS
+  // Generate button disabled only on success
   let didGenerate = false;
   if (vueApplication.currentStage["format"] == "ROUND-ROBIN") {
     didGenerate = generateRoundRobinDuels();
