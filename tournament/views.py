@@ -95,7 +95,15 @@ def setup_duels_groups_participants_api(request):
             "reason": "You do not have permission to perform this operation"
         })
     # Get group and participant details
-    tournament = list(Tournament.objects.all())[0]
+    tournament = Tournament.by_id(
+        None,
+        CURRENT_TOURNAMENT
+    )
+    if tournament is None:
+        return JsonResponse({
+            "success": False,
+            "reason": "There appears to be no currently active tournament"
+        })
     stages = tournament.all_stages()
     groups = list()
     current_stage = None
@@ -108,32 +116,19 @@ def setup_duels_groups_participants_api(request):
             current_stage = stage
             break
     participants = tournament.all_participants()
-    context = {}
-    context["currentstage"] = {
-        "id": current_stage.id,
-        "number": current_stage.number,
-        "format": current_stage.stage_format
+    context = {
+        "stage": current_stage.dictionary(),
+        "groups": [],
+        "participants": []
     }
-    context["groups"] = []
     for group in groups:
         context["groups"].append(
-            {
-                "id": group.id,
-                "number": group.number,
-                "index": len(context["groups"]),
-                "members": [],
-                "duels": []
-            }
+            group.dictionary()
         )
-    context["participants"] = []
     for participant in participants:
         context["participants"].append(
-            {
-                "id": participant.id,
-                "battlename": participant.battle_name
-            }
+            participant.dictionary()
         )
-    context["allduels"] = []
     context["success"] = True
     return JsonResponse(context)
 
