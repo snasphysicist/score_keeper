@@ -9,7 +9,7 @@ var vueApplication = new Vue({
 function resetDuel(event) {
   let duelId = event.target.getAttribute("duelid");
   let data = {
-    "duelid": duelId
+    "id": duelId
   };
   const PATCH_URL = "/run_duel/api/v1/duel/reset";
   fetch(
