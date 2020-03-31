@@ -29,16 +29,15 @@ var vueApplication = new Vue({
       return "---";
     },
     currentRound: function() {
-      for (let i = 0; i < this.rounds.length; i++) {
-        let round = this.rounds[i];
-        if (
-            (round["status"] === "RUNNING")
-            || (round["status"] === "PAUSED")
-        ) {
-          return round;
-        }
+      let round = this.rounds.filter(function(round) {
+        return (round["status"] === "RUNNING")
+                || (round["status"] === "PAUSED");
+      });
+      if (round.length > 0) {
+        return round[0];
+      } else {
+        return null;
       }
-      return null;
     },
     nextRound: function() {
       for (let i = 0; i < this.rounds.length; i++) {
