@@ -135,3 +135,8 @@ class Duel(models.Model):
             return unstarted[0]
         else:
             return None
+
+    def delete_all_events(self):
+        rounds = self.all_rounds()
+        for a_round in rounds:
+            a_round.delete_all_events()
