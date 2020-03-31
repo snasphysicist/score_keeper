@@ -100,9 +100,45 @@ var vueApplication = new Vue({
   }
 });
 
+/*
+ * When time is up or when
+ * an opponent has completely
+ * depleted their HP
+ * then a function set via
+ * setInterval flashes the
+ * background red/black as
+ * and indicator
+ * References to these
+ * 'interval objects' are
+ * kept in these variables
+ * so the flashing can be
+ * stopped when
+ * the round is stopped
+ */
 let timeNotifier = null;
 let hpNotifier1 = null;
 let hpNotifier2 = null;
+
+/*
+ * Each of three possible
+ * items that can have a
+ * flashing background to
+ * indicate that they are
+ * depleted (time, hp 1/2)
+ * has a trio of methods
+ * to manage the flashing effect
+ * xNotify actually does the
+ * work of toggling the
+ * background colour
+ * startXNotifierY initiates the
+ * flashing by setting the interval
+ * Note that it stores a
+ * reference to the 'interval'
+ * in the applicable variable, above
+ * stopXNotifierY stops the flashing
+ * and ensures that the background
+ * has been reverted to normal
+ */
 
 function timeNotify() {
   let timeElement = document.getElementById("time");
@@ -177,29 +213,39 @@ function manageWebSocketConnection() {
       vueApplication.duel = jsonData["duel"];
       vueApplication.rounds = jsonData["rounds"];
     }
-    // Notify if round over
+    // Check if round time depleted
     if (vueApplication.currentRoundTimeRemaining == "0") {
+      // If flashing not yet started
       if (!timeNotifier) {
+        // Start time flashing
         startTimeNotifier();
       }
     } else {
+      // Otherwise stop time flashing
       stopTimeNotifier();
     }
+    // Check if opponent 1 hp depleted
     if (vueApplication.currentRoundOpponent1Score == 0) {
       if (!hpNotifier1) {
+        // If depleted, start it flashing
         startHPNotifier1();
       }
     } else {
+      // Otherwise top the flashing
       stopHPNotifier1();
     }
+    // Check if opponent 2 hp depleted
     if (vueApplication.currentRoundOpponent2Score == 0) {
       if (!hpNotifier2) {
+        // If yes, start hp display flashing
         startHPNotifier2();
       }
     } else {
+      // Else stop this hp from flashing
       stopHPNotifier2();
     }
   };
+  // Attempt to reopen on close
   ws.onclose = function () {
     ws = null;
     setTimeout(manageWebSocketConnection, 1000);
