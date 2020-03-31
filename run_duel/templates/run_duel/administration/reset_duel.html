@@ -9,12 +9,16 @@
   <body>
     <h1>Reset Duel</h1>
     <div id="vue" class="grid-container two-columns">
-      <template v-for="duel in duels">
-        {% verbatim %}
-        <p>{{ duel.opponent1 }} vs {{ duel.opponent2 }}</p>
-        {% endverbatim %}
-        <input type="button" :duelid="duel.id"
-          onclick="resetDuel(event)" value="Reset"/>
+      <template v-for="stage in stages">
+        <template v-for="group in stage.groups">
+          <template v-for="duel in group.duels">
+            {% verbatim %}
+            <p>{{ duel.opponent1.battle_name }} vs {{ duel.opponent2.battle_name }}</p>
+            {% endverbatim %}
+            <input type="button" :duelid="duel.id"
+              onclick="resetDuel(event)" value="Reset"/>
+          </template>
+        </template>
       </template>
     </div>
     <script type="text/javascript" src="static/run_duel/administration/reset_duel/application.js"></script>

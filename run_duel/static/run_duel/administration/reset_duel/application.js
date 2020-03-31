@@ -2,7 +2,7 @@
 var vueApplication = new Vue({
   el: '#vue',
   data: {
-    duels: []
+    tournament: {}
   }
 });
 
@@ -51,7 +51,7 @@ function fetchDuelList() {
     }
   }).then((json) => {
     if(json["success"]) {
-      vueApplication.duels = json["duels"];
+      vueApplication.tournament = json["tournament"];
     } else {
       // Handle error
     }
