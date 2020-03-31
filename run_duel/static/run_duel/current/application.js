@@ -60,20 +60,18 @@ var vueApplication = new Vue({
       return "---";
     },
     totalOpponent1Score: function() {
-      let running_total = 0;
-      for (let i = 0; i < this.rounds.length; i++) {
-        let round = this.rounds[i];
-        running_total += round["score"]["opponent1"];
-      }
-      return running_total;
+      return this.rounds.map(function(round) {
+        return round["score"]["opponent1"];
+      }).reduce(function(accumulator, value) {
+        return accumulator + value;
+      });
     },
     totalOpponent2Score: function() {
-      let running_total = 0;
-      for (let i = 0; i < this.rounds.length; i++) {
-        let round = this.rounds[i];
-        running_total += round["score"]["opponent2"];
-      }
-      return running_total;
+      return this.rounds.map(function(round) {
+        return round["score"]["opponent2"];
+      }).reduce(function(accumulator, value) {
+        return accumulator + value;
+      });
     },
     roundNumberDisplay: function() {
       let displayRound = this.currentOrNextRound;
