@@ -39,9 +39,20 @@ def new_duel_api(request):
     )
     # Basically, just make the selected
     # duel the current one
-    duel = list(Duel.objects.filter(id__exact=data["id"]))[0]
-    # All other duels not current
-    old_duels = list(Duel.objects.filter(current__exact=True))
+    duel = Duel.by_id(
+        None,
+        data["id"]
+    )
+    if duel is None:
+        return JsonResponse(
+            {
+                "success": False,
+                "reason": "The selected duel does not appear to exist"
+            }
+        )
+    # For any other duel marked
+    # as current, make it not so
+    old_duels = Duel.marked_as_current()
     for old_duel in old_duels:
         old_duel.current = False
         old_duel.save()
