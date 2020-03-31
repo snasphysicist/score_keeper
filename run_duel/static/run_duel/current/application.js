@@ -40,13 +40,14 @@ var vueApplication = new Vue({
       }
     },
     nextRound: function() {
-      for (let i = 0; i < this.rounds.length; i++) {
-        let round = this.rounds[i];
-        if (round["status"] == "READY") {
-          return round;
-        }
+      let round = this.rounds.filter(function(round) {
+        return round["status"] == "READY";
+      });
+      if (round.length > 0) {
+        return round[0];
+      } else {
+        return null;
       }
-      return null;
     },
     currentRoundOpponent1Score: function() {
       let round = this.currentRound;
