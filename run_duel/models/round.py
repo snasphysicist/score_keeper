@@ -42,6 +42,11 @@ class Round(models.Model):
     def all_events(self):
         return list(FightEvent.objects.filter(round__exact=self))
 
+    def delete_all_events(self):
+        events = self.all_events()
+        for event in events:
+            event.delete()
+
 
 #
 # # # Functions used to determine round status
