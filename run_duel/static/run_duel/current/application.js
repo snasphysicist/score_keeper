@@ -203,6 +203,49 @@ function stopHPNotifier2() {
   hp2Element.classList.remove("flash");
 }
 
+// Manage flashing on/off
+function manageNotifiers() {
+  /*
+   * If the round time is up
+   * and the timer is not yet flashing
+   * then start it flashing
+   */
+  if (vueApplication.currentRoundTimeRemaining == "0" && !timeNotifier) {
+    startTimeNotifier();
+  }
+  /*
+   * If the round time is not up
+   * but the time is flashing
+   * stop it from flashing
+   */
+  if (vueApplication.currentRoundTimeRemaining != "0" && timeNotifier) {
+    stopTimeNotifier();
+  }
+  /*
+   * If the opponent 1's hp is depleted
+   * and the hp display is not yet flashing
+   * then start it flashing
+   */
+  if (vueApplication.currentRoundOpponent1Score == 0 && !hpNotifier1) {
+    startHPNotifier1();
+  }
+  /*
+   * If opponent 1's hp has not yet been depleted
+   * but the hp display is still flashing
+   * then turn off the flashing
+   */
+  if (vueApplication.currentRoundOpponent1Score != 0 && hpNotifier1) {
+    stopHPNotifier1();
+  }
+  // As previous two ifs, for opponent 2
+  if (vueApplication.currentRoundOpponent2Score == 0 && !hpNotifier2) {
+    startHPNotifier2();
+  }
+  if (vueApplication.currentRoundOpponent2Score != 0 && hpNotifier2) {
+    stopHPNotifier2();
+  }
+}
+
 // Web socket handling
 let ws = null;
 function manageWebSocketConnection() {
@@ -213,37 +256,7 @@ function manageWebSocketConnection() {
       vueApplication.duel = jsonData["duel"];
       vueApplication.rounds = jsonData["rounds"];
     }
-    // Check if round time depleted
-    if (vueApplication.currentRoundTimeRemaining == "0") {
-      // If flashing not yet started
-      if (!timeNotifier) {
-        // Start time flashing
-        startTimeNotifier();
-      }
-    } else {
-      // Otherwise stop time flashing
-      stopTimeNotifier();
-    }
-    // Check if opponent 1 hp depleted
-    if (vueApplication.currentRoundOpponent1Score == 0) {
-      if (!hpNotifier1) {
-        // If depleted, start it flashing
-        startHPNotifier1();
-      }
-    } else {
-      // Otherwise top the flashing
-      stopHPNotifier1();
-    }
-    // Check if opponent 2 hp depleted
-    if (vueApplication.currentRoundOpponent2Score == 0) {
-      if (!hpNotifier2) {
-        // If yes, start hp display flashing
-        startHPNotifier2();
-      }
-    } else {
-      // Else stop this hp from flashing
-      stopHPNotifier2();
-    }
+    manageNotifiers();
   };
   // Attempt to reopen on close
   ws.onclose = function () {
