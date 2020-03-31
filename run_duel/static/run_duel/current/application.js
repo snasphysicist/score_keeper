@@ -12,21 +12,17 @@ var vueApplication = new Vue({
   computed: {
     currentRoundTimeRemaining: function() {
       let duel_time = 30000; //ms
-      for (let i = 0; i < this.rounds.length; i++) {
-        let round = this.rounds[i];
-        if (
-            (round["status"] === "RUNNING")
-            || (round["status"] === "PAUSED")
-        ) {
-          let remaining = duel_time - round["time"];
-          if (remaining < 0) {
-            remaining = 0;
-          }
-          return (remaining / 1000.0).toFixed(0);
+      let round = this.currentRound;
+      if (!round) {
+        // No round is active
+        return "---";
+      } else {
+        let remaining = duel_time - round["time"];
+        if (remaining < 0) {
+          remaining = 0;
         }
+        return (remaining / 1000.0).toFixed(0);
       }
-      // Default
-      return "---";
     },
     currentRound: function() {
       let round = this.rounds.filter(function(round) {
