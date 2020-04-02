@@ -163,7 +163,7 @@ function hideParticipants() {
       }
       group["members"].forEach(function(member) {
         assigned.push(
-          member["participantid"]
+          member["id"]
         );
       });
     });
