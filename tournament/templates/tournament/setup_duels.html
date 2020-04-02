@@ -39,9 +39,9 @@
         <h2>All Duels</h2>
         <div class="grid-container three-columns">
           <template v-for="duel in allduels">
-            <p>{{ duel.opponent1["battlename"] }}</p>
+            <p>{{ duel.opponent1.battle_name }}</p>
             <p>vs</p>
-            <p>{{ duel.opponent2["battlename"] }}</p>
+            <p>{{ duel.opponent2.battle_name }}</p>
           </template>
         </div>
         <input id="confirm" type="button" onclick="confirmDuels()"
