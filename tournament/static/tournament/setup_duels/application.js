@@ -91,7 +91,12 @@ function assignParticipant(event) {
     if (group) {
       // Add members if !exists
       if (!group["members"]) {
-        group["members"] = [];
+        // Ensure Vue is reactive on this property
+        Vue.set(
+          group,
+          "members",
+          []
+        );
       }
       // Get participant object from participants arrays
       let participant = vueApplication.participants.filter(function(participant) {

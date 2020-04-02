@@ -27,7 +27,7 @@
                 <h2>Group {{ group.number }}</h2>
                 <div class="grid-container two-columns-thirds">
                   <template v-for="member in group.members">
-                    <p>{{ member.battlename }}</p>
+                    <p>{{ member.battle_name }}</p>
                     <input :participantid="member.participantid" type="button"
                       onclick="unassignParticipant(event)" value="REMOVE"/>
                   </template>
