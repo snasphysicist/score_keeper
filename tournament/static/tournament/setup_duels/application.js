@@ -130,7 +130,7 @@ function unassignParticipant(event) {
       }
       // Find members in group with correct participant id
       let member = group["members"].filter(function(member) {
-        return member["participantid"] == participantId;
+        return member["id"] == participantId;
       });
       // Keep if this participant appears in members array
       return (member.length > 0);
