@@ -252,7 +252,8 @@ function generateRoundRobinDuels() {
   });
   // Display on screen
   vueApplication.groups.forEach(function(group) {
-    vueApplication.allduels.concat(group["duels"]);
+    vueApplication.allduels =
+      vueApplication.allduels.concat(group["duels"]);
   });
   return true;
 }
