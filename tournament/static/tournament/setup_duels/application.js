@@ -171,7 +171,7 @@ function hideParticipants() {
     let participantSection = document.getElementById("all-participants");
     let participantInputs = participantSection.children;
     // Disable if assigned, enable if unassigned
-    participantInputs.forEach(function(button) {
+    for (let button of participantInputs) {
       if(
         assigned.indexOf(
           button.getAttribute("participantid")
@@ -184,7 +184,7 @@ function hideParticipants() {
         button.disabled = false;
         allAssigned = false;
       }
-    });
+    };
     /*
      * Generate should be clickable
      * if all fighters assigned
