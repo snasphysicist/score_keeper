@@ -139,7 +139,7 @@ function unassignParticipant(event) {
     groups.forEach(function(group) {
       // Get the participant object in the group
       let toRemove = group["members"].filter(function(member) {
-        return member["participantid"] == participantId;
+        return member["id"] == participantId;
       });
       if (toRemove.length != 1) {
         return;
