@@ -163,7 +163,10 @@ function hideParticipants() {
       }
       group["members"].forEach(function(member) {
         assigned.push(
-          member["id"]
+          // Convert to string to compare with html attributes
+          String(
+            member["id"]
+          )
         );
       });
     });
