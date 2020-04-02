@@ -157,6 +157,10 @@ function hideParticipants() {
     // We'll also check if everyone has already been assigned
     let allAssigned = true;
     vueApplication.groups.forEach(function(group) {
+      // In case members hasn't been set yet
+      if (!group["members"]) {
+        return;
+      }
       group["members"].forEach(function(member) {
         assigned.push(
           member["participantid"]
