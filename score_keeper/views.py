@@ -27,7 +27,6 @@ def login_api(request):
     data = json.loads(
         request.body.decode('utf-8')
     )
-    print(data)
     user = authenticate(
         request,
         username=data["username"],
@@ -78,7 +77,6 @@ def try_static(request):
     path = "/".join(
         path.split("/")[1:]
     )
-    print("Seeking path: ", path)
     # Try to get page content from 'cache'
     if path in list(STATIC):
         return FileResponse(
@@ -108,10 +106,8 @@ def load_static():
                 )
     # Load file content for each
     for path in static_paths:
-        print("Adding file: ", path)
         # Path is everything 'south' of /static/
         uri_path = path.split("/static/")[-1]
-        print("At uri: ", uri_path)
         with open(path, 'r') as file:
             content = file.read()
         file_like_content = StringIO()
