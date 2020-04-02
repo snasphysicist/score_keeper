@@ -125,6 +125,9 @@ function findGroupById(groupId) {
 function unassignParticipant(event) {
     let participantId = event.target.getAttribute("participantid");
     let groups = vueApplication.groups.filter(function(group) {
+      if (!group["members"]) {
+        return false;
+      }
       // Find members in group with correct participant id
       let member = group["members"].filter(function(member) {
         return member["participantid"] == participantId;
