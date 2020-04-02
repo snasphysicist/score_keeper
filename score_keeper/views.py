@@ -1,4 +1,5 @@
 
+from io import StringIO
 import json
 import os
 
@@ -58,11 +59,58 @@ def main_page(request):
     return HttpResponse(template.render(context, request))
 
 
+# Will pre-load static
+# files on first call
+# Store here
+# Like a manual cache
+STATIC_LOADED = False
+STATIC = None
+
+
 def try_static(request):
+    # Set up cache on first call
+    if STATIC is None:
+        load_static()
     path = request.get_full_path()
-    file_path = BASE_DIR + path
-    if os.path.isfile(file_path):
-        the_file = open(file_path, 'rb')
+    # Path should be of format
+    # /<module>/folders/filename
+    # Ditch module bit
+    path = "/".join(
+        path.split("/")[1:]
+    )
+    # Try to get page content from 'cache'
+    if STATIC[path] is not None:
+        the_file = StringIO(
+            STATIC["path"]
+        )
         return FileResponse(the_file)
     else:
         raise Http404
+
+
+def load_static():
+    global STATIC
+    STATIC = {}
+    static_paths = []
+    # Find all files in static folders
+    for root_directory, directories, files in os.walk(BASE_DIR):
+        for file in files:
+            if "/static/" in os.path.join(
+                root_directory,
+                file
+            ):
+                static_paths.append(
+                    os.path.join(
+                        root_directory,
+                        file
+                    )
+                )
+    # Load file content for each
+    for path in static_paths:
+        print("Adding file: ", path)
+        # Path is everything 'south' of /static/
+        uri_path = path.split("/static/")[-1]
+        print("At uri: ", uri_path)
+        with open(path, 'r') as file:
+            content = file.read()
+        STATIC[uri_path] = content
