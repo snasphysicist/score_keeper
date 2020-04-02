@@ -78,12 +78,13 @@ def try_static(request):
     path = "/".join(
         path.split("/")[1:]
     )
+    print("Seeking path: ", path)
     # Try to get page content from 'cache'
     if path in list(STATIC):
-        the_file = StringIO(
-            STATIC["path"]
+        return FileResponse(
+            STATIC[path]["content"].getvalue(),
+            content_type=STATIC[path]["type"]
         )
-        return FileResponse(the_file)
     else:
         raise Http404
 
@@ -113,4 +114,21 @@ def load_static():
         print("At uri: ", uri_path)
         with open(path, 'r') as file:
             content = file.read()
-        STATIC[uri_path] = content
+        file_like_content = StringIO()
+        file_like_content.write(
+            content
+        )
+        STATIC[uri_path] = {
+            "content": file_like_content,
+            "type": guess_type(path)
+        }
+
+
+def guess_type(path):
+    if ".css" in path:
+        return "text/css"
+    if ".js" in path:
+        return "text/javascript"
+    if ".html" in path:
+        return "text/html"
+    return "text/plain"
