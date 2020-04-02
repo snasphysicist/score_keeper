@@ -151,7 +151,7 @@ function hideParticipants() {
     vueApplication.groups.forEach(function(group) {
       group["members"].forEach(function(member) {
         assigned.push(
-          member["participantid"];
+          member["participantid"]
         );
       });
     });
@@ -160,25 +160,26 @@ function hideParticipants() {
     let participantInputs = participantSection.children;
     // Disable if assigned, enable if unassigned
     participantInputs.forEach(function(button) {
-      if (
-          assigned.indexOf(
-              button.getAttribute("participantid")
-          ) > -1
+      if(
+        assigned.indexOf(
+          button.getAttribute("participantid")
+        ) > -1
       ) {
           // Disable when assigned
-          button.disabled = true;
+        button.disabled = true;
       } else {
           // Enable when unassigned
-          button.disabled = false;
-          allAssigned = false;
+        button.disabled = false;
+        allAssigned = false;
       }
+    });
     /*
      * Generate should be clickable
      * if all fighters assigned
      * AND duels not yet generated
      */
     let generateButton = document.getElementById("generate");
-    if(allAssigned && vueApplication.allduels.length == 0) {
+    if (allAssigned && vueApplication.allduels.length == 0) {
       generateButton.disabled = false;
     } else {
       generateButton.disabled = true;
