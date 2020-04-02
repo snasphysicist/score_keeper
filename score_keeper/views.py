@@ -79,7 +79,7 @@ def try_static(request):
         path.split("/")[1:]
     )
     # Try to get page content from 'cache'
-    if STATIC[path] is not None:
+    if path in list(STATIC):
         the_file = StringIO(
             STATIC["path"]
         )
