@@ -1,11 +1,10 @@
   var vueApplication = new Vue({
     el: '#vue',
     data: {
-      currentstage: 0,
+      stage: 0,
       groups: [],
       participants: [],
-      allduels: [],
-      stageformat: ""
+      allduels: []
     }
   })
 
@@ -212,9 +211,9 @@ function hideParticipants() {
 function generateDuels() {
   // Generate button disabled only on success
   let didGenerate = false;
-  if (vueApplication.currentStage["format"] == "ROUND-ROBIN") {
+  if (vueApplication.stage["format"] == "ROUND-ROBIN") {
     didGenerate = generateRoundRobinDuels();
-  } else if (vueApplication.currentStage["format"] == "CROSS-ROUND-ROBIN") {
+  } else if (vueApplication.stage["format"] == "CROSS-ROUND-ROBIN") {
     didGenerate = generateCrossRoundRobinDuels();
   }
   if (didGenerate) {
@@ -362,7 +361,7 @@ function getSetupDetails() {
     }
   }).then((json) => {
     if (json["success"]) {
-      vueApplication.currentStage = json["currentstage"];
+      vueApplication.stage = json["stage"];
       vueApplication.groups = json["groups"];
       vueApplication.participants = json["participants"];
     }
