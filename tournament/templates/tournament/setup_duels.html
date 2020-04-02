@@ -9,7 +9,7 @@
 <body>
     {% verbatim %}
     <div id="vue" class="grid-container">
-        <h1>Stage {{ currentstage["number"] }} Setup</h1>
+        <h1>Stage {{ stage.number }} Setup</h1>
         <div class="grid-container two-columns">
             <input v-for="group in groups"
                 :id="'group-' + group.number" :groupid="group.id"
