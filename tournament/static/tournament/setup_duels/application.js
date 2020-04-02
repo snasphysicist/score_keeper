@@ -89,12 +89,14 @@ function assignParticipant(event) {
     // Assume group already exists
     let groupId = selected.getAttribute("groupid");
     let group = findGroupById(groupId);
-    group["members"].push(
-      {
-        participantid: participantId,
-        battlename: battleName
-      }
-    );
+    if (group) {
+      group["members"].push(
+        {
+          participantid: participantId,
+          battlename: battleName
+        }
+      );
+    }
     hideParticipants();
 }
 
