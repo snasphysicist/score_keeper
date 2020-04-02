@@ -18,8 +18,8 @@
         </div>
         <div id="all-participants" class="grid-container two-columns">
             <input v-for="participant in participants"
-                :id="participant.battlename" :participantid="participant.id"
-                type="button" :value="participant.battlename"
+                :id="participant.battle_name" :participantid="participant.id"
+                type="button" :value="participant.battle_name"
                 onclick="assignParticipant(event)"/>
         </div>
         <div class="grid-container">
