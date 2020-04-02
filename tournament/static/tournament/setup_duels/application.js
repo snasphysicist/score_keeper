@@ -81,7 +81,6 @@ function toggleGroupSelect(event) {
 function assignParticipant(event) {
     // Get participant id from button
     let participantId = event.target.getAttribute("participantid");
-    let battleName = event.target.id;
     // Do nothing if no group selected
     if (!selected) {
         return;
@@ -90,12 +89,19 @@ function assignParticipant(event) {
     let groupId = selected.getAttribute("groupid");
     let group = findGroupById(groupId);
     if (group) {
-      group["members"].push(
-        {
-          participantid: participantId,
-          battlename: battleName
-        }
-      );
+      // Add members if !exists
+      if (!group["members"]) {
+        group["members"] = [];
+      }
+      // Get participant object from participants arrays
+      let participant = vueApplication.participants.filter(function(participant) {
+        return participant["id"] == participantId;
+      });
+      if (participant.length == 1) {
+        group["members"].push(
+          participant[0]
+        );
+      }
     }
     hideParticipants();
 }
