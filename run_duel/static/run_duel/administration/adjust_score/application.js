@@ -57,6 +57,24 @@ let vueApplication = new Vue({
       }
       return duel[0]["rounds"];
     },
+    selectedDuelData: function() {
+      let duels = this.groupDuels;
+      let duel = duels.filter(function(duel) {
+        // Match on two opponent names
+        return (
+          this.selectedduel.contains(
+            duel["opponent1"]["battle_name"]
+          )
+          && this.selectedduel.contains(
+            duel["opponent2"]["battle_name"]
+          )
+        );
+      });
+      if (duel.length != 1) {
+        return [];
+      }
+      return duel[0];
+    },
     selectedRoundData: function() {
       let rounds = this.duelRounds;
       let round = rounds.filter(function(round) {
