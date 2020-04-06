@@ -208,6 +208,13 @@ function hideParticipants() {
     }
 }
 
+// Helper function to return only required data from group object
+function keyGroupData(group) {
+  return {
+    "id": group["id"]
+  };
+}
+
 function generateDuels() {
   // Generate button disabled only on success
   let didGenerate = false;
@@ -244,7 +251,7 @@ function generateRoundRobinDuels() {
     // Set up duels with those combinations
     group.duels = combinations.map(function(pairing) {
       return {
-        group: group["id"],
+        group: keyGroupData(group),
         opponent1: members[pairing[0]],
         opponent2: members[pairing[1]]
       };
@@ -276,7 +283,7 @@ function generateCrossRoundRobinDuels() {
     groupPairs.forEach(function(pairing) {
       vueApplication.allduels.push(
         {
-          group: group1["id"],
+          group: keyGroupData(group1),
           opponent1: pairing[0],
           opponent2: pairing[1]
         }
