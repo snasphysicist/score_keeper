@@ -45,7 +45,7 @@ let vueApplication = new Vue({
         // Match on two opponent names
         return (
           this.selectedduel.contains(
-            duel["oppponent1"]["battle_name"]
+            duel["opponent1"]["battle_name"]
           )
           && this.selectedduel.contains(
             duel["opponent2"]["battle_name"]
@@ -58,10 +58,8 @@ let vueApplication = new Vue({
       return duel[0]["rounds"];
     },
     selectedRoundData: function() {
-      if (!this.duel["rounds"]) {
-        return [];
-      }
-      let round = this.duel["rounds"].filter(function(round) {
+      let rounds = this.duelRounds;
+      let round = rounds.filter(function(round) {
         return round["number"] == this.selectedround;
       })
       if (round.length != 1) {
