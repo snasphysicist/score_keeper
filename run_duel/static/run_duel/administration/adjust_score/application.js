@@ -51,10 +51,10 @@ let vueApplication = new Vue({
       let duel = duels.filter(function(duel) {
         // Match on two opponent names
         return (
-          selectedDuel.contains(
+          selectedDuel.includes(
             duel["opponent1"]["battle_name"]
           )
-          && selectedDuel.contains(
+          && selectedDuel.includes(
             duel["opponent2"]["battle_name"]
           )
         );
@@ -70,10 +70,10 @@ let vueApplication = new Vue({
       let duel = duels.filter(function(duel) {
         // Match on two opponent names
         return (
-          selectedDuel.contains(
+          selectedDuel.includes(
             duel["opponent1"]["battle_name"]
           )
-          && selectedDuel.contains(
+          && selectedDuel.includes(
             duel["opponent2"]["battle_name"]
           )
         );
