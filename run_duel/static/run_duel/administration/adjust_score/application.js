@@ -24,9 +24,7 @@ let vueApplication = new Vue({
       }
       // Filter down to selected stage
       let selectedStage = this.selectedstage;
-      console.log(this);
       let stage = this.tournament["stages"].filter(function(stage) {
-        console.log(this);
         return stage["stage"]["number"] == selectedStage;
       });
       if (stage.length != 1) {
@@ -170,7 +168,6 @@ function fetchDuelScores() {
 
 function getDuelsForGroup() {
   let groupId = vueApplication.selectedGroupId;
-  console.log(groupId);
   // Exit if group id invalid
   if (groupId == null) {
     return;

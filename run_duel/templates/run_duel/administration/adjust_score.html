@@ -32,7 +32,7 @@
         <h2>Round</h2>
         <select v-model="selectedround">
           <option value="" disabled selected style="display:none;"></option>
-          <option v-for="round in duelRounds" :roundid="round.id">{% verbatim %}{{ round.round_number }}{% endverbatim %}</option>
+          <option v-for="round in duelRounds" :roundid="round.id">{% verbatim %}{{ round.number }}{% endverbatim %}</option>
         </select>
       </div>
       <div type="grid-container">
