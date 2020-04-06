@@ -30,17 +30,8 @@ let vueApplication = new Vue({
       return stage[0]["groups"];
     },
     groupDuels: function() {
-      if (!this.tournament["stages"]) {
-        return [];
-      }
-      // Filter down to selected stage
-      let stage = this.tournament["stages"].filter(function(stage) {
-        return stage["stage"]["number"] == this.selectedstage;
-      })
-      if (stage.length != 1) {
-        return [];
-      }
-      let group = stage[0]["groups"].filter(function(group) {
+      let groups = this.stageGroups;
+      let group = groups.filter(function(group) {
         return group["group"]["number"] == this.selectedgroup;
       })
       if (group.length != 1) {
