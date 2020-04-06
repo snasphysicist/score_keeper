@@ -5,7 +5,9 @@ let vueApplication = new Vue({
     selectedgroup: "",
     selectedduel: "",
     selectedround: "",
-    tournament: {},
+    tournament: {
+      "stages": []
+    },
     duel: {}
   },
   computed: {
@@ -21,9 +23,12 @@ let vueApplication = new Vue({
         return [];
       }
       // Filter down to selected stage
+      let selectedStage = this.selectedstage;
+      console.log(this);
       let stage = this.tournament["stages"].filter(function(stage) {
-        return stage["stage"]["number"] == this.selectedstage;
-      })
+        console.log(this);
+        return stage["stage"]["number"] == selectedStage;
+      });
       if (stage.length != 1) {
         return [];
       }
@@ -31,8 +36,9 @@ let vueApplication = new Vue({
     },
     groupDuels: function() {
       let groups = this.stageGroups;
+      let selectedGroup = this.selectedgroup;
       let group = groups.filter(function(group) {
-        return group["group"]["number"] == this.selectedgroup;
+        return group["group"]["number"] == selectedGroup;
       });
       if (group.length != 1) {
         return [];
@@ -41,13 +47,14 @@ let vueApplication = new Vue({
     },
     duelRounds: function() {
       let duels = this.groupDuels;
+      let selectedDuel = this.selectedduel;
       let duel = duels.filter(function(duel) {
         // Match on two opponent names
         return (
-          this.selectedduel.contains(
+          selectedDuel.contains(
             duel["opponent1"]["battle_name"]
           )
-          && this.selectedduel.contains(
+          && selectedDuel.contains(
             duel["opponent2"]["battle_name"]
           )
         );
@@ -59,26 +66,28 @@ let vueApplication = new Vue({
     },
     selectedDuelData: function() {
       let duels = this.groupDuels;
+      let selectedDuel = this.selectedduel;
       let duel = duels.filter(function(duel) {
         // Match on two opponent names
         return (
-          this.selectedduel.contains(
+          selectedDuel.contains(
             duel["opponent1"]["battle_name"]
           )
-          && this.selectedduel.contains(
+          && selectedDuel.contains(
             duel["opponent2"]["battle_name"]
           )
         );
       });
       if (duel.length != 1) {
-        return [];
+        return {};
       }
       return duel[0];
     },
     selectedRoundData: function() {
       let rounds = this.duelRounds;
+      let selectedRound = this.selectedround;
       let round = rounds.filter(function(round) {
-        return round["number"] == this.selectedround;
+        return round["number"] == selectedRound;
       })
       if (round.length != 1) {
         return [];
