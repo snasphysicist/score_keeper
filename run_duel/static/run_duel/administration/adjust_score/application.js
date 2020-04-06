@@ -33,11 +33,29 @@ let vueApplication = new Vue({
       let groups = this.stageGroups;
       let group = groups.filter(function(group) {
         return group["group"]["number"] == this.selectedgroup;
-      })
+      });
       if (group.length != 1) {
         return [];
       }
       return group[0]["duels"];
+    },
+    duelRounds: function() {
+      let duels = this.groupDuels;
+      let duel = duels.filter(function(duel) {
+        // Match on two opponent names
+        return (
+          this.selectedduel.contains(
+            duel["oppponent1"]["battle_name"]
+          )
+          && this.selectedduel.contains(
+            duel["opponent2"]["battle_name"]
+          )
+        );
+      });
+      if (duel.length != 1) {
+        return [];
+      }
+      return duel[0]["rounds"];
     },
     selectedRoundData: function() {
       if (!this.duel["rounds"]) {
