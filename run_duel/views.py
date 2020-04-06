@@ -191,7 +191,6 @@ def adjust_score_api(request):
     data = json.loads(
         request.body.decode("utf-8")
     )
-    print(data)
     the_round = list(Round.objects.filter(id__exact=data["roundid"]))
     if len(the_round) == 0:
         return JsonResponse(
@@ -201,7 +200,6 @@ def adjust_score_api(request):
             }
         )
     the_round = the_round[0]
-    adjustment_type = ""
     if data["opponent"] == 1:
         adjustment_type = "OPPONENT-1-ADJUST-"
     elif data["opponent"] == 2:
