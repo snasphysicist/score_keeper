@@ -209,8 +209,8 @@ function doScoreAdjustment(event) {
   } else {
     action = "DOWN";
   }
-  let duelId = vueApplication.alldueldata["duel_id"];
-  let roundId = vueApplication.selectedRoundData["round_id"];
+  let duelId = vueApplication.selectedDuelData["id"];
+  let roundId = vueApplication.selectedRoundData["id"];
   const POST_URL = "/run_duel/api/v1/duel/adjust";
   data = {
     duelid: duelId,
