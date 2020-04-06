@@ -134,7 +134,9 @@ fetchDuelList();
 
 function fetchDuelScores() {
   let dueltext = vueApplication.selectedduel;
-  let options = document.getElementById("round-select").children;
+  let options = Array.from(
+    document.getElementById("round-select").children
+  );
   let option = options.filter(function(opt) {
     return opt.innerHTML == dueltext;
   })
