@@ -230,7 +230,7 @@ function doScoreAdjustment(event) {
     }
   }).then((json) => {
     if (json["success"]) {
-      fetchDuelScores();
+      fetchDuelList();
     }
   })
 }
