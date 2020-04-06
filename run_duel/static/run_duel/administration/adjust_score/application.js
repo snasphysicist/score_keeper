@@ -11,7 +11,7 @@ let vueApplication = new Vue({
   computed: {
     allStages: function() {
       if (this.tournament["stages"]) {
-        return tournament["stages"];
+        return this.tournament["stages"];
       } else {
         return [];
       }
@@ -89,7 +89,7 @@ function fetchDuelList() {
     }
   }).then((json) => {
     if(json["success"]) {
-      vueApplication.tournament = json["tournament"];
+      vueApplication.tournament = json;
     } else {
       // Handle error
     }
