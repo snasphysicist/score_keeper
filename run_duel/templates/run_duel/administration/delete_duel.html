@@ -9,7 +9,7 @@
   <body>
     <h1>Delete Duel</h1>
     <div id="vue" class="grid-container two-columns">
-      <template v-for="stage in stages">
+      <template v-for="stage in tournament.stages">
         <template v-for="group in stage.groups">
           <template v-for="duel in group.duels">
             {% verbatim %}
