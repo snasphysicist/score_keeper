@@ -27,7 +27,6 @@ class Round(models.Model):
         events = self.all_events()
         return {
             "id": self.id,
-            "duel": self.duel.json(),
             "number": self.round_number,
             "status": determine_status(events),
             "score": calculate_score(events),
