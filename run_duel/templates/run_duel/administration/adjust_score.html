@@ -28,19 +28,23 @@
         <h2>Round</h2>
         <select v-model="selectedround">
           <option value="" disabled selected style="display:none;"></option>
-          <option v-for="round in allduelrounds" :roundid="round.round_id">{% verbatim %}{{ round.round_number }}{% endverbatim %}</option>
+          <option v-for="round in duelRounds" :roundid="round.id">{% verbatim %}{{ round.round_number }}{% endverbatim %}</option>
         </select>
       </div>
       <div type="grid-container">
         <h2>Score</h2>
         <p>{% verbatim %}{{ formattedRoundScore }}{% endverbatim %}</p>
         <h2>Adjust</h2>
-        <h3>{% verbatim %}{{ duel.opponent1 ? alldueldata.opponent1.battle_name : "---" }}{% endverbatim %}</h3>
+        <h3>{% verbatim %}
+          {{ selectedDuelData.opponent1 ? selectedDuelData.opponent1.battle_name : "---" }}
+        {% endverbatim %}</h3>
         <input id="opponent-1-up" type="button"
           onclick="doScoreAdjustment(event)" value="HP ++"/>
         <input id="opponent-1-down" type="button"
           onclick="doScoreAdjustment(event)" value="HP --"/>
-        <h3>{% verbatim %}{{ duel.opponent2 ? alldueldata.opponent2.battle_name : "---" }}{% endverbatim %}</h3>
+        <h3>{% verbatim %}
+          {{ selectedDuelData.opponent2 ? selectedDuelData.opponent2.battle_name : "---" }}
+        {% endverbatim %}</h3>
         <input id="opponent-2-up" type="button"
           onclick="doScoreAdjustment(event)" value="HP ++"/>
         <input id="opponent-2-down" type="button"
