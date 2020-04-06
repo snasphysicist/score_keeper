@@ -21,7 +21,7 @@
           <option v-for="group in stageGroups" :groupid="group.group.id">{% verbatim %}{{ group.group.number }}{% endverbatim %}</option>
         </select>
         <h2>Duel</h2>
-        <select v-model="selectedduel" id="round-select" onchange="setTimeout(fetchDuelScores, 100);">
+        <select v-model="selectedduel" id="round-select">
           <option value="" disabled selected style="display:none;"></option>
           <option v-for="duel in groupDuels" :duelid="duel.id">
             {% verbatim %}
