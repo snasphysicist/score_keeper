@@ -157,17 +157,17 @@ def reset_duel_api(request):
         request.body.decode("utf-8")
     )
     duel_id = data["id"]
-    duels = Duel.by_id(
+    duel = Duel.by_id(
         None,
         duel_id
     )
-    if len(duels) == 0:
+    if duel is None:
         result = {
             "success": False,
             "reason": "Could not find duel with provided identifier"
         }
     else:
-        duels[0].delete_all_events()
+        duel.delete_all_events()
         result = {"success": True}
     return JsonResponse(result)
 
