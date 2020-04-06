@@ -35,12 +35,12 @@
         <h2>Score</h2>
         <p>{% verbatim %}{{ formattedRoundScore }}{% endverbatim %}</p>
         <h2>Adjust</h2>
-        <h3>{% verbatim %}{{ alldueldata.opponent1 ? alldueldata.opponent1 : "---" }}{% endverbatim %}</h3>
+        <h3>{% verbatim %}{{ duel.opponent1 ? alldueldata.opponent1.battle_name : "---" }}{% endverbatim %}</h3>
         <input id="opponent-1-up" type="button"
           onclick="doScoreAdjustment(event)" value="HP ++"/>
         <input id="opponent-1-down" type="button"
           onclick="doScoreAdjustment(event)" value="HP --"/>
-        <h3>{% verbatim %}{{ alldueldata.opponent2 ? alldueldata.opponent2 : "---" }}{% endverbatim %}</h3>
+        <h3>{% verbatim %}{{ duel.opponent2 ? alldueldata.opponent2.battle_name : "---" }}{% endverbatim %}</h3>
         <input id="opponent-2-up" type="button"
           onclick="doScoreAdjustment(event)" value="HP ++"/>
         <input id="opponent-2-down" type="button"
