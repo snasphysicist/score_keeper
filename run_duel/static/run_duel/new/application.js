@@ -18,18 +18,12 @@ let vueApplication = new Vue({
     },
     stageGroups: function() {
       // Get all groups for the selected stage
-      if (!this.pendingduels["stages"]) {
-        console.log("1");
-        return [];
-      }
-      let stage = this.pendingduels["stages"].filter(function(stage) {
-        return stage["stage"]["number"] == this.selectedstage;
-      });
+      let stage = this.allStages.filter(
+        stage => stage["stage"]["number"] == this.selectedstage
+      );
       if (stage.length == 0) {
-        console.log("2");
         return [];
       }
-      console.log("3");
       return stage[0]["groups"];
     },
     groupDuels: function() {
