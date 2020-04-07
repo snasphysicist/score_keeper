@@ -52,6 +52,9 @@ class Round(models.Model):
         for event in events:
             event.delete()
 
+    def status(self):
+        return determine_status(self)
+
 
 #
 # # # Functions used to determine round status
