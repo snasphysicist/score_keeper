@@ -65,22 +65,22 @@ var vueApplication = new Vue({
           // Add up scores when participant is opponent 1
           let score = this.group["duels"].filter(
             // Get only duels where participant is opponent 1
-            duel => duel["opponent1"]["id"] == participant["id"];
+            duel => (duel["opponent1"]["id"] == participant["id"])
           ).map(
             // Extract opponent 1 score
             duel => duel["score"]["opponent1"]
           ).reduce(
             // Sum scores
-            (accumulator, value) => accumulator + value;
+            (accumulator, value) => accumulator + value
           );
           // Add scores where participant is opponent 2
           score += this.group["duels"].filter(
-            duel => duel["opponent2"]["id"] == participant["id"];
+            duel => (duel["opponent2"]["id"] == participant["id"])
           ).map(
             duel => duel["score"]["opponent2"]
           ).reduce(
             // Sum scores
-            (accumulator, value) => accumulator + value;
+            (accumulator, value) => accumulator + value
           );
           // Add summed score to participant object
           participant["score"] = score;
