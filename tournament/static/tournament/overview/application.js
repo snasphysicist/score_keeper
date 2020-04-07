@@ -2,7 +2,9 @@
 var vueApplication = new Vue({
   el: '#vue',
   data: {
-    tournament: {},
+    tournament: {
+      stages: []
+    },
     selectedstage: 0,
     selectedgroup: 0
   },
