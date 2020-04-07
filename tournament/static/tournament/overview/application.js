@@ -22,12 +22,74 @@ var vueApplication = new Vue({
         group => (group["group"]["number"] == this.selectedgroup)
       );
       if (groups.length != 1) {
-        return [];
+        return {duels: []};
       }
       return group[0];
     }
+    participants: function() {
+      if (this.group["duels"].length == 0) {
+        return [];
+      }
+      // Get unique participants in group
+      let uniqueParticipants = [];
+      this.group["duels"].forEach(
+        duel => {
+          let added = participants.map(
+            participant => participant["id"]
+          );
+          if (
+            added.indexOf(
+              duel["opponent1"]["id"]
+            ) > -1
+          ) {
+            participants.push(duel["opponent1"]);
+          }
+          if (
+            added.indexOf(
+              duel["opponent2"]["id"]
+            ) > -1
+          ) {
+            participants.push(duel["opponent2"]);
+          }
+        }
+      );
+      return uniqueParticipants;
+    },
+    participantsWithScore: function() {
+      if (this.participants.length == 0) {
+        return [];
+      }
+      let participantsFull = this.participants;
+      participantsFull.forEach(
+        participant => {
+          // Add up scores when participant is opponent 1
+          let score = this.group["duels"].filter(
+            // Get only duels where participant is opponent 1
+            duel => duel["opponent1"]["id"] == participant["id"];
+          ).map(
+            // Extract opponent 1 score
+            duel => duel["score"]["opponent1"]
+          ).reduce(
+            // Sum scores
+            (accumulator, value) => accumulator + value;
+          );
+          // Add scores where participant is opponent 2
+          score += this.group["duels"].filter(
+            duel => duel["opponent2"]["id"] == participant["id"];
+          ).map(
+            duel => duel["score"]["opponent2"]
+          ).reduce(
+            // Sum scores
+            (accumulator, value) => accumulator + value;
+          );
+          // Add summed score to participant object
+          participant["score"] = score;
+        }
+      );
+      return participantsFull;
+    },
     sortedParticipants: function() {
-      let array = this.participants;
+      let array = this.participantsWithScore;
       array.sort(
         (a, b) => {
           return (
