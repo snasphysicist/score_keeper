@@ -12,11 +12,20 @@ var vueApplication = new Vue({
       let stages = this.tournament["stages"].filter(
         stage => (stage["stage"]["number"] == this.selectedstage)
       );
-      if (stages.length != 0) {
+      if (stages.length != 1) {
         return [];
       }
       return stages[0]["groups"];
     },
+    group: function() {
+      let groups = this.groups.filter(
+        group => (group["group"]["number"] == this.selectedgroup)
+      );
+      if (groups.length != 1) {
+        return [];
+      }
+      return group[0];
+    }
     sortedParticipants: function() {
       let array = this.participants;
       array.sort(
