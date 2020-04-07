@@ -62,7 +62,7 @@ var vueApplication = new Vue({
       return "---";
     },
     totalOpponent1Score: function() {
-      let scores = this.rounds.map(
+      let scores = this.duel.rounds.map(
         round => round["score"]["opponent1"]
       );
       if (scores.length == 0) {
@@ -73,7 +73,7 @@ var vueApplication = new Vue({
       );
     },
     totalOpponent2Score: function() {
-      let scores = this.rounds.map(
+      let scores = this.duel.rounds.map(
         round => round["score"]["opponent2"]
       );
       if (scores.length == 0) {
