@@ -86,6 +86,13 @@ var vueApplication = new Vue({
           );
           // Add summed score to participant object
           participant["score"] = score;
+          // Calculate completed duels
+          participant["completed"] = this.group["duels"].filter(
+            duel => (duel["opponent1"]["id"] == participant["id"])
+          ).length // Count duels where participant is opponent 1
+          + this.group["duels"].filter(
+            duel => (duel["opponent2"]["id"] == participant["id"])
+          ).length; // Get only duels where participant is opponent 2
         }
       );
       return participantsFull;
