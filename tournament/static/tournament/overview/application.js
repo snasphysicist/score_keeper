@@ -3,20 +3,19 @@ var vueApplication = new Vue({
   el: '#vue',
   data: {
     tournament: {},
-    participants: [],
     selectedstage: 0,
     selectedgroup: 0
   },
   computed: {
     groups: function() {
       // Filter down to selected stage
-      let stage = this.stages.filter(function(stage) {
-        return stage["stage"]["number"] == this.selectedstage;
-      })
-      if (stage.length != 0) {
+      let stages = this.tournament["stages"].filter(
+        stage => (stage["stage"]["number"] == this.selectedstage)
+      );
+      if (stages.length != 0) {
         return [];
       }
-      return stage[0]["groups"];
+      return stages[0]["groups"];
     },
     selectedGroupId: function() {
       // Filter down to selected stage
