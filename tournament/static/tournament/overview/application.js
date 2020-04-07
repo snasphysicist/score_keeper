@@ -42,14 +42,14 @@ var vueApplication = new Vue({
           if (
             added.indexOf(
               duel["opponent1"]["id"]
-            ) > -1
+            ) == -1
           ) {
             uniqueParticipants.push(duel["opponent1"]);
           }
           if (
             added.indexOf(
               duel["opponent2"]["id"]
-            ) > -1
+            ) == -1
           ) {
             uniqueParticipants.push(duel["opponent2"]);
           }
