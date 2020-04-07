@@ -69,7 +69,7 @@ var vueApplication = new Vue({
         return "---";
       }
       return scores.reduce(
-        accumulator, value => (accumulator + value)
+        (accumulator, value) => (accumulator + value)
       );
     },
     totalOpponent2Score: function() {
@@ -80,7 +80,7 @@ var vueApplication = new Vue({
         return "---";
       }
       return scores.reduce(
-        accumulator, value => (accumulator + value)
+        (accumulator, value) => (accumulator + value)
       );
     },
     roundNumberDisplay: function() {
