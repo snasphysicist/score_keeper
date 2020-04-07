@@ -249,7 +249,14 @@ function manageNotifiers() {
 // Web socket handling
 let ws = null;
 function manageWebSocketConnection() {
-  ws = new WebSocket("{{ websocket_protocol }}://{{ base_url }}:{{ websocket_port }}/");
+  ws = new WebSocket(
+    WEBSOCKET_PROTOCOL
+    + "://"
+    + WEBSOCKET_URL
+    + ":"
+    + WEBSOCKET_PORT
+    + "/"
+  );
   ws.onmessage = function (event) {
     jsonData = JSON.parse(event.data);
     if (jsonData["success"]) {

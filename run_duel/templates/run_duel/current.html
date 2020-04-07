@@ -5,6 +5,12 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/run_duel/current/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- Set websocket constants -->
+    <script type="text/javascript">
+      const WEBSOCKET_PROTOCOL = {{ websocket_protocol }};
+      const WEBSOCKET_URL = {{ base_url }};
+      const WEBSOCKET_PORT = {{ websocket_port }};
+    </script>
   </head>
   <body>
     <div id="vue" class="grid-container page-contatiner">
