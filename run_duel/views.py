@@ -52,7 +52,7 @@ def new_duel_api(request):
         )
     # For any other duel marked
     # as current, make it not so
-    old_duels = Duel.marked_as_current()
+    old_duels = Duel.marked_as_current(None)
     for old_duel in old_duels:
         old_duel.current = False
         old_duel.save()
