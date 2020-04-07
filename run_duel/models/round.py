@@ -23,6 +23,12 @@ class Round(models.Model):
         default="NOT STARTED"   # RUNNING, PAUSED, FINISHED
     )
 
+    def by_id(self, round_id):
+        rounds = list(Round.objects.filter(id__exact=round_id))
+        if len(rounds) != 1:
+            return []
+        return rounds[0]
+
     def dictionary(self):
         events = self.all_events()
         return {
