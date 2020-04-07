@@ -12,12 +12,12 @@
       <p>Stage</p>
       <select v-model="selectedstage">
         <option value="" disabled selected style="display:none;">Default</option>
-        <option v-for="stage in stages" :stageid="stage.id">{% verbatim %}{{ stage.number }}{% endverbatim %}</option>
+        <option v-for="stage in tournament.stages" :stageid="stage.stage.id">{% verbatim %}{{ stage.number }}{% endverbatim %}</option>
       </select>
       <p>Group</p>
       <select v-model="selectedgroup">
         <option value="" disabled selected style="display:none;">Default</option>
-        <option v-for="group in groups" :groupid="group.id">{% verbatim %}{{ group.number }}{% endverbatim %}</option>
+        <option v-for="group in groups" :groupid="group.group.id">{% verbatim %}{{ group.number }}{% endverbatim %}</option>
       </select>
     </div>
     <h1>Duels</h1>
@@ -27,7 +27,7 @@
       <p>HP</p>
       <p>Opponent 2</p>
       <p>Status</p>
-      <template v-for="duel in duels">
+      <template v-for="duel in group.duels">
         <p>{% verbatim %}{{ duel.opponent1.battle_name }}{% endverbatim %}</p>
         <p>{% verbatim %}{{ duel.score.opponent1 }}{% endverbatim %}</p>
         <p>{% verbatim %}{{ duel.score.opponent1 }}{% endverbatim %}</p>
