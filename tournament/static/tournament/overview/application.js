@@ -88,10 +88,16 @@ var vueApplication = new Vue({
           participant["score"] = score;
           // Calculate completed duels
           participant["completed"] = this.group["duels"].filter(
-            duel => (duel["opponent1"]["id"] == participant["id"])
+            duel => (
+              (duel["opponent1"]["id"] == participant["id"])
+              && (duel["status"] == "FINISHED")
+            )
           ).length // Count duels where participant is opponent 1
           + this.group["duels"].filter(
-            duel => (duel["opponent2"]["id"] == participant["id"])
+            duel => (
+              (duel["opponent2"]["id"] == participant["id"])
+              && (duel["status"] == "FINISHED")
+            )
           ).length; // Get only duels where participant is opponent 2
         }
       );
@@ -103,7 +109,7 @@ var vueApplication = new Vue({
         (a, b) => {
           return (
             -1 * (1000 * (a.completed - b.completed))
-            - (a.remaining - b.remaining)
+            - (a.score - b.score)
           );
         }
       );
