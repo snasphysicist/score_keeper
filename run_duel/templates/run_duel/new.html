@@ -19,7 +19,11 @@
       </select>
       <p>Duel</p>
       <select v-model="selectedduel">
-        <option v-for="duel in groupDuels" :duelid="duel.id">{% verbatim %}{{ duel.opponent1 }} vs {{ duel.opponent2 }}{% endverbatim %}</option>
+        <option v-for="duel in groupDuels" :duelid="duel.id">
+          {% verbatim %}
+          {{ duel.opponent1.battle_name }} vs {{ duel.opponent2.battle_name }}
+          {% endverbatim %}
+        </option>
       </select>
     </div>
     <input type="button" id="fight" onclick="startNewDuel()" value="READY!"/>
