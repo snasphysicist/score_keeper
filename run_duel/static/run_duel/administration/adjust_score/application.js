@@ -22,11 +22,9 @@ let vueApplication = new Vue({
       if (!this.tournament["stages"]) {
         return [];
       }
-      // Filter down to selected stage
-      let selectedStage = this.selectedstage;
-      let stage = this.tournament["stages"].filter(function(stage) {
-        return stage["stage"]["number"] == selectedStage;
-      });
+      let stage = this.tournament["stages"].filter(
+        stage => (stage["stage"]["number"] == this.selectedstage)
+      );
       if (stage.length != 1) {
         return [];
       }
@@ -34,10 +32,9 @@ let vueApplication = new Vue({
     },
     groupDuels: function() {
       let groups = this.stageGroups;
-      let selectedGroup = this.selectedgroup;
-      let group = groups.filter(function(group) {
-        return group["group"]["number"] == selectedGroup;
-      });
+      let group = groups.filter(
+        group => (group["group"]["number"] == this.selectedgroup)
+      );
       if (group.length != 1) {
         return [];
       }
@@ -45,18 +42,16 @@ let vueApplication = new Vue({
     },
     duelRounds: function() {
       let duels = this.groupDuels;
-      let selectedDuel = this.selectedduel;
-      let duel = duels.filter(function(duel) {
-        // Match on two opponent names
-        return (
-          selectedDuel.includes(
+      let duel = duels.filter(
+        duel => (
+          this.selectedduel.includes(
             duel["opponent1"]["battle_name"]
           )
-          && selectedDuel.includes(
+          && this.selectedduel.includes(
             duel["opponent2"]["battle_name"]
           )
-        );
-      });
+        )
+      );
       if (duel.length != 1) {
         return [];
       }
@@ -64,18 +59,16 @@ let vueApplication = new Vue({
     },
     selectedDuelData: function() {
       let duels = this.groupDuels;
-      let selectedDuel = this.selectedduel;
-      let duel = duels.filter(function(duel) {
-        // Match on two opponent names
-        return (
-          selectedDuel.includes(
+      let duel = duels.filter(
+        duel => (
+          this.selectedduel.includes(
             duel["opponent1"]["battle_name"]
           )
-          && selectedDuel.includes(
+          && this.selectedduel.includes(
             duel["opponent2"]["battle_name"]
           )
-        );
-      });
+        )
+      );
       if (duel.length != 1) {
         return {};
       }
@@ -84,9 +77,9 @@ let vueApplication = new Vue({
     selectedRoundData: function() {
       let rounds = this.duelRounds;
       let selectedRound = this.selectedround;
-      let round = rounds.filter(function(round) {
-        return round["number"] == selectedRound;
-      })
+      let round = rounds.filter(
+        round => (round["number"] == this.selectedround);
+      );
       if (round.length != 1) {
         return [];
       }
