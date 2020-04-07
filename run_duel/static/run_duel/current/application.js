@@ -5,9 +5,9 @@ var vueApplication = new Vue({
     "duel": {
       "duel_id": 0,
       "opponent1": {},
-      "opponent2": {}
-    },
-    "rounds": []
+      "opponent2": {},
+      "rounds": []
+    }
   },
   computed: {
     currentRoundTimeRemaining: function() {
@@ -25,18 +25,20 @@ var vueApplication = new Vue({
       }
     },
     currentRound: function() {
-      let round = this.rounds.filter(function(round) {
-        return (round["status"] === "RUNNING")
-                || (round["status"] === "PAUSED");
-      });
-      if (round.length > 0) {
-        return round[0];
+      let rounds = this.duel.rounds.filter(
+        round => (
+          round["status"] === "RUNNING")
+          || (round["status"] === "PAUSED"
+        )
+      );
+      if (rounds.length > 0) {
+        return rounds[0];
       } else {
         return null;
       }
     },
     nextRound: function() {
-      let round = this.rounds.filter(function(round) {
+      let round = this.duel.rounds.filter(function(round) {
         return round["status"] == "READY";
       });
       if (round.length > 0) {
@@ -266,10 +268,9 @@ function manageWebSocketConnection() {
     + "/"
   );
   ws.onmessage = function (event) {
-    jsonData = JSON.parse(event.data);
-    if (jsonData["success"]) {
-      vueApplication.duel = jsonData["duel"];
-      vueApplication.rounds = jsonData["rounds"];
+    let json = JSON.parse(event.data);
+    if (json["success"]) {
+      vueApplication.duel = json;
     }
     manageNotifiers();
   };
