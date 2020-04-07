@@ -78,7 +78,7 @@ let vueApplication = new Vue({
       let rounds = this.duelRounds;
       let selectedRound = this.selectedround;
       let round = rounds.filter(
-        round => (round["number"] == this.selectedround);
+        round => (round["number"] == this.selectedround)
       );
       if (round.length != 1) {
         return [];
