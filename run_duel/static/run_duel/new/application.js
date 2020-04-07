@@ -81,10 +81,8 @@ function fetchPendingDuels() {
     }
   }).then((json) => {
     if (json["success"]) {
-      vueApplication.pendingduels = json["pending"];
-      if (json["pending"].length > 0) {
-        setTimeout(setSuggestedNextDuel, 100);
-      }
+      vueApplication.tournament = json;
+      setTimeout(setSuggestedNextDuel, 100);
     }
   });
 }
