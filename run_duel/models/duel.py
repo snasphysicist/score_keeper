@@ -118,8 +118,8 @@ class Duel(models.Model):
     def current_round(self):
         current = [
             x for x in self.all_rounds() if (
-                x.determine_status() == "RUNNING"
-                or x.determine_status() == "PAUSED"
+                x.status() == "RUNNING"
+                or x.status() == "PAUSED"
             )
         ]
         if len(current) > 0:
@@ -129,7 +129,7 @@ class Duel(models.Model):
 
     def next_round(self):
         unstarted = [
-            x for x in self.all_rounds() if x.determine_status() == "READY"
+            x for x in self.all_rounds() if x.status() == "READY"
         ]
         if len(unstarted) > 0:
             return unstarted[0]
