@@ -60,18 +60,26 @@ var vueApplication = new Vue({
       return "---";
     },
     totalOpponent1Score: function() {
-      return this.rounds.map(function(round) {
-        return round["score"]["opponent1"];
-      }).reduce(function(accumulator, value) {
-        return accumulator + value;
-      });
+      let scores = this.rounds.map(
+        round => round["score"]["opponent1"]
+      );
+      if (scores.length == 0) {
+        return "---";
+      }
+      return scores.reduce(
+        accumulator, value => (accumulator + value)
+      );
     },
     totalOpponent2Score: function() {
-      return this.rounds.map(function(round) {
-        return round["score"]["opponent2"];
-      }).reduce(function(accumulator, value) {
-        return accumulator + value;
-      });
+      let scores = this.rounds.map(
+        round => round["score"]["opponent2"]
+      );
+      if (scores.length == 0) {
+        return "---";
+      }
+      return scores.reduce(
+        accumulator, value => (accumulator + value)
+      );
     },
     roundNumberDisplay: function() {
       let displayRound = this.currentOrNextRound;
