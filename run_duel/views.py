@@ -88,7 +88,7 @@ def new_event_api(request):
 
 # Event stream api
 def event_stream(request):
-    current_duel_object = Duel.current_duel()
+    current_duel_object = Duel.current_duel(None)
     if current_duel_object is None:
         return JsonResponse({})
     return JsonResponse(
