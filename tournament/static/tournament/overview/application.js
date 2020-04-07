@@ -26,7 +26,7 @@ var vueApplication = new Vue({
       if (groups.length != 1) {
         return {duels: []};
       }
-      return group[0];
+      return groups[0];
     },
     participants: function() {
       if (this.group["duels"].length == 0) {
