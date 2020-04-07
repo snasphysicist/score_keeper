@@ -4,12 +4,14 @@ let vueApplication = new Vue({
     selectedstage: "",
     selectedgroup: "",
     selectedduel: "",
-    pendingduels: {}
+    tournament: {
+      stages: []
+    }
   },
   computed: {
     allStages: function() {
-      if (this.pendingduels["stages"]) {
-        return this.pendingduels["stages"];
+      if (this.tournament["stages"]) {
+        return this.tournament["stages"];
       } else {
         return [];
       }
