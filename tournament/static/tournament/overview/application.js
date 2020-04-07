@@ -25,7 +25,7 @@ var vueApplication = new Vue({
         return {duels: []};
       }
       return group[0];
-    }
+    },
     participants: function() {
       if (this.group["duels"].length == 0) {
         return [];
