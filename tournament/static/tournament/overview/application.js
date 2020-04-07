@@ -2,9 +2,8 @@
 var vueApplication = new Vue({
   el: '#vue',
   data: {
-    duels: [],
+    tournament: {},
     participants: [],
-    stages: [],
     selectedstage: 0,
     selectedgroup: 0
   },
@@ -52,9 +51,9 @@ var vueApplication = new Vue({
   }
 });
 
-function getTournamentStagesGroups() {
-  const TOURNAMENT_ID = CURRENT_TOURNAMENT;
-  const GET_URL = "/tournament/api/v1/<0>/stagesgroups";
+function fetchDuelList() {
+  const TOURNAMENT_ID = 3;
+  const GET_URL = "/run_duel/api/v1/<0>/duel/list";
   // Insert ID into url
   let url = GET_URL.replace(
     "<0>",
@@ -70,39 +69,12 @@ function getTournamentStagesGroups() {
       return response.json();
     }
   }).then((json) => {
-    if (json["success"]) {
-      vueApplication.stages = json["stages"];
+    if(json["success"]) {
+      vueApplication.tournament = json;
+    } else {
+      // Handle error
     }
   })
 }
 
-getTournamentStagesGroups();
-
-function getDuelsForGroup() {
-  let groupId = vueApplication.selectedGroupId;
-  // Exit if group id invalid
-  if (groupId == null) {
-    return;
-  }
-  const GET_URL = "/tournament/api/v1/<0>/overview";
-  // Insert ID into url
-  let url = GET_URL.replace(
-    "<0>",
-    groupId
-  );
-  fetch(
-    url,
-    {
-      method: "GET",
-    }
-  ).then((response) => {
-    if (response.ok) {
-      return response.json();
-    }
-  }).then((json) => {
-    if (json["success"]) {
-      vueApplication.duels = json["duels"];
-      vueApplication.participants = json["participants"];
-    }
-  })
-}
+fetchDuelList();
