@@ -38,11 +38,11 @@ var vueApplication = new Vue({
       }
     },
     nextRound: function() {
-      let round = this.duel.rounds.filter(function(round) {
-        return round["status"] == "READY";
-      });
-      if (round.length > 0) {
-        return round[0];
+      let rounds = this.duel.rounds.filter(
+        round => round["status"] == "READY"
+      );
+      if (rounds.length > 0) {
+        return rounds[0];
       } else {
         return null;
       }
