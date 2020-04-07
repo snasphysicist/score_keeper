@@ -17,24 +17,6 @@ var vueApplication = new Vue({
       }
       return stages[0]["groups"];
     },
-    selectedGroupId: function() {
-      // Filter down to selected stage
-      let stage = this.stages.filter(function(stage) {
-        return stage["stage"]["number"] == this.selectedstage;
-      })
-      if (stage.length != 0) {
-        return null;
-      }
-      groups = stage[0]["groups"];
-      // Filter down to selected group
-      let group = groups.filter(function(group) {
-        return group["number"] == this.selectedgroup;
-      })
-      if (group.length != 0) {
-        return null;
-      }
-      return group[0]["id"];
-    },
     sortedParticipants: function() {
       let array = this.participants;
       array.sort(
