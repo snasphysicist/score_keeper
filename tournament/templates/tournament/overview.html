@@ -10,12 +10,12 @@
   <div id="vue">
     <div class="grid-container four-columns">
       <p>Stage</p>
-      <select v-model="selectedstage" onchange="getDuelsForGroup()">
+      <select v-model="selectedstage">
         <option value="" disabled selected style="display:none;">Default</option>
         <option v-for="stage in stages" :stageid="stage.id">{% verbatim %}{{ stage.number }}{% endverbatim %}</option>
       </select>
       <p>Group</p>
-      <select v-model="selectedgroup" onchange="setTimeout(getDuelsForGroup, 100);">
+      <select v-model="selectedgroup">
         <option value="" disabled selected style="display:none;">Default</option>
         <option v-for="group in groups" :groupid="group.id">{% verbatim %}{{ group.number }}{% endverbatim %}</option>
       </select>
