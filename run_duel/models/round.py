@@ -91,7 +91,7 @@ def calculate_score(events):
         "opponent2": STARTING_HP
     }
     for event in score_events:
-        value = 5
+        value = STARTING_HP
         if "HAND" in event.type:
             value = 2
         elif "HEAD" in event.type:
@@ -113,9 +113,12 @@ def calculate_score(events):
         elif "OPPONENT-2" in event.type:
             scores["opponent2"] -= value
     # HP cannot be depleted below zero
+    # HP cannot exceed maximum
     for opponent in scores.keys():
         if scores[opponent] < 0:
             scores[opponent] = 0
+        if scores[opponent] > STARTING_HP:
+            scores[opponent] = STARTING_HP
     return scores
 
 
