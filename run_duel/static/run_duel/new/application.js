@@ -61,7 +61,9 @@ function setSuggestedNextDuel() {
     vueApplication.selectedstage = suggestedStage["stage"]["number"];
     vueApplication.selectedgroup = suggestedGroup["group"]["number"];
     vueApplication.selectedduel =
-      suggestedDuel["opponent1"] + " vs " + suggestedDuel["opponent2"];
+      suggestedDuel["opponent1"]["battle_name"]
+      + " vs "
+      + suggestedDuel["opponent2"]["battle_name"];
   }
 }
 
