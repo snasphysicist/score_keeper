@@ -36,7 +36,7 @@ var vueApplication = new Vue({
       let uniqueParticipants = [];
       this.group["duels"].forEach(
         duel => {
-          let added = participants.map(
+          let added = uniqueParticipants.map(
             participant => participant["id"]
           );
           if (
@@ -44,14 +44,14 @@ var vueApplication = new Vue({
               duel["opponent1"]["id"]
             ) > -1
           ) {
-            participants.push(duel["opponent1"]);
+            uniqueParticipants.push(duel["opponent1"]);
           }
           if (
             added.indexOf(
               duel["opponent2"]["id"]
             ) > -1
           ) {
-            participants.push(duel["opponent2"]);
+            uniqueParticipants.push(duel["opponent2"]);
           }
         }
       );
