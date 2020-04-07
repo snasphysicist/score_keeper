@@ -53,7 +53,7 @@ class Round(models.Model):
             event.delete()
 
     def status(self):
-        return determine_status(self)
+        return determine_status(self.all_events())
 
 
 #
