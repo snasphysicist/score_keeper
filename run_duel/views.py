@@ -191,15 +191,17 @@ def adjust_score_api(request):
     data = json.loads(
         request.body.decode("utf-8")
     )
-    the_round = list(Round.objects.filter(id__exact=data["roundid"]))
-    if len(the_round) == 0:
+    the_round = Round.by_id(
+        None,
+        data["roundid"]
+    )
+    if the_round is None:
         return JsonResponse(
             {
                 "success": False,
                 "reason": "Could not find specified round"
             }
         )
-    the_round = the_round[0]
     if data["opponent"] == 1:
         adjustment_type = "OPPONENT-1-ADJUST-"
     elif data["opponent"] == 2:
