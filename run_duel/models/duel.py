@@ -129,7 +129,7 @@ class Duel(models.Model):
 
     def next_round(self):
         unstarted = [
-            x for x in self.all_rounds() if x.determine_status == "READY"
+            x for x in self.all_rounds() if x.determine_status() == "READY"
         ]
         if len(unstarted) > 0:
             return unstarted[0]
