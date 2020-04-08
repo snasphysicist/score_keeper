@@ -3,7 +3,7 @@
   <head>
     <title>Adjust Score</title>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="static/run_duel/administration/adjust_score/styles.css">
+    <link rel="stylesheet" href="/run_duel/administration/adjust_score/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   </head>
   <body>
@@ -21,32 +21,40 @@
           <option v-for="group in stageGroups" :groupid="group.group.id">{% verbatim %}{{ group.group.number }}{% endverbatim %}</option>
         </select>
         <h2>Duel</h2>
-        <select v-model="selectedduel" id="round-select" onchange="setTimeout(fetchDuelScores, 100);">
+        <select v-model="selectedduel" id="round-select">
           <option value="" disabled selected style="display:none;"></option>
-          <option v-for="duel in groupDuels" :duelid="duel.id">{% verbatim %}{{ duel.opponent1 }} vs {{ duel.opponent2 }}{% endverbatim %}</option>
+          <option v-for="duel in groupDuels" :duelid="duel.id">
+            {% verbatim %}
+            {{ duel.opponent1.battle_name }} vs {{ duel.opponent2.battle_name }}
+            {% endverbatim %}
+          </option>
         </select>
         <h2>Round</h2>
         <select v-model="selectedround">
           <option value="" disabled selected style="display:none;"></option>
-          <option v-for="round in allduelrounds" :roundid="round.round_id">{% verbatim %}{{ round.round_number }}{% endverbatim %}</option>
+          <option v-for="round in duelRounds" :roundid="round.id">{% verbatim %}{{ round.number }}{% endverbatim %}</option>
         </select>
       </div>
       <div type="grid-container">
         <h2>Score</h2>
         <p>{% verbatim %}{{ formattedRoundScore }}{% endverbatim %}</p>
         <h2>Adjust</h2>
-        <h3>{% verbatim %}{{ alldueldata.opponent1 ? alldueldata.opponent1 : "---" }}{% endverbatim %}</h3>
+        <h3>{% verbatim %}
+          {{ selectedDuelData.opponent1 ? selectedDuelData.opponent1.battle_name : "---" }}
+        {% endverbatim %}</h3>
         <input id="opponent-1-up" type="button"
           onclick="doScoreAdjustment(event)" value="HP ++"/>
         <input id="opponent-1-down" type="button"
           onclick="doScoreAdjustment(event)" value="HP --"/>
-        <h3>{% verbatim %}{{ alldueldata.opponent2 ? alldueldata.opponent2 : "---" }}{% endverbatim %}</h3>
+        <h3>{% verbatim %}
+          {{ selectedDuelData.opponent2 ? selectedDuelData.opponent2.battle_name : "---" }}
+        {% endverbatim %}</h3>
         <input id="opponent-2-up" type="button"
           onclick="doScoreAdjustment(event)" value="HP ++"/>
         <input id="opponent-2-down" type="button"
           onclick="doScoreAdjustment(event)" value="HP --"/>
       </div>
     </div>
-    <script type="text/javascript" src="static/run_duel/administration/adjust_score/application.js"></script>
+    <script type="text/javascript" src="/run_duel/administration/adjust_score/application.js"></script>
   </body>
 </html>

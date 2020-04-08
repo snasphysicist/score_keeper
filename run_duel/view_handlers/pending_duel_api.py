@@ -16,9 +16,7 @@ def handle(request):
     # Get duel information as JSON
     all_duels = tournament_all_duels(CURRENT_TOURNAMENT)
     unfinished_duels = remove_finished_duels(all_duels)
+    unfinished_duels["success"] = True
     return JsonResponse(
-        {
-            "success": True,
-            "pending": unfinished_duels
-        }
+        unfinished_duels
     )

@@ -23,11 +23,16 @@ class Round(models.Model):
         default="NOT STARTED"   # RUNNING, PAUSED, FINISHED
     )
 
+    def by_id(self, round_id):
+        rounds = list(Round.objects.filter(id__exact=round_id))
+        if len(rounds) != 1:
+            return []
+        return rounds[0]
+
     def dictionary(self):
         events = self.all_events()
         return {
             "id": self.id,
-            "duel": self.duel.json(),
             "number": self.round_number,
             "status": determine_status(events),
             "score": calculate_score(events),
@@ -46,6 +51,9 @@ class Round(models.Model):
         events = self.all_events()
         for event in events:
             event.delete()
+
+    def status(self):
+        return determine_status(self.all_events())
 
 
 #
@@ -86,7 +94,7 @@ def calculate_score(events):
         "opponent2": STARTING_HP
     }
     for event in score_events:
-        value = 5
+        value = STARTING_HP
         if "HAND" in event.type:
             value = 2
         elif "HEAD" in event.type:
@@ -108,9 +116,12 @@ def calculate_score(events):
         elif "OPPONENT-2" in event.type:
             scores["opponent2"] -= value
     # HP cannot be depleted below zero
+    # HP cannot exceed maximum
     for opponent in scores.keys():
         if scores[opponent] < 0:
             scores[opponent] = 0
+        if scores[opponent] > STARTING_HP:
+            scores[opponent] = STARTING_HP
     return scores
 
 

@@ -4,54 +4,33 @@ let vueApplication = new Vue({
     selectedstage: "",
     selectedgroup: "",
     selectedduel: "",
-    pendingduels: {}
+    tournament: {
+      stages: []
+    }
   },
   computed: {
     allStages: function() {
-      if (this.pendingduels["stages"]) {
-        return this.pendingduels["stages"];
+      if (this.tournament["stages"]) {
+        return this.tournament["stages"];
       } else {
         return [];
       }
     },
     stageGroups: function() {
       // Get all groups for the selected stage
-      if (!this.pendingduels["stages"]) {
-        console.log("1");
-        return [];
-      }
-      let stage = this.pendingduels["stages"].filter(function(stage) {
-        return stage["stage"]["number"] == this.selectedstage;
-      });
+      let stage = this.allStages.filter(
+        stage => stage["stage"]["number"] == this.selectedstage
+      );
       if (stage.length == 0) {
-        console.log("2");
         return [];
       }
-      console.log("3");
       return stage[0]["groups"];
     },
     groupDuels: function() {
-      if (!this.pendingduels["stages"]) {
-        return [];
-      }
-      /*
-       * Filter down to selected stage
-       * Map to extract groups
-       * Will then have array in array [[group1, group2, ...]]
-       * So extract first element
-       */
-      let groups = this.pendingduels["stages"].filter(function(stage) {
-        return stage["stage"]["number"] == this.selectedstage;
-      }).map(function(stage) {
-        return stage["groups"];
-      })[0];
-      if (!groups) {
-        return [];
-      }
       // Filter down to selected group
-      let group = groups.filter(function(group) {
-        return group["group"]["number"] == this.selectedgroup;
-      })
+      let group = this.stageGroups.filter(
+        group => (group["group"]["number"] == this.selectedgroup)
+      );
       if (group.length == 0) {
         return [];
       }
@@ -65,11 +44,11 @@ let vueApplication = new Vue({
  * duels, suggest which should be next
  */
 function setSuggestedNextDuel() {
-  if (!vueApplication.pendingduels["stages"]) {
+  if (!vueApplication.tournament["stages"]) {
     return;
   }
   // Get stages/groups with duels
-  let pendingStages = vueApplication.pendingduels["stages"].filter(function(stage) {
+  let pendingStages = vueApplication.tournament["stages"].filter(function(stage) {
     let groups = stage["groups"].filter(function(group) {
       return group["duels"].length > 0;
     })
@@ -81,8 +60,10 @@ function setSuggestedNextDuel() {
     let suggestedDuel = pendingStages[0]["groups"][0]["duels"][0];
     vueApplication.selectedstage = suggestedStage["stage"]["number"];
     vueApplication.selectedgroup = suggestedGroup["group"]["number"];
-    vueApplication.selectedduel = suggestedDuel["opponent1"] + " vs "
-      + suggestedDuel["opponent2"];
+    vueApplication.selectedduel =
+      suggestedDuel["opponent1"]["battle_name"]
+      + " vs "
+      + suggestedDuel["opponent2"]["battle_name"];
   }
 }
 
@@ -102,10 +83,8 @@ function fetchPendingDuels() {
     }
   }).then((json) => {
     if (json["success"]) {
-      vueApplication.pendingduels = json["pending"];
-      if (json["pending"].length > 0) {
-        setTimeout(setSuggestedNextDuel, 100);
-      }
+      vueApplication.tournament = json;
+      setTimeout(setSuggestedNextDuel, 100);
     }
   });
 }

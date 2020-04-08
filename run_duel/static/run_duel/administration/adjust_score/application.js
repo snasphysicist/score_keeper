@@ -5,13 +5,15 @@ let vueApplication = new Vue({
     selectedgroup: "",
     selectedduel: "",
     selectedround: "",
-    tournament: {},
+    tournament: {
+      "stages": []
+    },
     duel: {}
   },
   computed: {
     allStages: function() {
       if (this.tournament["stages"]) {
-        return tournament["stages"];
+        return this.tournament["stages"];
       } else {
         return [];
       }
@@ -20,41 +22,64 @@ let vueApplication = new Vue({
       if (!this.tournament["stages"]) {
         return [];
       }
-      // Filter down to selected stage
-      let stage = this.tournament["stages"].filter(function(stage) {
-        return stage["stage"]["number"] == this.selectedstage;
-      })
+      let stage = this.tournament["stages"].filter(
+        stage => (stage["stage"]["number"] == this.selectedstage)
+      );
       if (stage.length != 1) {
         return [];
       }
       return stage[0]["groups"];
     },
     groupDuels: function() {
-      if (!this.tournament["stages"]) {
-        return [];
-      }
-      // Filter down to selected stage
-      let stage = this.tournament["stages"].filter(function(stage) {
-        return stage["stage"]["number"] == this.selectedstage;
-      })
-      if (stage.length != 1) {
-        return [];
-      }
-      let group = stage[0]["groups"].filter(function(group) {
-        return group["group"]["number"] == this.selectedgroup;
-      })
+      let groups = this.stageGroups;
+      let group = groups.filter(
+        group => (group["group"]["number"] == this.selectedgroup)
+      );
       if (group.length != 1) {
         return [];
       }
       return group[0]["duels"];
     },
-    selectedRoundData: function() {
-      if (!this.duel["rounds"]) {
+    duelRounds: function() {
+      let duels = this.groupDuels;
+      let duel = duels.filter(
+        duel => (
+          this.selectedduel.includes(
+            duel["opponent1"]["battle_name"]
+          )
+          && this.selectedduel.includes(
+            duel["opponent2"]["battle_name"]
+          )
+        )
+      );
+      if (duel.length != 1) {
         return [];
       }
-      let round = this.duel["rounds"].filter(function(round) {
-        return round["number"] == this.selectedround;
-      })
+      return duel[0]["rounds"];
+    },
+    selectedDuelData: function() {
+      let duels = this.groupDuels;
+      let duel = duels.filter(
+        duel => (
+          this.selectedduel.includes(
+            duel["opponent1"]["battle_name"]
+          )
+          && this.selectedduel.includes(
+            duel["opponent2"]["battle_name"]
+          )
+        )
+      );
+      if (duel.length != 1) {
+        return {};
+      }
+      return duel[0];
+    },
+    selectedRoundData: function() {
+      let rounds = this.duelRounds;
+      let selectedRound = this.selectedround;
+      let round = rounds.filter(
+        round => (round["number"] == this.selectedround)
+      );
       if (round.length != 1) {
         return [];
       }
@@ -89,7 +114,7 @@ function fetchDuelList() {
     }
   }).then((json) => {
     if(json["success"]) {
-      vueApplication.tournament = json["tournament"];
+      vueApplication.tournament = json;
     } else {
       // Handle error
     }
@@ -97,70 +122,6 @@ function fetchDuelList() {
 }
 
 fetchDuelList();
-
-function fetchDuelScores() {
-  let dueltext = vueApplication.selectedduel;
-  let options = document.getElementById("round-select").children;
-  let option = options.filter(function(opt) {
-    return opt.innerHTML == dueltext;
-  })
-  if (option.length != 1) {
-    return;
-  }
-  let duelId = option[0].getAttribute("duelid");
-  const GET_URL = "/run_duel/api/v1/duel/<0>/score";
-  // Insert ID into url
-  let url = GET_URL.replace(
-    "<0>",
-    duelId
-  );
-  fetch(
-    url,
-    {
-      method: "GET",
-    }
-  ).then((response) => {
-    if (response.ok) {
-      return response.json();
-    }
-  }).then((json) => {
-    if(json["success"]) {
-      vueApplication.duel = json["duel"];
-    } else {
-      // Handle error
-    }
-  })
-}
-
-function getDuelsForGroup() {
-  let groupId = vueApplication.selectedGroupId;
-  console.log(groupId);
-  // Exit if group id invalid
-  if (groupId == null) {
-    return;
-  }
-  const GET_URL = "/tournament/api/v1/<0>/overview";
-  // Insert ID into url
-  let url = GET_URL.replace(
-    "<0>",
-    groupId
-  );
-  fetch(
-    url,
-    {
-      method: "GET",
-    }
-  ).then((response) => {
-    if (response.ok) {
-      return response.json();
-    }
-  }).then((json) => {
-    if (json["success"]) {
-      vueApplication.duels = json["duels"];
-      vueApplication.participants = json["participants"];
-    }
-  })
-}
 
 function doScoreAdjustment(event) {
   let clickedId = event.target.id;
@@ -176,8 +137,8 @@ function doScoreAdjustment(event) {
   } else {
     action = "DOWN";
   }
-  let duelId = vueApplication.alldueldata["duel_id"];
-  let roundId = vueApplication.selectedRoundData["round_id"];
+  let duelId = vueApplication.selectedDuelData["id"];
+  let roundId = vueApplication.selectedRoundData["id"];
   const POST_URL = "/run_duel/api/v1/duel/adjust";
   data = {
     duelid: duelId,
@@ -197,7 +158,7 @@ function doScoreAdjustment(event) {
     }
   }).then((json) => {
     if (json["success"]) {
-      fetchDuelScores();
+      fetchDuelList();
     }
   })
 }

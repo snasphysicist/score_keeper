@@ -3,13 +3,13 @@
 <head>
   <title>Set Up Duels</title>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="static/tournament/setup_duels/styles.css">
+  <link rel="stylesheet" href="/tournament/setup_duels/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
 <body>
     {% verbatim %}
     <div id="vue" class="grid-container">
-        <h1>Stage {{ currentstage["number"] }} Setup</h1>
+        <h1>Stage {{ stage.number }} Setup</h1>
         <div class="grid-container two-columns">
             <input v-for="group in groups"
                 :id="'group-' + group.number" :groupid="group.id"
@@ -18,8 +18,8 @@
         </div>
         <div id="all-participants" class="grid-container two-columns">
             <input v-for="participant in participants"
-                :id="participant.battlename" :participantid="participant.id"
-                type="button" :value="participant.battlename"
+                :id="participant.battle_name" :participantid="participant.id"
+                type="button" :value="participant.battle_name"
                 onclick="assignParticipant(event)"/>
         </div>
         <div class="grid-container">
@@ -27,8 +27,8 @@
                 <h2>Group {{ group.number }}</h2>
                 <div class="grid-container two-columns-thirds">
                   <template v-for="member in group.members">
-                    <p>{{ member.battlename }}</p>
-                    <input :participantid="member.participantid" type="button"
+                    <p>{{ member.battle_name }}</p>
+                    <input :participantid="member.id" type="button"
                       onclick="unassignParticipant(event)" value="REMOVE"/>
                   </template>
                 </div>
@@ -39,15 +39,15 @@
         <h2>All Duels</h2>
         <div class="grid-container three-columns">
           <template v-for="duel in allduels">
-            <p>{{ duel.opponent1["battlename"] }}</p>
+            <p>{{ duel.opponent1.battle_name }}</p>
             <p>vs</p>
-            <p>{{ duel.opponent2["battlename"] }}</p>
+            <p>{{ duel.opponent2.battle_name }}</p>
           </template>
         </div>
         <input id="confirm" type="button" onclick="confirmDuels()"
           value="Confirm Duels" disabled=true/>
     </div>
     {% endverbatim %}
-    <script type="text/javascript" src="static/tournament/setup_duels/application.js"></script>
+    <script type="text/javascript" src="/tournament/setup_duels/application.js"></script>
 </body>
 </html>

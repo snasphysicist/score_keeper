@@ -53,7 +53,7 @@ function fetchDuelList() {
     }
   }).then((json) => {
     if(json["success"]) {
-      vueApplication.tournament = json["tournament"];
+      vueApplication.tournament = json;
     } else {
       // Handle error
     }

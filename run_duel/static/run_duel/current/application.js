@@ -5,9 +5,9 @@ var vueApplication = new Vue({
     "duel": {
       "duel_id": 0,
       "opponent1": {},
-      "opponent2": {}
-    },
-    "rounds": []
+      "opponent2": {},
+      "rounds": []
+    }
   },
   computed: {
     currentRoundTimeRemaining: function() {
@@ -25,22 +25,24 @@ var vueApplication = new Vue({
       }
     },
     currentRound: function() {
-      let round = this.rounds.filter(function(round) {
-        return (round["status"] === "RUNNING")
-                || (round["status"] === "PAUSED");
-      });
-      if (round.length > 0) {
-        return round[0];
+      let rounds = this.duel.rounds.filter(
+        round => (
+          round["status"] === "RUNNING")
+          || (round["status"] === "PAUSED"
+        )
+      );
+      if (rounds.length > 0) {
+        return rounds[0];
       } else {
         return null;
       }
     },
     nextRound: function() {
-      let round = this.rounds.filter(function(round) {
-        return round["status"] == "READY";
-      });
-      if (round.length > 0) {
-        return round[0];
+      let rounds = this.duel.rounds.filter(
+        round => round["status"] == "READY"
+      );
+      if (rounds.length > 0) {
+        return rounds[0];
       } else {
         return null;
       }
@@ -60,18 +62,26 @@ var vueApplication = new Vue({
       return "---";
     },
     totalOpponent1Score: function() {
-      return this.rounds.map(function(round) {
-        return round["score"]["opponent1"];
-      }).reduce(function(accumulator, value) {
-        return accumulator + value;
-      });
+      let scores = this.duel.rounds.map(
+        round => round["score"]["opponent1"]
+      );
+      if (scores.length == 0) {
+        return "---";
+      }
+      return scores.reduce(
+        (accumulator, value) => (accumulator + value)
+      );
     },
     totalOpponent2Score: function() {
-      return this.rounds.map(function(round) {
-        return round["score"]["opponent2"];
-      }).reduce(function(accumulator, value) {
-        return accumulator + value;
-      });
+      let scores = this.duel.rounds.map(
+        round => round["score"]["opponent2"]
+      );
+      if (scores.length == 0) {
+        return "---";
+      }
+      return scores.reduce(
+        (accumulator, value) => (accumulator + value)
+      );
     },
     roundNumberDisplay: function() {
       let displayRound = this.currentOrNextRound;
@@ -249,12 +259,18 @@ function manageNotifiers() {
 // Web socket handling
 let ws = null;
 function manageWebSocketConnection() {
-  ws = new WebSocket("{{ websocket_protocol }}://{{ base_url }}:{{ websocket_port }}/");
+  ws = new WebSocket(
+    WEBSOCKET_PROTOCOL
+    + "://"
+    + WEBSOCKET_URL
+    + ":"
+    + WEBSOCKET_PORT
+    + "/"
+  );
   ws.onmessage = function (event) {
-    jsonData = JSON.parse(event.data);
-    if (jsonData["success"]) {
-      vueApplication.duel = jsonData["duel"];
-      vueApplication.rounds = jsonData["rounds"];
+    let json = JSON.parse(event.data);
+    if (json["success"]) {
+      vueApplication.duel = json;
     }
     manageNotifiers();
   };

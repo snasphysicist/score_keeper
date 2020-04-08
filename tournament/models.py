@@ -14,6 +14,7 @@ class Tournament(models.Model):
 
     def dictionary(self):
         return {
+            "id": self.id,
             "name": self.name,
             "date": str(self.date)
         }
@@ -64,6 +65,7 @@ class Stage(models.Model):
 
     def dictionary(self):
         return {
+            "id": self.id,
             "number": self.number,
             "format": self.stage_format,
             "tournament": self.tournament.json()
@@ -89,6 +91,7 @@ class Group(models.Model):
 
     def dictionary(self):
         return {
+            "id": self.id,
             "number": self.number,
             "contestant_number": self.contestant_number,
             "stage": self.stage.json()
@@ -118,6 +121,7 @@ class Participant(models.Model):
 
     def dictionary(self):
         return {
+            "id": self.id,
             "battle_name": self.battle_name,
             "first_name": self.first_name,
             "last_name": self.last_name,

@@ -27,7 +27,7 @@ def handle(request):
             "reason": "Required key missing from json request"
         })
     # Get the rounds for the current match
-    this_duel = Duel.current_duel()
+    this_duel = Duel.current_duel(None)
     if this_duel is None:
         return JsonResponse({
             "success": False,

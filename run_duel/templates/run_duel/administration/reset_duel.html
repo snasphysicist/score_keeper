@@ -3,13 +3,13 @@
   <head>
     <title>Reset Duel</title>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="static/run_duel/administration/reset_duel/styles.css">
+    <link rel="stylesheet" href="/run_duel/administration/reset_duel/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   </head>
   <body>
     <h1>Reset Duel</h1>
     <div id="vue" class="grid-container two-columns">
-      <template v-for="stage in stages">
+      <template v-for="stage in tournament.stages">
         <template v-for="group in stage.groups">
           <template v-for="duel in group.duels">
             {% verbatim %}
@@ -21,6 +21,6 @@
         </template>
       </template>
     </div>
-    <script type="text/javascript" src="static/run_duel/administration/reset_duel/application.js"></script>
+    <script type="text/javascript" src="/run_duel/administration/reset_duel/application.js"></script>
   </body>
 </html>

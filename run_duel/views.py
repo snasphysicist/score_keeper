@@ -52,7 +52,7 @@ def new_duel_api(request):
         )
     # For any other duel marked
     # as current, make it not so
-    old_duels = Duel.marked_as_current()
+    old_duels = Duel.marked_as_current(None)
     for old_duel in old_duels:
         old_duel.current = False
         old_duel.save()
@@ -88,7 +88,7 @@ def new_event_api(request):
 
 # Event stream api
 def event_stream(request):
-    current_duel_object = Duel.current_duel()
+    current_duel_object = Duel.current_duel(None)
     if current_duel_object is None:
         return JsonResponse({})
     return JsonResponse(
@@ -157,17 +157,17 @@ def reset_duel_api(request):
         request.body.decode("utf-8")
     )
     duel_id = data["id"]
-    duels = Duel.by_id(
+    duel = Duel.by_id(
         None,
         duel_id
     )
-    if len(duels) == 0:
+    if duel is None:
         result = {
             "success": False,
             "reason": "Could not find duel with provided identifier"
         }
     else:
-        duels[0].delete_all_events()
+        duel.delete_all_events()
         result = {"success": True}
     return JsonResponse(result)
 
@@ -191,17 +191,17 @@ def adjust_score_api(request):
     data = json.loads(
         request.body.decode("utf-8")
     )
-    print(data)
-    the_round = list(Round.objects.filter(id__exact=data["roundid"]))
-    if len(the_round) == 0:
+    the_round = Round.by_id(
+        None,
+        data["roundid"]
+    )
+    if the_round is None:
         return JsonResponse(
             {
                 "success": False,
                 "reason": "Could not find specified round"
             }
         )
-    the_round = the_round[0]
-    adjustment_type = ""
     if data["opponent"] == 1:
         adjustment_type = "OPPONENT-1-ADJUST-"
     elif data["opponent"] == 2:

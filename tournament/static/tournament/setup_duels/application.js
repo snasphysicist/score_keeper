@@ -1,11 +1,10 @@
   var vueApplication = new Vue({
     el: '#vue',
     data: {
-      currentstage: 0,
+      stage: 0,
       groups: [],
       participants: [],
-      allduels: [],
-      stageformat: ""
+      allduels: []
     }
   })
 
@@ -81,7 +80,6 @@ function toggleGroupSelect(event) {
 function assignParticipant(event) {
     // Get participant id from button
     let participantId = event.target.getAttribute("participantid");
-    let battleName = event.target.id;
     // Do nothing if no group selected
     if (!selected) {
         return;
@@ -89,12 +87,26 @@ function assignParticipant(event) {
     // Assume group already exists
     let groupId = selected.getAttribute("groupid");
     let group = findGroupById(groupId);
-    group["members"].push(
-      {
-        participantid: participantId,
-        battlename: battleName
+    if (group) {
+      // Add members if !exists
+      if (!group["members"]) {
+        // Ensure Vue is reactive on this property
+        Vue.set(
+          group,
+          "members",
+          []
+        );
       }
-    );
+      // Get participant object from participants arrays
+      let participant = vueApplication.participants.filter(function(participant) {
+        return participant["id"] == participantId;
+      });
+      if (participant.length == 1) {
+        group["members"].push(
+          participant[0]
+        );
+      }
+    }
     hideParticipants();
 }
 
@@ -112,9 +124,12 @@ function findGroupById(groupId) {
 function unassignParticipant(event) {
     let participantId = event.target.getAttribute("participantid");
     let groups = vueApplication.groups.filter(function(group) {
+      if (!group["members"]) {
+        return false;
+      }
       // Find members in group with correct participant id
       let member = group["members"].filter(function(member) {
-        return member["participantid"] == participantId;
+        return member["id"] == participantId;
       });
       // Keep if this participant appears in members array
       return (member.length > 0);
@@ -123,7 +138,7 @@ function unassignParticipant(event) {
     groups.forEach(function(group) {
       // Get the participant object in the group
       let toRemove = group["members"].filter(function(member) {
-        return member["participantid"] == participantId;
+        return member["id"] == participantId;
       });
       if (toRemove.length != 1) {
         return;
@@ -149,9 +164,16 @@ function hideParticipants() {
     // We'll also check if everyone has already been assigned
     let allAssigned = true;
     vueApplication.groups.forEach(function(group) {
+      // In case members hasn't been set yet
+      if (!group["members"]) {
+        return;
+      }
       group["members"].forEach(function(member) {
         assigned.push(
-          member["participantid"];
+          // Convert to string to compare with html attributes
+          String(
+            member["id"]
+          )
         );
       });
     });
@@ -159,38 +181,46 @@ function hideParticipants() {
     let participantSection = document.getElementById("all-participants");
     let participantInputs = participantSection.children;
     // Disable if assigned, enable if unassigned
-    participantInputs.forEach(function(button) {
-      if (
-          assigned.indexOf(
-              button.getAttribute("participantid")
-          ) > -1
+    for (let button of participantInputs) {
+      if(
+        assigned.indexOf(
+          button.getAttribute("participantid")
+        ) > -1
       ) {
           // Disable when assigned
-          button.disabled = true;
+        button.disabled = true;
       } else {
           // Enable when unassigned
-          button.disabled = false;
-          allAssigned = false;
+        button.disabled = false;
+        allAssigned = false;
       }
+    };
     /*
      * Generate should be clickable
      * if all fighters assigned
      * AND duels not yet generated
      */
     let generateButton = document.getElementById("generate");
-    if(allAssigned && vueApplication.allduels.length == 0) {
+    if (allAssigned && vueApplication.allduels.length == 0) {
       generateButton.disabled = false;
     } else {
       generateButton.disabled = true;
     }
 }
 
+// Helper function to return only required data from group object
+function keyGroupData(group) {
+  return {
+    "id": group["id"]
+  };
+}
+
 function generateDuels() {
   // Generate button disabled only on success
   let didGenerate = false;
-  if (vueApplication.currentStage["format"] == "ROUND-ROBIN") {
+  if (vueApplication.stage["format"] == "ROUND-ROBIN") {
     didGenerate = generateRoundRobinDuels();
-  } else if (vueApplication.currentStage["format"] == "CROSS-ROUND-ROBIN") {
+  } else if (vueApplication.stage["format"] == "CROSS-ROUND-ROBIN") {
     didGenerate = generateCrossRoundRobinDuels();
   }
   if (didGenerate) {
@@ -221,7 +251,7 @@ function generateRoundRobinDuels() {
     // Set up duels with those combinations
     group.duels = combinations.map(function(pairing) {
       return {
-        group: group["id"],
+        group: keyGroupData(group),
         opponent1: members[pairing[0]],
         opponent2: members[pairing[1]]
       };
@@ -229,7 +259,8 @@ function generateRoundRobinDuels() {
   });
   // Display on screen
   vueApplication.groups.forEach(function(group) {
-    vueApplication.allduels.concat(group["duels"]);
+    vueApplication.allduels =
+      vueApplication.allduels.concat(group["duels"]);
   });
   return true;
 }
@@ -252,7 +283,7 @@ function generateCrossRoundRobinDuels() {
     groupPairs.forEach(function(pairing) {
       vueApplication.allduels.push(
         {
-          group: group1["id"],
+          group: keyGroupData(group1),
           opponent1: pairing[0],
           opponent2: pairing[1]
         }
@@ -338,7 +369,7 @@ function getSetupDetails() {
     }
   }).then((json) => {
     if (json["success"]) {
-      vueApplication.currentStage = json["currentstage"];
+      vueApplication.stage = json["stage"];
       vueApplication.groups = json["groups"];
       vueApplication.participants = json["participants"];
     }

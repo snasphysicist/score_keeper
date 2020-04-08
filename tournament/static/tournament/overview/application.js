@@ -2,48 +2,114 @@
 var vueApplication = new Vue({
   el: '#vue',
   data: {
-    duels: [],
-    participants: [],
-    stages: [],
+    tournament: {
+      stages: []
+    },
     selectedstage: 0,
     selectedgroup: 0
   },
   computed: {
     groups: function() {
       // Filter down to selected stage
-      let stage = this.stages.filter(function(stage) {
-        return stage["stage"]["number"] == this.selectedstage;
-      })
-      if (stage.length != 0) {
+      let stages = this.tournament["stages"].filter(
+        stage => (stage["stage"]["number"] == this.selectedstage)
+      );
+      if (stages.length != 1) {
         return [];
       }
-      return stage[0]["groups"];
+      return stages[0]["groups"];
     },
-    selectedGroupId: function() {
-      // Filter down to selected stage
-      let stage = this.stages.filter(function(stage) {
-        return stage["stage"]["number"] == this.selectedstage;
-      })
-      if (stage.length != 0) {
-        return null;
+    group: function() {
+      let groups = this.groups.filter(
+        group => (group["group"]["number"] == this.selectedgroup)
+      );
+      if (groups.length != 1) {
+        return {duels: []};
       }
-      groups = stage[0]["groups"];
-      // Filter down to selected group
-      let group = groups.filter(function(group) {
-        return group["number"] == this.selectedgroup;
-      })
-      if (group.length != 0) {
-        return null;
+      return groups[0];
+    },
+    participants: function() {
+      if (this.group["duels"].length == 0) {
+        return [];
       }
-      return group[0]["id"];
+      // Get unique participants in group
+      let uniqueParticipants = [];
+      this.group["duels"].forEach(
+        duel => {
+          let added = uniqueParticipants.map(
+            participant => participant["id"]
+          );
+          if (
+            added.indexOf(
+              duel["opponent1"]["id"]
+            ) == -1
+          ) {
+            uniqueParticipants.push(duel["opponent1"]);
+          }
+          if (
+            added.indexOf(
+              duel["opponent2"]["id"]
+            ) == -1
+          ) {
+            uniqueParticipants.push(duel["opponent2"]);
+          }
+        }
+      );
+      return uniqueParticipants;
+    },
+    participantsWithScore: function() {
+      if (this.participants.length == 0) {
+        return [];
+      }
+      let participantsFull = this.participants;
+      participantsFull.forEach(
+        participant => {
+          // Add up scores when participant is opponent 1
+          let score = this.group["duels"].filter(
+            // Get only duels where participant is opponent 1
+            duel => (duel["opponent1"]["id"] == participant["id"])
+          ).map(
+            // Extract opponent 1 score
+            duel => duel["score"]["opponent1"]
+          ).reduce(
+            // Sum scores
+            (accumulator, value) => accumulator + value
+          );
+          // Add scores where participant is opponent 2
+          score += this.group["duels"].filter(
+            duel => (duel["opponent2"]["id"] == participant["id"])
+          ).map(
+            duel => duel["score"]["opponent2"]
+          ).reduce(
+            // Sum scores
+            (accumulator, value) => accumulator + value
+          );
+          // Add summed score to participant object
+          participant["score"] = score;
+          // Calculate completed duels
+          participant["completed"] = this.group["duels"].filter(
+            duel => (
+              (duel["opponent1"]["id"] == participant["id"])
+              && (duel["status"] == "FINISHED")
+            )
+          ).length // Count duels where participant is opponent 1
+          + this.group["duels"].filter(
+            duel => (
+              (duel["opponent2"]["id"] == participant["id"])
+              && (duel["status"] == "FINISHED")
+            )
+          ).length; // Get only duels where participant is opponent 2
+        }
+      );
+      return participantsFull;
     },
     sortedParticipants: function() {
-      let array = this.participants;
+      let array = this.participantsWithScore;
       array.sort(
         (a, b) => {
           return (
             -1 * (1000 * (a.completed - b.completed))
-            - (a.remaining - b.remaining)
+            - (a.score - b.score)
           );
         }
       );
@@ -52,9 +118,9 @@ var vueApplication = new Vue({
   }
 });
 
-function getTournamentStagesGroups() {
-  const TOURNAMENT_ID = CURRENT_TOURNAMENT;
-  const GET_URL = "/tournament/api/v1/<0>/stagesgroups";
+function fetchDuelList() {
+  const TOURNAMENT_ID = 3;
+  const GET_URL = "/run_duel/api/v1/<0>/duel/list";
   // Insert ID into url
   let url = GET_URL.replace(
     "<0>",
@@ -70,39 +136,12 @@ function getTournamentStagesGroups() {
       return response.json();
     }
   }).then((json) => {
-    if (json["success"]) {
-      vueApplication.stages = json["stages"];
+    if(json["success"]) {
+      vueApplication.tournament = json;
+    } else {
+      // Handle error
     }
   })
 }
 
-getTournamentStagesGroups();
-
-function getDuelsForGroup() {
-  let groupId = vueApplication.selectedGroupId;
-  // Exit if group id invalid
-  if (groupId == null) {
-    return;
-  }
-  const GET_URL = "/tournament/api/v1/<0>/overview";
-  // Insert ID into url
-  let url = GET_URL.replace(
-    "<0>",
-    groupId
-  );
-  fetch(
-    url,
-    {
-      method: "GET",
-    }
-  ).then((response) => {
-    if (response.ok) {
-      return response.json();
-    }
-  }).then((json) => {
-    if (json["success"]) {
-      vueApplication.duels = json["duels"];
-      vueApplication.participants = json["participants"];
-    }
-  })
-}
+fetchDuelList();

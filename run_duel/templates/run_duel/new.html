@@ -3,7 +3,7 @@
 <head>
   <title>Next Duel</title>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="static/run_duel/new/styles.css">
+  <link rel="stylesheet" href="/run_duel/new/styles.css">
 </head>
 <body>
   <div id="vue">
@@ -19,13 +19,17 @@
       </select>
       <p>Duel</p>
       <select v-model="selectedduel">
-        <option v-for="duel in groupDuels" :duelid="duel.id">{% verbatim %}{{ duel.opponent1 }} vs {{ duel.opponent2 }}{% endverbatim %}</option>
+        <option v-for="duel in groupDuels" :duelid="duel.id">
+          {% verbatim %}
+          {{ duel.opponent1.battle_name }} vs {{ duel.opponent2.battle_name }}
+          {% endverbatim %}
+        </option>
       </select>
     </div>
     <input type="button" id="fight" onclick="startNewDuel()" value="READY!"/>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <!-- Set up Vue -->
-  <script src="static/run_duel/new/application.js" type="text/javascript"></script>
+  <script src="/run_duel/new/application.js" type="text/javascript"></script>
 </body>
 </html>
