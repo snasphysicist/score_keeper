@@ -411,7 +411,7 @@ function moveUp(event) {
   }
   // Find duel in array
   let duel = vueApplication.allduels.filter(
-    duel => return duel["id"] == duelId
+    duel => duel["id"] == duelId
   )
   if (duel.length != 1) {
     return;
@@ -435,7 +435,7 @@ function moveDown(event) {
   }
   // Find duel in array
   let duel = vueApplication.allduels.filter(
-    duel => return duel["id"] == duelId
+    duel => duel["id"] == duelId
   )
   if (duel.length != 1) {
     return;
