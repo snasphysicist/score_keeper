@@ -403,3 +403,51 @@ function confirmDuels() {
     }
   })
 }
+
+function moveUp(event) {
+  let duelId = event.target.getAttribute("duelid");
+  if (!duelId) {
+    return;
+  }
+  // Find duel in array
+  let duel = vueApplication.allduels.filter(
+    duel => return duel["id"] == duelId
+  )
+  if (duel.length != 1) {
+    return;
+  }
+  duel = duel[0];
+  // Find duel in array
+  index = vueApplication.allduels.indexOf(duel);
+  if (index == 0) {
+    // Don't move up if already at top
+    return;
+  }
+  let temporary = vueApplication.allduels[index - 1];
+  vueApplication.allduels[index - 1] = vueApplication.allduels[index];
+  vueApplication.allduels[index] = temporary;
+}
+
+function moveDown(event) {
+  let duelId = event.target.getAttribute("duelid");
+  if (!duelId) {
+    return;
+  }
+  // Find duel in array
+  let duel = vueApplication.allduels.filter(
+    duel => return duel["id"] == duelId
+  )
+  if (duel.length != 1) {
+    return;
+  }
+  duel = duel[0];
+  // Find duel in array
+  index = vueApplication.allduels.indexOf(duel);
+  if (index == (vueApplication.allduels.length - 1)) {
+    // Don't move up if already at end
+    return;
+  }
+  let temporary = vueApplication.allduels[index + 1];
+  vueApplication.allduels[index + 1] = vueApplication.allduels[index];
+  vueApplication.allduels[index] = temporary;
+}
