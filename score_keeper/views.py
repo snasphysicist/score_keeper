@@ -127,4 +127,6 @@ def guess_type(path):
         return "text/javascript"
     if ".html" in path:
         return "text/html"
+    if ".svg" in path:
+        return "image/svg+xml"
     return "text/plain"
