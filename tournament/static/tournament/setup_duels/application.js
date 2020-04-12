@@ -405,7 +405,7 @@ function confirmDuels() {
 }
 
 function moveUp(event) {
-  let index = event.target.getAttribute("index");
+  let index = Number(event.target.getAttribute("index"));
   if (!index) {
     return;
   }
@@ -413,21 +413,47 @@ function moveUp(event) {
     // Don't move up if already at top
     return;
   }
-  let temporary = vueApplication.allduels[index - 1];
-  vueApplication.allduels[index - 1] = vueApplication.allduels[index];
-  vueApplication.allduels[index] = temporary;
+  /*
+   * Only way I've found to do this
+   * which mutates the array (so Vue detects the change)
+   * but also doesn't break Vue with 'undefined' elements
+   */
+  let newArray = [];
+  for (let i = 0; i < vueApplication.allduels.length; i++) {
+    if (i == (index - 1)) {
+      newArray.push(vueApplication.allduels[i + 1]);
+    } else if (i == index) {
+      newArray.push(vueApplication.allduels[i - 1]);
+    } else {
+      newArray.push(vueApplication.allduels[i]);
+    }
+  }
+  vueApplication.allduels = newArray;
 }
 
 function moveDown(event) {
-  let index = event.target.getAttribute("index");
-  if (!index) {
+  let index = Number(event.target.getAttribute("index"));
+  if (!index && index !== 0) {
     return;
   }
   if (index == (vueApplication.allduels.length - 1)) {
     // Don't move down if already at end
     return;
   }
-  let temporary = vueApplication.allduels[index + 1];
-  vueApplication.allduels[index + 1] = vueApplication.allduels[index];
-  vueApplication.allduels[index] = temporary;
+  /*
+   * Only way I've found to do this
+   * which mutates the array (so Vue detects the change)
+   * but also doesn't break Vue with 'undefined' elements
+   */
+   let newArray = [];
+   for (let i = 0; i < vueApplication.allduels.length; i++) {
+     if (i == (index + 1)) {
+       newArray.push(vueApplication.allduels[i - 1]);
+     } else if (i == index) {
+       newArray.push(vueApplication.allduels[i + 1]);
+     } else {
+       newArray.push(vueApplication.allduels[i]);
+     }
+   }
+   vueApplication.allduels = newArray;
 }
