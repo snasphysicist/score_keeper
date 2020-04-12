@@ -37,10 +37,12 @@
         <input id="generate" type="button"
           onclick="generateDuels()" value="Generate Duels" disabled=true/>
         <h2>All Duels</h2>
-        <div class="grid-container three-columns">
+        <div class="grid-container five-columns">
           <template v-for="duel in allduels">
             <p>{{ duel.opponent1.battle_name }}</p>
+            <img class="arrow" src="/tournament/setup_duels/arrow-down.svg"/>
             <p>vs</p>
+            <img class="arrow" src="/tournament/setup_duels/arrow-up.svg"/>
             <p>{{ duel.opponent2.battle_name }}</p>
           </template>
         </div>
