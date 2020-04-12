@@ -40,10 +40,10 @@
         <div class="grid-container five-columns">
           <template v-for="duel in allduels">
             <p>{{ duel.opponent1.battle_name }}</p>
-            <img class="arrow" :duelid="duel.id" onclick="moveDown(event)"
+            <img class="arrow" :index="allduels.indexOf(duel)" onclick="moveDown(event)"
               src="/tournament/setup_duels/arrow-down.svg"/>
             <p>vs</p>
-            <img class="arrow" :duelid="duel.id" onclick="moveUp(event)"
+            <img class="arrow" :index="allduels.indexOf(duel)" onclick="moveUp(event)"
               src="/tournament/setup_duels/arrow-up.svg"/>
             <p>{{ duel.opponent2.battle_name }}</p>
           </template>

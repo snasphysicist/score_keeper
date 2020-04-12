@@ -405,20 +405,10 @@ function confirmDuels() {
 }
 
 function moveUp(event) {
-  let duelId = event.target.getAttribute("duelid");
-  if (!duelId) {
+  let index = event.target.getAttribute("index");
+  if (!index) {
     return;
   }
-  // Find duel in array
-  let duel = vueApplication.allduels.filter(
-    duel => duel["id"] == duelId
-  )
-  if (duel.length != 1) {
-    return;
-  }
-  duel = duel[0];
-  // Find duel in array
-  index = vueApplication.allduels.indexOf(duel);
   if (index == 0) {
     // Don't move up if already at top
     return;
@@ -429,22 +419,12 @@ function moveUp(event) {
 }
 
 function moveDown(event) {
-  let duelId = event.target.getAttribute("duelid");
-  if (!duelId) {
+  let index = event.target.getAttribute("index");
+  if (!index) {
     return;
   }
-  // Find duel in array
-  let duel = vueApplication.allduels.filter(
-    duel => duel["id"] == duelId
-  )
-  if (duel.length != 1) {
-    return;
-  }
-  duel = duel[0];
-  // Find duel in array
-  index = vueApplication.allduels.indexOf(duel);
   if (index == (vueApplication.allduels.length - 1)) {
-    // Don't move up if already at end
+    // Don't move down if already at end
     return;
   }
   let temporary = vueApplication.allduels[index + 1];
