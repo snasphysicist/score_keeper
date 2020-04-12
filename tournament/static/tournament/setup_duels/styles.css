@@ -5,6 +5,9 @@ body, h1, h2, p, input, div {
   text-align: center;
   font-family: sans-serif;
 }
+img {
+  margin: auto;
+}
 input {
   min-width: 30%;
   min-height: 50px;
@@ -12,6 +15,10 @@ input {
 }
 input[type=button]:active {
   background-color: #8b0000;
+}
+input[disabled] {
+  color: #773334;
+  background-color: #111111;
 }
 .grid-container {
   display: grid;
@@ -37,7 +44,6 @@ input[type=button]:active {
 .selected {
   background-color: #003d01;
 }
-input[disabled] {
-  color: #773334;
-  background-color: #111111;
+.arrow{
+  width: 20px;
 }

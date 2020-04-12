@@ -403,3 +403,57 @@ function confirmDuels() {
     }
   })
 }
+
+function moveUp(event) {
+  let index = Number(event.target.getAttribute("index"));
+  if (!index) {
+    return;
+  }
+  if (index == 0) {
+    // Don't move up if already at top
+    return;
+  }
+  /*
+   * Only way I've found to do this
+   * which mutates the array (so Vue detects the change)
+   * but also doesn't break Vue with 'undefined' elements
+   */
+  let newArray = [];
+  for (let i = 0; i < vueApplication.allduels.length; i++) {
+    if (i == (index - 1)) {
+      newArray.push(vueApplication.allduels[i + 1]);
+    } else if (i == index) {
+      newArray.push(vueApplication.allduels[i - 1]);
+    } else {
+      newArray.push(vueApplication.allduels[i]);
+    }
+  }
+  vueApplication.allduels = newArray;
+}
+
+function moveDown(event) {
+  let index = Number(event.target.getAttribute("index"));
+  if (!index && index !== 0) {
+    return;
+  }
+  if (index == (vueApplication.allduels.length - 1)) {
+    // Don't move down if already at end
+    return;
+  }
+  /*
+   * Only way I've found to do this
+   * which mutates the array (so Vue detects the change)
+   * but also doesn't break Vue with 'undefined' elements
+   */
+   let newArray = [];
+   for (let i = 0; i < vueApplication.allduels.length; i++) {
+     if (i == (index + 1)) {
+       newArray.push(vueApplication.allduels[i - 1]);
+     } else if (i == index) {
+       newArray.push(vueApplication.allduels[i + 1]);
+     } else {
+       newArray.push(vueApplication.allduels[i]);
+     }
+   }
+   vueApplication.allduels = newArray;
+}
