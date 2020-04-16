@@ -2,7 +2,7 @@
 import asyncio
 import json
 import requests
-import time
+import threading
 import websockets
 
 # Track who is connected to the websocket server
@@ -124,16 +124,26 @@ async def drop_closed():
                 connection = CONNECTIONS[i]
                 if not connection.open:
                     CONNECTIONS.pop(i)
-                    print("DROPPED 1, REMANING: ", len(CONNECTIONS))
+                    print("DROPPED 1, REMAINING: ", len(CONNECTIONS))
             except IndexError:
                 pass
 
 
-start_server = websockets.serve(
-    handler,
-    "localhost",
-    8001
-)
+def start_websocket():
+    start_server = websockets.serve(
+        handler,
+        "localhost",
+        8001
+    )
 
-asyncio.get_event_loop().run_until_complete(start_server)
-asyncio.get_event_loop().run_forever()
+    asyncio.get_event_loop().run_until_complete(start_server)
+    asyncio.get_event_loop().run_forever()
+
+
+if __name__ == "__main__":
+    runnable = threading.Thread(
+        target=start_websocket,
+        daemon=True
+    )
+    runnable.start()
+    print("DONE")
