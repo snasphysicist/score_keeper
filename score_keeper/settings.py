@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'run_duel',
-    'tournament'
+    'score_keeper.apps.WebsocketAppConfig',
+    'tournament',
 ]
 
 MIDDLEWARE = [
