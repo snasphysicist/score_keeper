@@ -140,10 +140,14 @@ def start_websocket():
     asyncio.get_event_loop().run_forever()
 
 
-if __name__ == "__main__":
+def get_websocket_thread():
     runnable = threading.Thread(
         target=start_websocket,
         daemon=True
     )
-    runnable.start()
+    return runnable
+
+
+if __name__ == "__main__":
+    get_websocket_thread().start()
     print("DONE")
