@@ -146,8 +146,3 @@ def get_websocket_thread():
         daemon=True
     )
     return runnable
-
-
-if __name__ == "__main__":
-    get_websocket_thread().start()
-    print("DONE")
