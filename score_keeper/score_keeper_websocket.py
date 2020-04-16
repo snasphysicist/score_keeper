@@ -129,20 +129,22 @@ async def drop_closed():
                 pass
 
 
+# TODO set this up as a class, set main event loop as field
 def start_websocket():
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
     start_server = websockets.serve(
         handler,
         "localhost",
         8001
     )
-
-    asyncio.get_event_loop().run_until_complete(start_server)
-    asyncio.get_event_loop().run_forever()
+    # In case not on main thread, get new event loop
+    loop.run_until_complete(start_server)
+    loop.run_forever()
 
 
 def get_websocket_thread():
     runnable = threading.Thread(
-        target=start_websocket,
-        daemon=True
+        target=start_websocket
     )
     return runnable
