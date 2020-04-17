@@ -98,7 +98,16 @@ function startNewDuel() {
   let duelid;
   for (let i = 0; i < duels.length; i++) {
     let duel = duels[i];
-    if (duel.innerText == vueApplication.selectedduel) {
+    // Strip whitespace to compare, for higher reliability
+    if (
+      duel.innerText.replace(
+        /\s/g,
+        ""
+      ) == vueApplication.selectedduel.replace(
+        /\s/g,
+        ""
+      )
+    ) {
       duelid = duel.getAttribute("duelid");
       break;
     }
