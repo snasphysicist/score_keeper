@@ -18,10 +18,6 @@ class Round(models.Model):
         default=0
     )
     round_number = models.IntegerField(default=1)
-    status = models.CharField(
-        max_length=20,
-        default="NOT STARTED"   # RUNNING, PAUSED, FINISHED
-    )
 
     def by_id(self, round_id):
         rounds = list(Round.objects.filter(id__exact=round_id))
