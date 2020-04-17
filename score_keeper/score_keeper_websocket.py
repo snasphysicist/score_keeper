@@ -12,7 +12,6 @@ CONNECTIONS = []
 PREVIOUS_STATUS = {}
 THIS_STATUS = {}
 
-
 # Maximum number of requests
 # before sending even if
 # status hasn't changed
@@ -148,3 +147,8 @@ def get_websocket_thread():
         target=start_websocket
     )
     return runnable
+
+
+def start_websocket_thread():
+    runnable = get_websocket_thread()
+    runnable.start()
