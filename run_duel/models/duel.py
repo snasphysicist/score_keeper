@@ -67,7 +67,7 @@ class Duel(models.Model):
 
     def current_duel(self):
         marked_as_current = Duel.marked_as_current(self)
-        if marked_as_current is not None:
+        if len(marked_as_current) == 1:
             return marked_as_current[0]
         else:
             return None
