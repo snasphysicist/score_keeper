@@ -91,7 +91,9 @@ class Duel(models.Model):
     def with_round_data(self):
         all_data = self.dictionary()
         rounds = [
-            x.dictionary() for x in self.all_rounds()
+            r.dictionary()
+            for r
+            in self.all_rounds()
         ]
         all_data["rounds"] = rounds
         all_data["score"] = {

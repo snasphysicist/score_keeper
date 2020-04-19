@@ -32,7 +32,8 @@ class Round(models.Model):
             "number": self.round_number,
             "status": determine_status(events),
             "score": calculate_score(events),
-            "time": time_remaining(events)
+            "time": time_remaining(events),
+            "last_event": last_event(events)
         }
 
     def json(self):
@@ -124,6 +125,13 @@ def calculate_score(events):
 #
 # # #   Functions used in the calculation of round time
 #
+
+def last_event(events):
+    if len(events) > 0:
+        return events[-1].dictionary()
+    else:
+        return {}
+
 
 # Calculate round time remaining
 def time_remaining(events):
