@@ -4,6 +4,11 @@
     <title>FIGHT!</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/run_duel/current/styles.css">
+    {% if can_record_score %}
+      <link rel="stylesheet" href="/run_duel/current/styles_umpire.css">
+    {% else %}
+      <link rel="stylesheet" href="/run_duel/current/styles_observer.css">
+    {% endif %}
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <!-- Set websocket constants -->
     <script type="text/javascript">
