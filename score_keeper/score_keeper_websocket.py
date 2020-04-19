@@ -106,12 +106,34 @@ async def status_update(
             THIS_STATUS = json.loads(
                 response.content.decode("utf-8")
             )
-            THIS_STATUS["success"] = True
         if (
                 THIS_STATUS != PREVIOUS_STATUS
                 or loop_counter > maximum_requests
         ):
-            return json.dumps(THIS_STATUS)
+            # Insert latest event without modifying received data
+            return json.dumps(
+                {
+                    **THIS_STATUS,
+                    "last_event": determine_last_event(),
+                    "success": True
+                }
+            )
+
+
+# Only include a last event if it has changed since last time
+def determine_last_event():
+    if "last_event" in PREVIOUS_STATUS.keys():
+        previous_last_event = PREVIOUS_STATUS["last_event"]
+    else:
+        previous_last_event = {}
+    if "last_event" in THIS_STATUS.keys():
+        current_last_event = THIS_STATUS["last_event"]
+    else:
+        current_last_event = {}
+    if previous_last_event != current_last_event:
+        return current_last_event
+    else:
+        return {}
 
 
 # Ditch closed connections regularly
