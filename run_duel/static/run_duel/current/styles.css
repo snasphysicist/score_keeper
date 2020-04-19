@@ -11,11 +11,6 @@ input {
   min-height: 50px;
   font-family: sans-serif;
 }
-{% if can_record_score %}
-input[type=button]:active {
-  background-color: #8b0000;
-}
-{% endif %}
 .grid-container {
   display: grid;
   justify-content: center;
