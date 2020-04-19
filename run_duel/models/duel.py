@@ -112,6 +112,17 @@ class Duel(models.Model):
                 )
             )
         }
+        # Find the last_event for the current round
+        current_round = list(
+            filter(
+                lambda r: r["status"] == "PAUSED" or r["status"] == "RUNNING",
+                rounds
+            )
+        )
+        if len(current_round) == 1:
+            all_data["last_event"] = current_round[0]["last_event"]
+        else:
+            all_data["last_event"] = {}
         return all_data
 
     # This and next method
