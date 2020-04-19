@@ -1,4 +1,6 @@
 
+const LAST_EVENT_NOTIFY_CLASS_NAME = "occurred;"
+
 var vueApplication = new Vue({
   el: '#vue',
   data: {
@@ -256,6 +258,38 @@ function manageNotifiers() {
   }
 }
 
+// 'Flash' button on new event
+function indicateNewEvent(lastEvent) {
+  let type = lastEvent["type"];
+  // If no type (no event) then just stop
+  if (!type) {
+    return;
+  }
+  // Displayable event types correspond to button ids
+  let indicateElement = document.getElementById(type.toLowerCase());
+  // If no element corresponding to event then just stop
+  if (!indicateElement) {
+    return;
+  }
+  // Highlight background immediately
+  indicateElement.classList.add(LAST_EVENT_NOTIFY_CLASS_NAME);
+  // Dehighlight in about half a second
+  setTimeout(
+    deindicateNewEvent.bind(
+      null,
+      indicateElement
+    ),
+    500
+  );
+}
+
+function deindicateNewEvent(deindicateObject) {
+  if (!deindicateObject) {
+    return;
+  }
+  deindicateObject.classList.remove(LAST_EVENT_NOTIFY_CLASS_NAME);
+}
+
 // Web socket handling
 let ws = null;
 function manageWebSocketConnection() {
@@ -271,6 +305,7 @@ function manageWebSocketConnection() {
     let json = JSON.parse(event.data);
     if (json["success"]) {
       vueApplication.duel = json;
+      indicateNewEvent(json["last_event"]);
     }
     manageNotifiers();
   };
