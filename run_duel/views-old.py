@@ -16,13 +16,6 @@ CURRENT_TOURNAMENT = 3
 # Administration pages
 #
 
-def adjust_score_page(request):
-    if not (can_administer_duels_all(request) or can_record_score(request)):
-        return redirect('/score_keeper/login')
-    template = loader.get_template('run_duel/administration/adjust_score.html')
-    context = {}
-    return HttpResponse(template.render(context, request))
-
 
 def adjust_score_api(request):
     if not (can_administer_duels_all(request) or can_record_score(request)):

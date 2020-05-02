@@ -1,4 +1,5 @@
 
+from .adjust_score import handle as adjust_score
 from .current_duel import handle as current_duel
 from .delete_duel import handle as delete_duel
 from .delete_duel_api import handle as delete_duel_api
