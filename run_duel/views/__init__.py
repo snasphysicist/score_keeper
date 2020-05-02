@@ -8,3 +8,4 @@ from .new_duel import handle as new_duel
 from .new_duel_api import handle as new_duel_api
 from .new_event_api import handle as new_event_api
 from .pending_duel_api import handle as pending_duel_api
+from .reset_duel import handle as reset_duel

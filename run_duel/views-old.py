@@ -16,14 +16,6 @@ CURRENT_TOURNAMENT = 3
 # Administration pages
 #
 
-def reset_duel_page(request):
-    if not can_administer_duels_all(request):
-        return redirect('/score_keeper/login')
-    template = loader.get_template('run_duel/administration/reset_duel.html')
-    context = {}
-    return HttpResponse(template.render(context, request))
-
-
 def reset_duel_api(request):
     if not can_administer_duels_all(request):
         return JsonResponse(
