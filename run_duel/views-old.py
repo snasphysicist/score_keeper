@@ -12,15 +12,6 @@ from run_duel.models import Duel, FightEvent, Round
 CURRENT_TOURNAMENT = 3
 
 
-# Render new duel page
-def new_duel(request):
-    if not can_start_duels(request):
-        return redirect('/score_keeper/login')
-    template = loader.get_template('run_duel/new.html')
-    context = {}
-    return HttpResponse(template.render(context, request))
-
-
 # Move on to a different duel
 def new_duel_api(request):
     if not can_start_duels(request):
