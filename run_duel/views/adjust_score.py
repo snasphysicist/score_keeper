@@ -11,4 +11,9 @@ def handle(request):
         return redirect('/score_keeper/login')
     template = loader.get_template('run_duel/administration/adjust_score.html')
     context = {}
-    return HttpResponse(template.render(context, request))
+    return HttpResponse(
+        template.render(
+            context,
+            request
+        )
+    )
