@@ -9,10 +9,6 @@ from django.template import loader
 
 from run_duel.models import Duel, FightEvent, Round
 
-from .view_handlers.get_all_duels_api import handle as get_all_duels_api_handler
-from .view_handlers.new_event_api import handle as new_event_api_handler
-from .view_handlers.pending_duel_api import handle as pending_duel_api_handler
-
 CURRENT_TOURNAMENT = 3
 
 
@@ -63,11 +59,6 @@ def new_duel_api(request):
     })
 
 
-# List pending duels
-def pending_duel_api(request):
-    return pending_duel_api_handler(request)
-
-
 # Render current duel page
 def current_duel(request):
     template = loader.get_template('run_duel/current.html')
@@ -79,11 +70,6 @@ def current_duel(request):
         "can_record_score": can_record_score(request)
     }
     return HttpResponse(template.render(context, request))
-
-
-# Event recording api
-def new_event_api(request):
-    return new_event_api_handler(request)
 
 
 # Event stream api
@@ -106,11 +92,6 @@ def delete_duel_page(request):
     template = loader.get_template('run_duel/administration/delete_duel.html')
     context = {}
     return HttpResponse(template.render(context, request))
-
-
-def get_all_duels_api(request, **kwargs):
-    tournament_id = kwargs["id"]
-    return get_all_duels_api_handler(tournament_id)
 
 
 def delete_duel_api(request):
