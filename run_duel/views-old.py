@@ -16,30 +16,6 @@ CURRENT_TOURNAMENT = 3
 # Administration pages
 #
 
-def delete_duel_api(request):
-    if not can_administer_duels_all(request):
-        return JsonResponse(
-            {
-                "success": False,
-                "reason": "You do not have permission to perform this operation"
-            }
-        )
-    data = json.loads(
-        request.body.decode("utf-8")
-    )
-    duel_id = data["duelid"]
-    duels = list(Duel.objects.filter(id__exact=duel_id))
-    if len(duels) == 0:
-        result = {
-            "success": False,
-            "reason": "Could not find duel with provided identifier"
-        }
-    else:
-        duels[0].delete()
-        result = {"success": True}
-    return JsonResponse(result)
-
-
 def reset_duel_page(request):
     if not can_administer_duels_all(request):
         return redirect('/score_keeper/login')
