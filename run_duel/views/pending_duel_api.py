@@ -2,7 +2,6 @@
 from django.http import JsonResponse
 
 from .shared import *
-from tournament.models import Tournament
 
 
 def handle(request):
