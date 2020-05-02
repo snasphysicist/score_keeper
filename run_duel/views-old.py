@@ -12,20 +12,9 @@ from run_duel.models import Duel, FightEvent, Round
 CURRENT_TOURNAMENT = 3
 
 
-
-
-
 #
 # Administration pages
 #
-
-def delete_duel_page(request):
-    if not can_administer_duels_all(request):
-        return redirect('/score_keeper/login')
-    template = loader.get_template('run_duel/administration/delete_duel.html')
-    context = {}
-    return HttpResponse(template.render(context, request))
-
 
 def delete_duel_api(request):
     if not can_administer_duels_all(request):
