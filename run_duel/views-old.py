@@ -12,19 +12,6 @@ from run_duel.models import Duel, FightEvent, Round
 CURRENT_TOURNAMENT = 3
 
 
-# Render current duel page
-def current_duel(request):
-    template = loader.get_template('run_duel/current.html')
-    context = {
-        "websocket_protocol": os.environ["SCORE_KEEPER_WEBSOCKET_PROTOCOL"],
-        "base_url": os.environ["SCORE_KEEPER_BASE_URL"],
-        "websocket_port": os.environ["SCORE_KEEPER_WEBSOCKET_PORT"],
-        # Only enable scoring for umpires
-        "can_record_score": can_record_score(request)
-    }
-    return HttpResponse(template.render(context, request))
-
-
 # Event stream api
 def event_stream(request):
     current_duel_object = Duel.current_duel(None)

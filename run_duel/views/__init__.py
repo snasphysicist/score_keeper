@@ -1,4 +1,5 @@
 
+from .current_duel import handle as current_duel
 from .get_all_duels_api import handle as get_all_duels_api
 from .new_duel import handle as new_duel
 from .new_duel_api import handle as new_duel_api
