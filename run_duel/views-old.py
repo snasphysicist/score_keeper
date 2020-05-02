@@ -20,19 +20,7 @@ CURRENT_TOURNAMENT = 3
 
 
 
-def single_duel_data_api(request, **kwargs):
-    duel_id = kwargs["id"]
-    duel = Duel.by_id(duel_id)
-    if duel is None:
-        return JsonResponse(
-            {
-                "success": False,
-                "reason": "Could not find duel with provided id"
-            }
-        )
-    data = duel.with_round_data()
-    data["success"] = True
-    return JsonResponse(data)
+
 
 
 #

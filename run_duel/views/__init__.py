@@ -12,3 +12,4 @@ from .new_event_api import handle as new_event_api
 from .pending_duel_api import handle as pending_duel_api
 from .reset_duel import handle as reset_duel
 from .reset_duel_api import handle as reset_duel_api
+from .single_duel_data_api import handle as single_duel_data_api
