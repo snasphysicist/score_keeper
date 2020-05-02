@@ -12,14 +12,7 @@ from run_duel.models import Duel, FightEvent, Round
 CURRENT_TOURNAMENT = 3
 
 
-# Event stream api
-def event_stream(request):
-    current_duel_object = Duel.current_duel(None)
-    if current_duel_object is None:
-        return JsonResponse({})
-    return JsonResponse(
-        current_duel_object.with_round_data()
-    )
+
 
 
 #
