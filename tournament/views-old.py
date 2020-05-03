@@ -10,9 +10,6 @@ from run_duel.models import Duel, Round
 from tournament.models import Group, Participant, Tournament
 
 
-
-
-
 def setup_duels(request):
     if not can_administer_duels(request):
         return redirect('/score_keeper/login')
@@ -131,8 +128,3 @@ def stages_groups_api(request, **kwargs):
         )
     stagesgroups["success"] = True
     return JsonResponse(stagesgroups)
-
-
-# Can a user start duels?
-def can_administer_duels(request):
-    return request.user.groups.filter(name="duel_administrator").exists()
