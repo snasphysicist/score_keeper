@@ -12,12 +12,6 @@ from django.template import loader
 from .settings import BASE_DIR
 
 
-# API to log user out
-def logout_api(request):
-    logout(request)
-    return redirect('login')
-
-
 def main_page(request):
     template = loader.get_template("score_keeper/main.html")
     context = {}
