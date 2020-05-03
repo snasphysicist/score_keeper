@@ -9,17 +9,6 @@ from django.template import loader
 from run_duel.models import Duel, Round
 from tournament.models import Group, Participant, Tournament
 
-CURRENT_TOURNAMENT = 3
-
-
-# Tournament overview page
-def tournament_overview(request):
-    template = loader.get_template('tournament/overview.html')
-    context = {
-        "current_tournament": CURRENT_TOURNAMENT
-    }
-    return HttpResponse(template.render(context, request))
-
 
 def overview_api(request, **kwargs):
     # Group id comes from url
