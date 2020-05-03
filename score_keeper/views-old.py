@@ -12,30 +12,6 @@ from django.template import loader
 from .settings import BASE_DIR
 
 
-# API to handle username/password login
-def login_api(request):
-    data = json.loads(
-        request.body.decode('utf-8')
-    )
-    user = authenticate(
-        request,
-        username=data["username"],
-        password=data["password"]
-    )
-    if user is not None:
-        login(request, user)
-        response_json = {
-            "success": True
-        }
-    else:
-        response_json = {
-            "success": False
-        }
-    return JsonResponse(
-        response_json
-    )
-
-
 # API to log user out
 def logout_api(request):
     logout(request)
