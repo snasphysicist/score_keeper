@@ -10,59 +10,6 @@ from run_duel.models import Duel, Round
 from tournament.models import Group, Participant, Tournament
 
 
-def setup_duels(request):
-    if not can_administer_duels(request):
-        return redirect('/score_keeper/login')
-    template = loader.get_template('tournament/setup_duels.html')
-    context = {}
-    return HttpResponse(template.render(context, request))
-
-
-def setup_duels_groups_participants_api(request):
-    if not can_administer_duels(request):
-        return JsonResponse({
-            "success": False,
-            "reason": "You do not have permission to perform this operation"
-        })
-    # Get group and participant details
-    tournament = Tournament.by_id(
-        None,
-        CURRENT_TOURNAMENT
-    )
-    if tournament is None:
-        return JsonResponse({
-            "success": False,
-            "reason": "There appears to be no currently active tournament"
-        })
-    stages = tournament.all_stages()
-    groups = list()
-    current_stage = None
-    for stage in stages:
-        groups += stage.all_groups()
-        duels = list()
-        for group in groups:
-            duels += group.all_duels()
-        if len(duels) == 0:
-            current_stage = stage
-            break
-    participants = tournament.all_participants()
-    context = {
-        "stage": current_stage.dictionary(),
-        "groups": [],
-        "participants": []
-    }
-    for group in groups:
-        context["groups"].append(
-            group.dictionary()
-        )
-    for participant in participants:
-        context["participants"].append(
-            participant.dictionary()
-        )
-    context["success"] = True
-    return JsonResponse(context)
-
-
 def generate_duels_api(request):
     if not can_administer_duels(request):
         return JsonResponse({
