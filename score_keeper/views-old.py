@@ -12,16 +12,6 @@ from django.template import loader
 from .settings import BASE_DIR
 
 
-def login_page(request):
-    # If user already logged in, redirect
-    if request.user.is_authenticated:
-        return redirect('/score_keeper/main')
-    else:
-        template = loader.get_template("score_keeper/login.html")
-        context = {}
-        return HttpResponse(template.render(context, request))
-
-
 # API to handle username/password login
 def login_api(request):
     data = json.loads(
