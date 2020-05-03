@@ -12,10 +12,7 @@ from django.template import loader
 from .settings import BASE_DIR
 
 
-def main_page(request):
-    template = loader.get_template("score_keeper/main.html")
-    context = {}
-    return HttpResponse(template.render(context, request))
+
 
 
 # Will pre-load static
